@@ -1,0 +1,112 @@
+// Updated at 2024-10-05
+// 将键绑定放在此文件中以覆盖默认值
+[
+  {
+    "key": "shift+space",
+    "command": "cursorPageUp",
+    "when": "textInputFocus"
+  },
+  // 显示文件资源管理器
+  {
+    "key": "cmd+. .",
+    "command": "workbench.files.action.focusFilesExplorer"
+  },
+
+  // --- 面板命令
+  // 显示问题
+  {
+    "key": "cmd+. 1",
+    "command": "workbench.panel.markers.view.focus"
+  },
+  // 显示输出
+  {
+    "key": "cmd+. 2",
+    "command": "workbench.action.output.toggleOutput",
+    "when": "workbench.panel.output.active"
+  },
+  // 显示调试控制台
+  {
+    "key": "cmd+. 3",
+    "command": "workbench.debug.action.toggleRepl",
+    "when": "workbench.panel.repl.view.active"
+  },
+  // 显示终端
+  {
+    "key": "cmd+. 4",
+    "command": "workbench.action.terminal.toggleTerminal",
+    "when": "terminal.active"
+  },
+  // 拆分一个上下分屏, vertical,
+  {
+    "key": "cmd+[ v",
+    "command": "workbench.action.splitEditorDown"
+  },
+  // 拆分一个左右分屏, horizontal
+  {
+    "key": "cmd+[ h",
+    "command": "workbench.action.splitEditor"
+  },
+  // 将光标向上动1屏
+  {
+    "key": "cmd+i k",
+    "command": "workbench.action.focusAboveGroup"
+  },
+  // 将光标向下动1屏
+  {
+    "key": "cmd+i j",
+    "command": "workbench.action.focusBelowGroup"
+  },
+  // 将光标向左移动1屏
+  {
+    "key": "cmd+i h",
+    "command": "workbench.action.focusLeftGroup"
+  },
+  // 将光标向右移动1屏
+  {
+    "key": "cmd+i l",
+    "command": "workbench.action.focusRightGroup"
+  },
+  // --- 资源管理器中对文件或目录的操作
+  // 新建文件
+  {
+    "key": "i",
+    "command": "explorer.newFile",
+    "when": " explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus "
+  },
+  // 新建目录
+  {
+    "key": "o",
+    "command": "explorer.newFolder",
+    "when": " explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus "
+  },
+  // 刷新资源管理器
+  {
+    "key": "r",
+    "command": "workbench.files.action.refreshFilesExplorer",
+    "when": " explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus "
+  },
+  // 删除文件或目录
+  {
+    "key": "d",
+    "command": "deleteFile",
+    "when": " explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus "
+  },
+  // 剪切文件或目录
+  {
+    "key": "x",
+    "command": "filesExplorer.cut",
+    "when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus"
+  },
+  // 复制文件或目录
+  {
+    "key": "y",
+    "command": "filesExplorer.copy",
+    "when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !inputFocus"
+  },
+  // 粘贴文件或目录
+  {
+    "key": "p",
+    "command": "filesExplorer.paste",
+    "when": "explorerViewletVisible && filesExplorerFocus && !explorerResourceReadonly && !inputFocus"
+  }
+]

@@ -1,0 +1,12 @@
+wsl = false
+no-multigrid = false
+vsync = true
+maximized = false
+srgb = false
+idle = true
+# neovim-bin = "/usr/bin/nvim"
+frame = "full"
+title-hidden = true
+[font]
+  normal = ["Agave Nerd Font", "MesloLGS NF"]
+  size = 18

@@ -1,0 +1,284 @@
+// Updated at 2024-10-05
+{
+  // ------------------------------
+  // ------------------------------ [UI]
+  "editor.fontSize": 16, // Font and font size
+
+  // Terminal UI settings, can be copied from
+  // https://glitchbone.github.io/vscode-base16-term/#/
+  "terminal.integrated.fontSize": 16,
+  "terminal.integrated.fontFamily": "Agave Nerd Font Mono",
+  "terminal.integrated.customGlyphs": false,
+
+  "workbench.iconTheme": "eq-material-theme-icons",
+  "workbench.colorTheme": "Dainty – Andromeda",
+  "workbench.productIconTheme": "fluent-icons",
+  "workbench.colorCustomizations": {
+    "terminal.background": "#282936",
+    "terminal.foreground": "#E9E9F4",
+    "terminalCursor.background": "#E9E9F4",
+    "terminalCursor.foreground": "#E9E9F4",
+    "terminal.ansiBlack": "#282936",
+    "terminal.ansiBlue": "#62D6E8",
+    "terminal.ansiBrightBlack": "#626483",
+    "terminal.ansiBrightBlue": "#62D6E8",
+    "terminal.ansiBrightCyan": "#A1EFE4",
+    "terminal.ansiBrightGreen": "#EBFF87",
+    "terminal.ansiBrightMagenta": "#B45BCF",
+    "terminal.ansiBrightRed": "#EA51B2",
+    "terminal.ansiBrightWhite": "#F7F7FB",
+    "terminal.ansiBrightYellow": "#00F769",
+    "terminal.ansiCyan": "#A1EFE4",
+    "terminal.ansiGreen": "#EBFF87",
+    "terminal.ansiMagenta": "#B45BCF",
+    "terminal.ansiRed": "#EA51B2",
+    "terminal.ansiWhite": "#E9E9F4",
+    "terminal.ansiYellow": "#00F769"
+  },
+
+  // Sometimes some files in the project have the same name,
+  // the default title only shows the file name, can not see the file directory,
+  // here to change.
+  "window.title": "${dirty}${activeEditorLong}${separator}${rootName}${separator}${appName}",
+
+  // Controls whether preview mode is used when editors open.
+  "workbench.editor.enablePreview": false,
+
+  // [explorer]
+  "explorer.confirmDragAndDrop": false, // Controls whether the Explorer should ask for confirmation to move files and folders via drag and drop.
+  "explorer.confirmDelete": false,
+
+  // ------------------------------
+  // ------------------------------ [CMake]
+  // Don't automatically configure CMake project directories when they are opened.
+  "cmake.configureOnOpen": false,
+  "cmake.configureOnEdit": false,
+  "cmake.options.statusBarVisibility": "icon",
+  "cmake.showOptionsMovedNotification": false,
+  "cmake.pinnedCommands": [
+    "workbench.action.tasks.configureTaskRunner",
+    "workbench.action.tasks.runTask"
+  ],
+
+  // ------------------------------
+  // ------------------------------ [Editor]
+  "editor.bracketPairColorization.enabled": true, // Colorized brackets.
+  "editor.guides.bracketPairs": "active",
+  "editor.insertSpaces": true, // Insert spaces when pressing Tab
+  "editor.tabSize": 2, // The number of spaces a tab is equal to
+  "editor.lineNumbers": "relative", // Controls the display of line numbers
+  "editor.formatOnSave": true, // Format a file on save.
+  "editor.rulers": [120],
+  "editor.quickSuggestionsDelay": 0, // Controls the delay in milliseconds after which quick suggestions will show up.
+  "editor.inlayHints.enabled": "off", // Enables the inlay hints in the editor.
+
+  // cpp
+  "[cpp]": {
+    "editor.detectIndentation": true,
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+  },
+  // User clangd otherwise C/C++ intelliSense
+  "C_Cpp.intelliSenseEngine": "disabled",
+
+  // [json]
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // The default end of line character.
+  "files.eol": "\n",
+
+  // Controls whether an active snippet prevents quick suggestions.
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+
+  // open: Always allow untrusted files to be
+  // introduced to a trusted workspace without prompting.
+  "security.workspace.trust.untrustedFiles": "open",
+
+  // ------------------------------
+  // ------------------------------ [Extensions]
+  // Extensions configuration settings.
+  "extensions.autoUpdate": false,
+
+  // [tabnine]
+  "tabnine.experimentalAutoImports": true,
+
+  // [leetcode]
+  "leetcode.endpoint": "leetcode-cn",
+  "leetcode.defaultLanguage": "cpp",
+  "leetcode.workspaceFolder": "${userHome}/.leetcode",
+  "leetcode.hint.configWebviewMarkdown": false,
+
+  // [indentRainbow]
+  "indentRainbow.errorColor": "rgba(128,132,132,0.3)",
+  "indentRainbow.excludedLanguages": ["plaintext"],
+
+  // [cSpell]
+  "cSpell.userWords": [
+    "autofetch",
+    "clangd",
+    "clangtidy",
+    "DBUILD",
+    "donot",
+    "easymotion",
+    "EPOLLHUP",
+    "EPOLLPRI",
+    "esbenp",
+    "hlsearch",
+    "incsearch",
+    "INVOKABLE",
+    "keylayout",
+    "rapidjson",
+    "rgba",
+    "STDCPP",
+    "stdexec",
+    "tabnine",
+    "unifex",
+    "vetur"
+  ],
+
+  // [vim]
+  "vim.leader": "",
+  "vim.easymotion": true,
+  "vim.incsearch": true,
+  "vim.useSystemClipboard": true,
+  "vim.useCtrlKeys": false,
+  "vim.hlsearch": true,
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["j", "j"],
+      "after": ["<Esc>"]
+    }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["H"],
+      "after": ["^"]
+    },
+    {
+      "before": ["L"],
+      "after": ["$"]
+    },
+    // 移动标签页
+    {
+      "before": ["<shift+j>"],
+      "after": ["g", "T"]
+    },
+    {
+      "before": ["<shift+k>"],
+      "after": ["g", "t"]
+    },
+    // 翻半屏
+    {
+      "before": ["<space>"],
+      "after": ["<C-d>"]
+    }
+  ],
+
+  // Delegate certain key combinations back to VS Code
+  // to be handled natively.
+  "vim.handleKeys": {
+    "<C-o>": true,
+    "<C-a>": false,
+    "<C-f>": false,
+    "<C-n>": false
+  },
+  // Automatically change input method
+  "vim.autoSwitchInputMethod.enable": true,
+  "vim.autoSwitchInputMethod.defaultIM": "com.apple.keylayout.ABC",
+  "vim.autoSwitchInputMethod.obtainIMCmd": "/opt/homebrew/bin/im-select",
+  "vim.autoSwitchInputMethod.switchIMCmd": "/opt/homebrew/bin/im-select {im}",
+
+  // [clangd]
+  "clangd.checkUpdates": true,
+  "clangd.path": "${userHome}/Library/Application Support/Code/User/globalStorage/llvm-vs-code-extensions.vscode-clangd/install/18.1.3/clangd_18.1.3/bin/clangd",
+
+  // [projectManager]
+  "projectManager.tags": ["Personal", "Work", "Lego"],
+  "projectManager.sortList": "Saved",
+
+  // ------------------------------
+  // ------------------------------ [ssh]
+  "remote.SSH.showLoginTerminal": true,
+  "remote.SSH.remotePlatform": {
+    "myCloud": "linux",
+    "PublicDev": "linux"
+  },
+
+  // ------------------------------
+  // ------------------------------ [git]
+  "git.autofetch": true,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "diffEditor.ignoreTrimWhitespace": false,
+
+  // ------------------------------
+  // ------------------------------ [FrontEnd]
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[less]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "vetur.format.enable": true,
+  "vetur.format.defaultFormatter.html": "prettier",
+  "vetur.format.defaultFormatter.pug": "prettier",
+  "vetur.format.defaultFormatter.css": "prettier",
+  "vetur.format.defaultFormatter.postcss": "prettier",
+  "vetur.format.defaultFormatter.scss": "prettier",
+  "vetur.format.defaultFormatter.less": "prettier",
+  "vetur.format.defaultFormatter.stylus": "stylus-supremacy",
+  "vetur.format.defaultFormatter.js": "prettier",
+  "vetur.format.defaultFormatter.ts": "prettier",
+  "vetur.format.defaultFormatter.sass": "sass-formatter",
+  "html.format.enable": false,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "http.proxySupport": "off",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "markup.other.log.error",
+        "settings": { "foreground": "#FF0000" }
+      },
+      {
+        "scope": "markup.bold.log.error",
+        "settings": {
+          "foreground": "#FF0000",
+          "fontStyle": "bold italic"
+        }
+      },
+      {
+        "scope": "markup.other.log.warn",
+        "settings": { "foreground": "#c500f7cc" }
+      },
+      {
+        "scope": "markup.other.log.info",
+        "settings": { "foreground": "#2cd3c5" }
+      },
+      {
+        "scope": "markup.other.log.debug",
+        "settings": { "foreground": "#888585" }
+      },
+      {
+        "scope": "markup.other.log.highlight",
+        "settings": { "foreground": "#19ff04" }
+      }
+    ]
+  }
+}

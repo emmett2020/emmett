@@ -1,0 +1,10 @@
+.idea
+.cache
+
+cmake-build-debug
+cmake-build-release
+
+log
+logs
+build
+
