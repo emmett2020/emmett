@@ -1,0 +1,3 @@
+/Users/zhangnaigang/CLionProjects/demo/cost_of_context_switch_demo/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/zhangnaigang/CLionProjects/demo/cost_of_context_switch_demo/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/zhangnaigang/CLionProjects/demo/cost_of_context_switch_demo/cmake-build-debug/CMakeFiles/cost_of_context_switch.dir
