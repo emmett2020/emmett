@@ -1,3 +1,0 @@
-/Users/zhangnaigang/CLionProjects/demo/multithreading_read_same_file_demo/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/zhangnaigang/CLionProjects/demo/multithreading_read_same_file_demo/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/zhangnaigang/CLionProjects/demo/multithreading_read_same_file_demo/cmake-build-debug/CMakeFiles/read_file.dir
