@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 set(CMAKE_CXX_STANDARD 20)
-project(add_data_to_mysql)
+project(demo)
 
 INCLUDE_DIRECTORIES(
         include
@@ -11,12 +11,13 @@ INCLUDE_DIRECTORIES(
 LINK_DIRECTORIES(
         /usr/local/mysql/lib
         /opt/homebrew/Cellar/fmt/7.1.3/lib
-        )
+)
 
 LINK_LIBRARIES(libmysqlclient.a)
 
 
 
-add_executable(add_data_to_mysql main.cpp)
+add_executable(demo main.cpp)
 
-target_link_libraries(add_data_to_mysql libmysqlclient.a)
+target_link_libraries(demo libmysqlclient.a)
+
