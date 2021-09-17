@@ -15,9 +15,14 @@ LINK_DIRECTORIES(
 
 LINK_LIBRARIES(libmysqlclient.a)
 
+# code insight 会失效
+#set (demo_mmmalloc_dir demo_mmmalloc/*.h demo_mmmalloc/memlib.cpp)
 
-
-add_executable(demo main.cpp)
+add_executable(demo
+        main.cpp
+        ${demo_malloc_dir}
+        demo_mmmalloc/mm.cpp
+        )
 
 target_link_libraries(demo libmysqlclient.a)
 
