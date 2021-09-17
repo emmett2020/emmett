@@ -4,34 +4,30 @@
     ╭    ╠╣      ╠╣      ╠╣      ╣
     ╰⊙══⊙╯╚◎════◎╝╚◎════◎╝╚◎════◎╝
   --------------------------------------
-  @date: 2021-九月-17
+  @date:   2021-九月-17
   @author: xiaomingZhang2020@outlook.com
   --------------------------------------
 */
 
 #ifndef DEMO_MM_H
 #define DEMO_MM_H
+#include "heap.h"
 
-/*
- The address will be align to 2 * WSIZE = 8 bytes.
- */
-#ifndef ADDRPTR
-#define ADDRPTR unsigned int *
-#endif
+/* ADDRPTR - Address pointer to */
+#define ADDRPTR unsigned int*
 
-
-const int WSIZE = 4;            // Word and header/footer size (bytes)
-const int DSIZE = 8;            // Double word size (bytes)
-const int CHUNKSIZE = 1 << 12;  // Extend heap by this amount (bytes), equals 4KB
+const SIZE_T WSIZE = 4;            // Word and header/footer size (bytes)
+const SIZE_T DSIZE = 8;            // Double word size (bytes)
+const SIZE_T CHUNKSIZE = 1 << 12;  // Extend heap by this amount, equals to 4KB
 
 
-/* Pack a size and allocated a bit into a word*/
+/* pack - Pack a size and allocated a bit into a word */
 inline SIZE_T pack(SIZE_T size, int flag) { return size | flag; }
 
-
-/* Read and write a word at address p*/
+/* get & put - Read and write a word at address p */
 inline SIZE_T get(const ADDRPTR p) { return *p; }
 inline void put(ADDRPTR p, SIZE_T val) { *p = val; }
+
 
 /*
  * Manage the real memory chunk.The chunk looks like this:
@@ -43,20 +39,17 @@ inline void put(ADDRPTR p, SIZE_T val) { *p = val; }
                                     ...
            [          ] [          ] [          ] [         ]
    footer: [    1B    ] [    1B    ] [    1B    ] [---- ---a]  <- size + allocated flag
-   next chunk's header:
+   nxtchunk's header: [          ] [          ] [..]   [..]
    higher address
 
- * What's size stands for?
+ * What's the size stands for?
     there is one difference in size compared to glibc2.
     the size in header stands for the sum of it's size
     and it's footer and nextChunk's headers.
-
 */
 class Chunk;
-
 using mchunkptr = Chunk *;
 
-/*******************************************************************/
 
 class Chunk {
 public:
@@ -68,22 +61,22 @@ public:
 
 public:
     /*Given chunk ptr cp, compute address of its header and footer*/
-    ADDRPTR header() { return (ADDRPTR) (m_mem - WSIZE); }
-    ADDRPTR footer() { return (ADDRPTR) (m_mem + size() - DSIZE); }
+    ADDRPTR header() { return reinterpret_cast<ADDRPTR> (m_mem - WSIZE); }
+    ADDRPTR footer() { return reinterpret_cast<ADDRPTR> (m_mem + size() - DSIZE); }
 
     /*Read the size and allocated fields from address p*/
-    SIZE_T size() { return *header() & ~0x7; }
+    SIZE_T size() { return  *header() & ~0x7; }
     SIZE_T inUseFlag() { return *header() & ~0x1; }
 
-    /*set new size and flag*/
+    /*set - Set new size and flag for header and footer*/
     void set(SIZE_T sz, int flag) {
         // when we change size, we must change our footer
         *header() = pack(sz, flag);
-        ADDRPTR footer = (ADDRPTR) (m_mem + sz - DSIZE);
+        auto footer = reinterpret_cast<ADDRPTR> (m_mem + sz - DSIZE);
         *footer = pack(sz, flag);
     }
 
-    /*Given chunk ptr bp, compute address of next and previous blocks*/
+    /*Compute address of next and previous chunks*/
     mchunkptr nxtChunk() {
         return reinterpret_cast<mchunkptr>(m_mem + size());
     }
@@ -129,15 +122,31 @@ public:
     /* Create the initial empty heap */
     int init();
 
+    /*Equals to ptmalloc-free*/
+    void free(void *p);
+
+    /*
+     * malloc - Equals to ptmalloc-malloc。
+     *      The minimal size is 4 * WSIZE. Which includes header, footer, and pad.
+     *      The size of pad is 2 * WSIZE since all address are aligned to two WSIZE.
+    */
+    void *malloc(SIZE_T size);
+
 private:
     /*
-     * This will be used in two case.
-     * Case1: initialize heap
-     * Case2: mm_malloc can't find a suitable chunk
+     * extend_heap - This will be used in two case.
+     *               Case1: initialize heap
+     *               Case2: mm_malloc can't find a suitable chunk
     */
     mchunkptr extend_heap(SIZE_T words);
     mchunkptr coalesce(mchunkptr p);
+    mchunkptr find_fit(SIZE_T asize);
 
+    /*
+     * place - Place block of asize bytes at start of free block bp
+     *         and split if remainder would be at least minimum block size
+    */
+    void place(mchunkptr p, SIZE_T asize);
 
 private:
     static char *free_list;

@@ -4,7 +4,7 @@
     ╭    ╠╣      ╠╣      ╠╣      ╣
     ╰⊙══⊙╯╚◎════◎╝╚◎════◎╝╚◎════◎╝
   --------------------------------------
-  @date: 2021-九月-17
+  @date:   2021-九月-17
   @author: xiaomingZhang2020@outlook.com
   --------------------------------------
 */
@@ -16,8 +16,8 @@ void *Heap::mem_sbrk(int incr) {
     if ((incr < 0) || (mem_brk + incr > mem_max_addr)) {
         errno = ENOMEM;
         fprintf(stderr, "ERROR: mem_sbrk failed.Ran out of memory...\n");
-        return (void *) -1;
+        return reinterpret_cast<void*> (-1);
     }
     mem_brk += incr;
-    return (void *) old_brk;
+    return static_cast<void *> (old_brk);
 }

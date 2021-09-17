@@ -4,7 +4,7 @@
     ╭    ╠╣      ╠╣      ╠╣      ╣
     ╰⊙══⊙╯╚◎════◎╝╚◎════◎╝╚◎════◎╝
   --------------------------------------
-  @date: 2021-九月-17
+  @date:   2021-九月-17
   @author: xiaomingZhang2020@outlook.com
   --------------------------------------
 */
@@ -14,34 +14,33 @@
 
 #include <unistd.h>
 #include <sys/mman.h>
+#include <cerrno>
+#include <iostream>
 
 /*
- * Header's or footer's size. Since in some system, size_t == 4bytes,
- * while 8 bytes in others'.
+    SIZE_T - Header's or footer's size.
+             Since we always want 32 bit, we defined SIZE_T as unsigned int
  */
 #ifndef SIZE_T
-#define SIZE_T size_t
+#define SIZE_T unsigned
 #endif
 
-
-
-// Manage the heap use single mode
 class Heap {
 public:
-    /* mem_init - Initialize the memory system modelx */
+    /* Heap - Initialize the memory system model */
     Heap() {
-        mem_heap = (char *) malloc(HEAP_MAX_SIZE); // use glibc malloc
-        mem_brk = (char *) mem_heap;
-        mem_max_addr = (char *) (mem_heap + HEAP_MAX_SIZE);
+        /* Use glibc malloc to simulate mmap */
+        mem_heap = static_cast<char *> (malloc(HEAP_MAX_SIZE));
+        mem_brk = static_cast<char *> (mem_heap);
+        mem_max_addr = static_cast<char *> (mem_heap + HEAP_MAX_SIZE);
     }
 
-    /*
-     * Simple model of the sbrk function. Extends the heap br incr bytes
-     * and return the start address of the new area. In this model, the heap
-     * cannot be shrink.
-     */
+/*
+    mem-sbrk - Simple model of the sbrk function. Extends the heap br incr bytes
+               and return the start address of the new area. In this model, the heap
+               cannot be shrink.
+ */
     void *mem_sbrk(int incr);
-
 
 private:
     /* private global variables */
@@ -54,6 +53,6 @@ private:
 };
 
 // there will be changed in the future
-static Heap heap;
+extern Heap heap;
 
 #endif //DEMO_HEAP_H

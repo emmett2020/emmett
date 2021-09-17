@@ -22,6 +22,7 @@ add_executable(demo
         main.cpp
         ${demo_malloc_dir}
         demo_mmmalloc/mm.cpp
+        demo_mmmalloc/heap.cpp
         )
 
 target_link_libraries(demo libmysqlclient.a)
