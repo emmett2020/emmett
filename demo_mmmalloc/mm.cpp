@@ -14,7 +14,7 @@
 
 /* For bins*/
 int Bin::init() {
-    ADDRPTR p; //
+    ADDRPTR p;
     free_list = static_cast<char *>(heap.mem_sbrk(4 * WSIZE));
     if (free_list == reinterpret_cast<char *> (-1))
         return -1;
@@ -25,66 +25,66 @@ int Bin::init() {
     put(p + 3, pack(0, 1)); // Epilogue footer
     free_list += 2 * WSIZE;
 
-    /*Extend the empty heap with a free block of chunksize */
+    /*Extend the empty heap with a free chunk of chunk size */
     if (extend_heap(CHUNKSIZE / WSIZE) == nullptr)
         return -1;
     return 0;
 }
 
 
-mchunkptr Bin::extend_heap(SIZE_T words) {
+char *Bin::extend_heap(SIZE_T words) {
     char *p;
     SIZE_T size;
-    mchunkptr victim, nxtChunk;
-
     /*Allocate an even number of words to maintain alignment*/
     size = words % 2 ? (words + 1) * WSIZE : words * WSIZE;
     if ((long) (p = (char *) heap.mem_sbrk((int) size)) == -1)
         return nullptr;
-    victim = reinterpret_cast<mchunkptr>(p);
+//    auto victim = reinterpret_cast<mchunkptr>(p);
+    Chunk victim(p);
     /*Initialize free block header/footer and the epilogue header*/
-    victim->set(size, 0); // set free chunk header and free chunk footer
-    nxtChunk = victim->nxtChunk();
-    nxtChunk->set(0, 1); // new epilogue header
+    victim.set(size, 0); // set free chunk header and free chunk footer
+    auto nxtChunk = victim.nxtChunk();
+    nxtChunk.set(0, 1); // new epilogue header
 
     /*Coalesce if the previous block  was free*/
-    return coalesce(victim);
+    return coalesce(victim.mem());
 }
 
-mchunkptr Bin::coalesce(mchunkptr p) {
+char *Bin::coalesce(char *p) {
+    Chunk chunk(p);
     // get prev chunk's in_use bit and next chunk's in_use bit
-    size_t prevInUse = p->preChunk()->inUseFlag();
-    size_t nxtInUse = p->nxtChunk()->inUseFlag();
+    size_t prevInUse = chunk.preChunk().inUseFlag();
+    size_t nxtInUse = chunk.nxtChunk().inUseFlag();
 
     if (prevInUse && nxtInUse) // no need to coalesce
-        return p;
+        return chunk.mem();
     else if (prevInUse && !nxtInUse) { // coalesce the next chunk
-        size_t nextSize = p->nxtChunk()->size();
-        p->set(p->size() + nextSize, 0);
-        return p;
+        size_t nextSize = chunk.nxtChunk().size();
+        chunk.set(chunk.size() + nextSize, 0);
+        return chunk.mem();
     } else if (!prevInUse && nxtInUse) { // coalesce the prev chunk
-        size_t prevSize = p->preChunk()->size();
-        p->preChunk()->set(p->size() + prevSize, 0);
-        return p->preChunk();
+        size_t prevSize = chunk.preChunk().size();
+        auto preChunk = chunk.preChunk();
+        preChunk.set(chunk.size() + prevSize, 0);
+        return preChunk.mem();
     } else { // coalesce the prev and nxt chunke
-        size_t prevSize = p->preChunk()->size();
-        size_t nxtSize = p->nxtChunk()->size();
-        p->preChunk()->set(p->size() + prevSize + nxtSize, 0);
-        return p->preChunk();
+        size_t prevSize = chunk.preChunk().size();
+        size_t nxtSize = chunk.nxtChunk().size();
+        auto preChunk = chunk.preChunk();
+        preChunk.set(chunk.size() + prevSize + nxtSize, 0);
+        return preChunk.mem();
     }
 }
 
 void Bin::free(void *p) {
-    auto victim = static_cast<mchunkptr> (p);
-    victim->set(victim->size(), 0); // don't modify the size field
-    coalesce(victim);
+    Chunk victim (p);
+    victim.set(victim.size(), 0); // don't modify the size field
+    coalesce(victim.mem());
 }
 
 void *Bin::malloc(SIZE_T size) {
     SIZE_T asize;       // Adjusted chunk size
     SIZE_T extendsize;  // Amount to extend heap if no fit
-    mchunkptr victim;
-
     /*Ignore spurious request*/
     if (size == 0)
         return nullptr;
@@ -96,29 +96,31 @@ void *Bin::malloc(SIZE_T size) {
         asize = (size + DSIZE - 1) & ~(DSIZE - 1);
 
     /*Search the free_list for a fit*/
-    if ((victim = find_fit(asize)) != nullptr) {
-        place(victim, asize);
-        return static_cast<void *> (victim);
+    char* p;
+
+    if ((p = find_fit(asize)) != nullptr) {
+        place(p, asize);
+        return p;
     }
 
     /*No fit found. Get more memory and place the block*/
     extendsize = asize > CHUNKSIZE ? asize : CHUNKSIZE;
-    if ((victim = extend_heap(extendsize)) == nullptr) {
+    if ((p = extend_heap(extendsize)) == nullptr) {
         return nullptr;
     }
 
-    place(victim, asize);
-    return static_cast<void *>(victim);
+    place(p, asize);
+    return p;
 }
 
-mchunkptr Bin::find_fit(SIZE_T asize) {
-    auto p = reinterpret_cast<mchunkptr> (free_list);
-    while (p->size() > 0) {
+char* Bin::find_fit(SIZE_T asize) {
+    auto p = Chunk(free_list);
+    while (p.size() > 0) {
         // WARNING: this is different from book. But I consider that I was right.
-        if (p->size() - DSIZE >= asize && p->inUseFlag() == 0) {
-            return p;
+        if (p.size() - DSIZE >= asize && p.inUseFlag() == 0) {
+            return p.mem();
         }
-        p = p->nxtChunk();
+        p = p.nxtChunk();
     }
     return nullptr;
 }
@@ -132,17 +134,18 @@ mchunkptr Bin::find_fit(SIZE_T asize) {
  *           h       p             f       h       r         f        h    nxtChunk
  */
 
-void Bin::place(mchunkptr p, SIZE_T asize) {
-    size_t sz = p->size();
+void Bin::place(char* p, SIZE_T asize) {
+    Chunk chunk(p);
+    size_t sz = chunk.size();
     if (sz - asize >= 2 * DSIZE) {
         SIZE_T allocated_size = asize + DSIZE;
         SIZE_T remainder_size = sz - allocated_size;
 
-        p->set(allocated_size, 1); // allocate
-        auto remainder = (mchunkptr) ((char *) p + allocated_size);
-        remainder->set(remainder_size, 0);
+        chunk.set(allocated_size, 1); // allocate
+        Chunk remainder ((char *) p + allocated_size);
+        remainder.set(remainder_size, 0);
     } else {
-        p->set(sz, 1);
+        chunk.set(sz, 1);
     }
 }
 

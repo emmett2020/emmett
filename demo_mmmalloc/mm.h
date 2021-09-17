@@ -29,6 +29,8 @@ inline SIZE_T get(const ADDRPTR p) { return *p; }
 inline void put(ADDRPTR p, SIZE_T val) { *p = val; }
 
 
+class Chunk;
+using mchunkptr = Chunk *;
 /*
  * Manage the real memory chunk.The chunk looks like this:
 
@@ -46,18 +48,16 @@ inline void put(ADDRPTR p, SIZE_T val) { *p = val; }
     there is one difference in size compared to glibc2.
     the size in header stands for the sum of it's size
     and it's footer and nextChunk's headers.
+
 */
-class Chunk;
-using mchunkptr = Chunk *;
 
 
 class Chunk {
 public:
-    Chunk(void *p) {
-        m_mem = (char *) p;
+    explicit Chunk(void *p) {
+        m_mem = static_cast<char*>(p);
     }
 
-    Chunk() : m_mem(nullptr) {}
 
 public:
     /*Given chunk ptr cp, compute address of its header and footer*/
@@ -65,7 +65,7 @@ public:
     ADDRPTR footer() { return reinterpret_cast<ADDRPTR> (m_mem + size() - DSIZE); }
 
     /*Read the size and allocated fields from address p*/
-    SIZE_T size() { return  *header() & ~0x7; }
+    SIZE_T size() { return *header() & ~0x7; }
     SIZE_T inUseFlag() { return *header() & ~0x1; }
 
     /*set - Set new size and flag for header and footer*/
@@ -77,14 +77,16 @@ public:
     }
 
     /*Compute address of next and previous chunks*/
-    mchunkptr nxtChunk() {
-        return reinterpret_cast<mchunkptr>(m_mem + size());
+    Chunk nxtChunk() {
+        return Chunk(m_mem + size());
     }
 
-    mchunkptr preChunk() {
+    Chunk preChunk() {
         size_t prev_size = get((ADDRPTR) (m_mem) - DSIZE) & ~0x7;
-        return reinterpret_cast<mchunkptr> (m_mem - prev_size);
+        return Chunk(m_mem - prev_size);
     }
+
+    char *mem() { return m_mem; }
 
 private:
     char *m_mem;
@@ -110,17 +112,24 @@ private:
      If there have new chunk allocated, we could find nextChunk by free_list + 8.
 
  * What's epilogue footer?
-    We use this to mark the end of free_list. If chunk is at the end of free_list,
-    the nextChunk's header will be epilogue footer though next chunk isn't exists.
-    And when we extend the free_list, the epilogue footer will be rewrite by new
-    chunk, and it will stands for new chunk's header.
+     We use this to mark the end of free_list. If chunk is at the end of free_list,
+     the nextChunk's header will be epilogue footer though next chunk isn't exists.
+     And when we extend the free_list, the epilogue footer will be rewrite by new
+     chunk, and it will stands for new chunk's header.
 
  */
 
 class Bin {
 public:
-    /* Create the initial empty heap */
-    int init();
+    Bin() {
+        if (init() != 0) {
+            free_list = nullptr;
+            fprintf(stderr, "ERROR: Bin::init() error.\n");
+        }
+    }
+
+public:
+
 
     /*Equals to ptmalloc-free*/
     void free(void *p);
@@ -138,15 +147,17 @@ private:
      *               Case1: initialize heap
      *               Case2: mm_malloc can't find a suitable chunk
     */
-    mchunkptr extend_heap(SIZE_T words);
-    mchunkptr coalesce(mchunkptr p);
-    mchunkptr find_fit(SIZE_T asize);
+    char *extend_heap(SIZE_T words);
+    char *coalesce(char *p);
+    char *find_fit(SIZE_T asize);
 
+    /* Create the initial empty heap */
+    int init();
     /*
      * place - Place block of asize bytes at start of free block bp
      *         and split if remainder would be at least minimum block size
     */
-    void place(mchunkptr p, SIZE_T asize);
+    void place(char* p, SIZE_T asize);
 
 private:
     char *free_list;
