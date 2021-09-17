@@ -55,7 +55,7 @@ using mchunkptr = Chunk *;
 class Chunk {
 public:
     explicit Chunk(void *p) {
-        m_mem = static_cast<char*>(p);
+        m_mem = static_cast<char *>(p);
     }
 
 
@@ -66,7 +66,7 @@ public:
 
     /*Read the size and allocated fields from address p*/
     SIZE_T size() { return *header() & ~0x7; }
-    SIZE_T inUseFlag() { return *header() & ~0x1; }
+    SIZE_T inUseFlag() { return *header() & 0x1; }
 
     /*set - Set new size and flag for header and footer*/
     void set(SIZE_T sz, int flag) {
@@ -129,17 +129,16 @@ public:
     }
 
 public:
-
-
-    /*Equals to ptmalloc-free*/
-    void free(void *p);
-
     /*
      * malloc - Equals to ptmalloc-malloc。
      *      The minimal size is 4 * WSIZE. Which includes header, footer, and pad.
      *      The size of pad is 2 * WSIZE since all address are aligned to two WSIZE.
     */
     void *malloc(SIZE_T size);
+
+    /*Equals to ptmalloc-free*/
+    void free(void *p);
+
 
 private:
     /*
@@ -153,11 +152,12 @@ private:
 
     /* Create the initial empty heap */
     int init();
+
     /*
      * place - Place block of asize bytes at start of free block bp
      *         and split if remainder would be at least minimum block size
     */
-    void place(char* p, SIZE_T asize);
+    void place(char *p, SIZE_T asize);
 
 private:
     char *free_list;

@@ -53,36 +53,35 @@ char *Bin::extend_heap(SIZE_T words) {
 char *Bin::coalesce(char *p) {
     Chunk chunk(p);
     // get prev chunk's in_use bit and next chunk's in_use bit
-    size_t prevInUse = chunk.preChunk().inUseFlag();
-    size_t nxtInUse = chunk.nxtChunk().inUseFlag();
+    auto preChunk = chunk.preChunk();
+    auto nxtChunk = chunk.nxtChunk();
+    size_t preSize = preChunk.size();
+    size_t nxtSize = nxtChunk.size();
+    size_t preInUse = preChunk.inUseFlag();
+    size_t nxtInUse = nxtChunk.inUseFlag();
 
-    if (prevInUse && nxtInUse) // no need to coalesce
+    if (preInUse && nxtInUse) // no need to coalesce
         return chunk.mem();
-    else if (prevInUse && !nxtInUse) { // coalesce the next chunk
-        size_t nextSize = chunk.nxtChunk().size();
-        chunk.set(chunk.size() + nextSize, 0);
+    else if (preInUse && !nxtInUse) { // coalesce the next chunk
+        chunk.set(chunk.size() + nxtSize, 0);
         return chunk.mem();
-    } else if (!prevInUse && nxtInUse) { // coalesce the prev chunk
-        size_t prevSize = chunk.preChunk().size();
-        auto preChunk = chunk.preChunk();
-        preChunk.set(chunk.size() + prevSize, 0);
+    } else if (!preInUse && nxtInUse) { // coalesce the prev chunk
+        preChunk.set(chunk.size() + preSize, 0);
         return preChunk.mem();
     } else { // coalesce the prev and nxt chunke
-        size_t prevSize = chunk.preChunk().size();
-        size_t nxtSize = chunk.nxtChunk().size();
-        auto preChunk = chunk.preChunk();
-        preChunk.set(chunk.size() + prevSize + nxtSize, 0);
+        preChunk.set(chunk.size() + preSize + nxtSize, 0);
         return preChunk.mem();
     }
 }
 
 void Bin::free(void *p) {
-    Chunk victim (p);
+    Chunk victim(p);
     victim.set(victim.size(), 0); // don't modify the size field
     coalesce(victim.mem());
 }
 
 void *Bin::malloc(SIZE_T size) {
+    char *p;
     SIZE_T asize;       // Adjusted chunk size
     SIZE_T extendsize;  // Amount to extend heap if no fit
     /*Ignore spurious request*/
@@ -96,8 +95,6 @@ void *Bin::malloc(SIZE_T size) {
         asize = (size + DSIZE - 1) & ~(DSIZE - 1);
 
     /*Search the free_list for a fit*/
-    char* p;
-
     if ((p = find_fit(asize)) != nullptr) {
         place(p, asize);
         return p;
@@ -113,7 +110,7 @@ void *Bin::malloc(SIZE_T size) {
     return p;
 }
 
-char* Bin::find_fit(SIZE_T asize) {
+char *Bin::find_fit(SIZE_T asize) {
     auto p = Chunk(free_list);
     while (p.size() > 0) {
         // WARNING: this is different from book. But I consider that I was right.
@@ -134,7 +131,7 @@ char* Bin::find_fit(SIZE_T asize) {
  *           h       p             f       h       r         f        h    nxtChunk
  */
 
-void Bin::place(char* p, SIZE_T asize) {
+void Bin::place(char *p, SIZE_T asize) {
     Chunk chunk(p);
     size_t sz = chunk.size();
     if (sz - asize >= 2 * DSIZE) {
@@ -142,7 +139,7 @@ void Bin::place(char* p, SIZE_T asize) {
         SIZE_T remainder_size = sz - allocated_size;
 
         chunk.set(allocated_size, 1); // allocate
-        Chunk remainder ((char *) p + allocated_size);
+        Chunk remainder((char *) p + allocated_size);
         remainder.set(remainder_size, 0);
     } else {
         chunk.set(sz, 1);

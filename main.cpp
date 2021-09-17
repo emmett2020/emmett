@@ -4,12 +4,19 @@ using namespace std;
 
 int main(){
     Bin b;
-    auto p = (char*)b.malloc(8);
-    auto q1 = (int*)p;
-    auto q2 = (int*)p + 2;
-    *q1 = 3;
-    *q2 = 4;
-    cout<<*q1<<" "<<*q2<<endl;
-    b.free(p);
+
+    for(int i = 0; i < 1000; ++i) {
+        auto p = (char *) b.malloc(8);
+        cout<<reinterpret_cast<long>(p)<<endl;
+
+        auto p2 = (char *) b.malloc(16);
+        cout<<reinterpret_cast<long>(p2)<<endl;
+
+        auto p3 = (char *) b.malloc(24);
+        cout<<reinterpret_cast<long>(p3)<<endl;
+    }
+
+
+
     return 0;
 }
