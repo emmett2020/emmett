@@ -30,9 +30,9 @@ public:
     /* Heap - Initialize the memory system model */
     Heap() {
         /* Use glibc malloc to simulate mmap */
-        mem_heap = static_cast<char *> (malloc(HEAP_MAX_SIZE));
-        mem_brk = static_cast<char *> (mem_heap);
-        mem_max_addr = static_cast<char *> (mem_heap + HEAP_MAX_SIZE);
+        m_mem_heap = static_cast<char *> (malloc(HEAP_MAX_SIZE));
+        m_mem_brk = static_cast<char *> (m_mem_heap);
+        m_mem_max_addr = static_cast<char *> (m_mem_heap + HEAP_MAX_SIZE);
     }
 
 /*
@@ -44,9 +44,9 @@ public:
 
 private:
     /* private global variables */
-    static char *mem_heap;      // points to first byte of heap
-    static char *mem_brk;       // points to last byte of heap plus 1
-    static char *mem_max_addr;  // max legal heap addr plus 1
+    char *m_mem_heap;      // points to first byte of heap
+    char *m_mem_brk;       // points to last byte of heap plus 1
+    char *m_mem_max_addr;  // max legal heap addr plus 1
 private:
     const int HEAP_MAX_SIZE = 1024 * 1024;
 

@@ -149,7 +149,7 @@ private:
     void place(mchunkptr p, SIZE_T asize);
 
 private:
-    static char *free_list;
+    char *free_list;
 };
 
 
