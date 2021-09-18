@@ -4,17 +4,11 @@ using namespace std;
 
 int main(){
     Bin b;
-
-    for(int i = 0; i < 1000; ++i) {
-        auto p = (char *) b.malloc(8);
-        cout<<reinterpret_cast<long>(p)<<endl;
-
-        auto p2 = (char *) b.malloc(16);
-        cout<<reinterpret_cast<long>(p2)<<endl;
-
-        auto p3 = (char *) b.malloc(24);
-        cout<<reinterpret_cast<long>(p3)<<endl;
-    }
+    auto p = b.malloc(10);
+    b.checkHeap(1);
+    b.free(p);
+    cout<<endl<<endl;
+    b.checkHeap(1);
 
 
 

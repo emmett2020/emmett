@@ -78,15 +78,22 @@ public:
 
     /*Compute address of next and previous chunks*/
     Chunk nxtChunk() {
-        return Chunk(m_mem + size());
+        return Chunk(mem() + size());
     }
 
     Chunk preChunk() {
-        size_t prev_size = get((ADDRPTR) (m_mem) - DSIZE) & ~0x7;
-        return Chunk(m_mem - prev_size);
+        size_t prev_size = get((ADDRPTR) (mem() - DSIZE)) & ~0x7;
+        return Chunk(mem() - prev_size);
     }
 
     char *mem() { return m_mem; }
+
+#define MMMALLOC_DEBUG
+#ifdef  MMMALLOC_DEBUG
+    void print();
+#endif
+
+    void checkChunk();
 
 private:
     char *m_mem;
@@ -139,6 +146,7 @@ public:
     /*Equals to ptmalloc-free*/
     void free(void *p);
 
+    void checkHeap(int verbose);
 
 private:
     /*

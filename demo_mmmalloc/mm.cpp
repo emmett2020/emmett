@@ -22,7 +22,7 @@ int Bin::init() {
     put(p, 0); // Alignment padding
     put(p + 1, pack(DSIZE, 1)); //  Prologue header
     put(p + 2, pack(DSIZE, 1)); //  Prologue footer
-    put(p + 3, pack(0, 1)); // Epilogue footer
+    put(p + 3, pack(0, 0x1)); // Epilogue footer
     free_list += 2 * WSIZE;
 
     /*Extend the empty heap with a free chunk of chunk size */
@@ -37,16 +37,18 @@ char *Bin::extend_heap(SIZE_T words) {
     SIZE_T size;
     /*Allocate an even number of words to maintain alignment*/
     size = words % 2 ? (words + 1) * WSIZE : words * WSIZE;
-    if ((long) (p = (char *) heap.mem_sbrk((int) size)) == -1)
+    p = static_cast<char *>(heap.mem_sbrk(size));
+    if (!p)
         return nullptr;
-//    auto victim = reinterpret_cast<mchunkptr>(p);
+
     Chunk victim(p);
     /*Initialize free block header/footer and the epilogue header*/
     victim.set(size, 0); // set free chunk header and free chunk footer
-    auto nxtChunk = victim.nxtChunk();
-    nxtChunk.set(0, 1); // new epilogue header
 
-    /*Coalesce if the previous block  was free*/
+    // Note that epilogue don't have footer, we mute not use set
+    put((ADDRPTR) (p + size - WSIZE), pack(0, 1)); // new epilogue header
+
+    /*Coalesce if the previous chunk  was free*/
     return coalesce(victim.mem());
 }
 
@@ -119,7 +121,8 @@ char *Bin::find_fit(SIZE_T asize) {
         }
         p = p.nxtChunk();
     }
-    return nullptr;
+
+    return (p.size() > 0 ? p.mem() : nullptr);
 }
 
 /*
@@ -146,5 +149,68 @@ void Bin::place(char *p, SIZE_T asize) {
     }
 }
 
+void Chunk::checkChunk() {
+    auto address = reinterpret_cast<unsigned long>(&(*mem()));
+//  std::cout<<std::hex<<address<<std::endl;
+    if (address % 8) {
+        std::cerr << "Error: " << std::hex << address << " is not double word aligned\n";
+    }
+    if (get(header()) != get(footer()))
+        std::cerr << "Error: header does not match footer\n";
+}
+
+
+void Bin::checkHeap(int verbose) {
+    if (verbose)
+        std::cout << "Heap: " << static_cast<void *>(free_list) << std::endl;
+
+    Chunk p(free_list);
+    if (p.size() != DSIZE || !p.inUseFlag())
+        std::cerr << "Bad prologue header\n";
+    p.checkChunk();
+
+    for (p = p.nxtChunk(); p.size() > 0; p = p.nxtChunk()) {
+        if (verbose)
+            p.print();
+        p.checkChunk();
+    }
+
+    if (verbose) // epilogue don't have footer, so the value we don't care
+        p.print();
+    if (p.size() != 0 || p.inUseFlag() == 0)
+        std::cerr << "Bad epilogue header\n";
+}
+
+
+#ifdef MMMALLOC_DEBUG
+
+#include "iostream"
+
+void Chunk::print() {
+
+    std::cout << "header:\t\t\t";
+    std::cout << static_cast<void *>(header()) << std::endl;
+
+    std::cout << "mem:\t\t\t";
+    std::cout << static_cast<void *>(m_mem) << std::endl;
+
+    std::cout << "footer:\t\t\t";
+    std::cout << static_cast<void *>(footer()) << std::endl;
+
+    std::cout << "size:\t\t\t";
+    std::cout << size() << ", " << (*footer() & ~0x7) << std::endl;
+
+    std::cout << "bit:\t\t\t";
+    std::cout << inUseFlag() << ", " << (*footer() & 0x1) << std::endl;
+
+    std::cout << "Next chunk:\t\t";
+    std::cout << static_cast<void *>(nxtChunk().mem()) << std::endl;
+
+    std::cout << "Prev chunk:\t\t";
+    std::cout << static_cast<void *>(preChunk().mem()) << std::endl;
+
+    std::cout << std::endl;
+}
+#endif
 
 
