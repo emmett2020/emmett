@@ -116,6 +116,6 @@ void GC::scan_dataSegement() {
 
 void GC::scan_stack() {
     ADDRPTR stack_top;
-    asm volatile ("movl %%ebp, %%0" : "=r"(stack_top));
+    asm volatile ("movl %%rbp, %%0" : "=r"(stack_top));
     scan_region(stack_top, m_stack_bottom);
 }
