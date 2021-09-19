@@ -25,6 +25,8 @@ add_executable(demo
         demo_mmmalloc/heap.cpp
         demo_mmmalloc/heap.h
         demo_mmmalloc/mm.h
+        demo_gcmalloc/gcmalloc.cpp
+        demo_gcmalloc/gcmalloc.h
         )
 
 target_link_libraries(demo libmysqlclient.a)
