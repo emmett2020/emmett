@@ -8,6 +8,9 @@
   @author: xiaomingZhang2020@outlook.com
   --------------------------------------
 */
+
+// WARNING: this version haven't been tested OK
+
 #ifndef DEMO_GCMALLOC_H
 #define DEMO_GCMALLOC_H
 #include "../demo_mmmalloc/mm.h"
