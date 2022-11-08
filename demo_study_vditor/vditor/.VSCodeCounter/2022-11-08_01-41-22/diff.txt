@@ -1,0 +1,190 @@
+Date : 2022-11-08 01:41:22
+Directory : /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts
+Total : 129 files,  -11590 codes, -1754 comments, -1198 blanks, all -14542 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| XML        |          1 |         -1 |          0 |          0 |         -1 |
+| TypeScript |         10 |        -26 |        -25 |        -54 |       -105 |
+| Less       |         10 |     -1,771 |        -13 |       -330 |     -2,114 |
+| JavaScript |         66 |     -4,515 |     -1,249 |       -108 |     -5,872 |
+| CSS        |         42 |     -5,277 |       -467 |       -706 |     -6,450 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                     | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                        |        129 |    -11,590 |     -1,754 |     -1,198 |    -14,542 |
+| ..                                                                                                       |        121 |    -12,038 |     -1,784 |     -1,197 |    -15,019 |
+| ../assets                                                                                                |         10 |     -1,771 |        -13 |       -330 |     -2,114 |
+| ../assets/less                                                                                           |         10 |     -1,771 |        -13 |       -330 |     -2,114 |
+| ../css                                                                                                   |          4 |       -347 |       -104 |        -81 |       -532 |
+| ../css/content-theme                                                                                     |          4 |       -347 |       -104 |        -81 |       -532 |
+| ../images                                                                                                |          1 |         -1 |          0 |          0 |         -1 |
+| ../js                                                                                                    |        104 |     -9,445 |     -1,612 |       -733 |    -11,790 |
+| ../js/abcjs                                                                                              |          1 |         -1 |         -2 |          0 |         -3 |
+| ../js/echarts                                                                                            |          1 |         -1 |        -19 |         -4 |        -24 |
+| ../js/flowchart.js                                                                                       |          1 |         -3 |         -4 |         -2 |         -9 |
+| ../js/graphviz                                                                                           |          2 |       -321 |        -29 |        -74 |       -424 |
+| ../js/highlight.js                                                                                       |         40 |     -6,644 |       -368 |       -624 |     -7,636 |
+| ../js/highlight.js/styles                                                                                |         37 |     -4,929 |       -363 |       -624 |     -5,916 |
+| ../js/i18n                                                                                               |          6 |       -510 |          0 |         -6 |       -516 |
+| ../js/icons                                                                                              |          2 |       -369 |          0 |         -2 |       -371 |
+| ../js/katex                                                                                              |          3 |         -3 |         -1 |         -3 |         -7 |
+| ../js/lute                                                                                               |          1 |        -59 |          0 |         -5 |        -64 |
+| ../js/mathjax                                                                                            |         45 |     -1,532 |     -1,188 |        -12 |     -2,732 |
+| ../js/mathjax/a11y                                                                                       |          4 |         -4 |          0 |          0 |         -4 |
+| ../js/mathjax/input                                                                                      |         32 |        -32 |          0 |          0 |        -32 |
+| ../js/mathjax/input/mml                                                                                  |          1 |         -1 |          0 |          0 |         -1 |
+| ../js/mathjax/input/tex                                                                                  |         26 |        -26 |          0 |          0 |        -26 |
+| ../js/mathjax/input/tex/extensions                                                                       |         26 |        -26 |          0 |          0 |        -26 |
+| ../js/mathjax/sre                                                                                        |          8 |     -1,495 |     -1,188 |        -12 |     -2,695 |
+| ../js/mathjax/sre/mathmaps                                                                               |          6 |     -1,038 |          0 |        -12 |     -1,050 |
+| ../js/mermaid                                                                                            |          1 |         -1 |         -1 |         -1 |         -3 |
+| ../js/plantuml                                                                                           |          1 |         -1 |          0 |          0 |         -1 |
+| hint                                                                                                     |          1 |         97 |          1 |         -2 |         96 |
+| markdown                                                                                                 |          1 |          0 |          2 |          0 |          2 |
+| toolbar                                                                                                  |          2 |         71 |          6 |          0 |         77 |
+| ui                                                                                                       |          1 |         37 |          0 |          0 |         37 |
+| util                                                                                                     |          2 |         22 |         10 |          1 |         33 |
+| wysiwyg                                                                                                  |          1 |        221 |         11 |          0 |        232 |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                 | language   | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_content.less                       | Less       |       -245 |          0 |        -39 |       -284 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_hint.less                          | Less       |        -60 |          0 |         -8 |        -68 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_ir.less                            | Less       |       -228 |         -1 |        -47 |       -276 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_panel.less                         | Less       |        -92 |         -6 |        -13 |       -111 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_reset.less                         | Less       |       -505 |          0 |        -99 |       -604 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_sv.less                            | Less       |       -107 |          0 |        -26 |       -133 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_toolbar.less                       | Less       |       -155 |          0 |        -26 |       -181 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_tooltipped.less                    | Less       |       -146 |         -6 |        -20 |       -172 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/_wysiwyg.less                       | Less       |       -163 |          0 |        -33 |       -196 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/assets/less/index.less                          | Less       |        -70 |          0 |        -19 |        -89 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/css/content-theme/ant-design.css                | CSS        |       -154 |        -26 |        -31 |       -211 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/css/content-theme/dark.css                      | CSS        |        -76 |        -26 |        -22 |       -124 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/css/content-theme/light.css                     | CSS        |        -59 |        -26 |        -17 |       -102 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/css/content-theme/wechat.css                    | CSS        |        -58 |        -26 |        -11 |        -95 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/images/img-loading.svg                          | XML        |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/index.ts                                        | TypeScript |       -432 |        -35 |        -49 |       -516 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/abcjs/abcjs_basic.min.js                     | JavaScript |         -1 |         -2 |          0 |         -3 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/echarts/echarts.min.js                       | JavaScript |         -1 |        -19 |         -4 |        -24 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/flowchart.js/flowchart.min.js                | JavaScript |         -3 |         -4 |         -2 |         -9 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/graphviz/full.render.js                      | JavaScript |        -65 |         -6 |        -19 |        -90 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/graphviz/viz.js                              | JavaScript |       -256 |        -23 |        -55 |       -334 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/highlight.pack.js               | JavaScript |     -1,612 |         -5 |          0 |     -1,617 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/solidity.min.js                 | JavaScript |        -73 |          0 |          0 |        -73 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/abap.css                 | CSS        |       -136 |         -5 |        -15 |       -156 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/algol.css                | CSS        |       -121 |         -3 |        -20 |       -144 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/algol_nu.css             | CSS        |        -80 |         -5 |         -6 |        -91 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/ant-design.css           | CSS        |       -325 |        -65 |        -80 |       -470 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/arduino.css              | CSS        |       -136 |         -5 |        -17 |       -158 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/autumn.css               | CSS        |       -118 |         -9 |        -12 |       -139 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/borland.css              | CSS        |       -127 |         -5 |        -16 |       -148 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/bw.css                   | CSS        |       -127 |         -5 |        -19 |       -151 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/colorful.css             | CSS        |       -136 |         -9 |        -14 |       -159 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/dracula.css              | CSS        |       -122 |         -5 |        -14 |       -141 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/emacs.css                | CSS        |       -135 |        -19 |        -14 |       -168 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/friendly.css             | CSS        |       -149 |        -10 |        -25 |       -184 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/fruity.css               | CSS        |       -103 |         -9 |        -12 |       -124 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/github.css               | CSS        |       -151 |         -5 |        -19 |       -175 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/igor.css                 | CSS        |       -105 |         -5 |        -15 |       -125 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/lovelace.css             | CSS        |       -128 |         -8 |        -11 |       -147 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/manni.css                | CSS        |       -121 |         -9 |        -10 |       -140 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/monokai.css              | CSS        |       -120 |         -3 |        -10 |       -133 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/monokailight.css         | CSS        |       -153 |        -14 |        -14 |       -181 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/murphy.css               | CSS        |       -126 |         -7 |        -12 |       -145 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/native.css               | CSS        |       -132 |        -19 |        -14 |       -165 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/paraiso-dark.css         | CSS        |       -116 |        -11 |        -11 |       -138 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/paraiso-light.css        | CSS        |       -116 |        -11 |        -10 |       -137 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/pastie.css               | CSS        |       -146 |        -10 |        -25 |       -181 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/perldoc.css              | CSS        |       -120 |        -12 |        -10 |       -142 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/pygments.css             | CSS        |       -136 |         -7 |        -17 |       -160 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/rainbow_dash.css         | CSS        |       -143 |         -5 |        -17 |       -165 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/rrt.css                  | CSS        |       -125 |        -10 |        -25 |       -160 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/solarized-dark.css       | CSS        |       -123 |        -11 |        -13 |       -147 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/solarized-dark256.css    | CSS        |       -124 |         -9 |        -14 |       -147 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/solarized-light.css      | CSS        |       -141 |        -11 |        -12 |       -164 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/swapoff.css              | CSS        |       -121 |         -6 |        -18 |       -145 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/tango.css                | CSS        |       -161 |        -10 |        -13 |       -184 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/trac.css                 | CSS        |       -134 |        -10 |        -24 |       -168 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/vim.css                  | CSS        |       -127 |         -5 |        -13 |       -145 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/vs.css                   | CSS        |        -97 |         -5 |        -12 |       -114 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/styles/xcode.css                | CSS        |       -148 |         -6 |        -21 |       -175 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/highlight.js/yul.min.js                      | JavaScript |        -30 |          0 |          0 |        -30 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/i18n/en_US.js                                | JavaScript |        -85 |          0 |         -1 |        -86 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/i18n/ja_JP.js                                | JavaScript |        -85 |          0 |         -1 |        -86 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/i18n/ko_KR.js                                | JavaScript |        -85 |          0 |         -1 |        -86 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/i18n/ru_RU.js                                | JavaScript |        -85 |          0 |         -1 |        -86 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/i18n/zh_CN.js                                | JavaScript |        -85 |          0 |         -1 |        -86 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/i18n/zh_TW.js                                | JavaScript |        -85 |          0 |         -1 |        -86 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/icons/ant.js                                 | JavaScript |       -174 |          0 |         -1 |       -175 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/icons/material.js                            | JavaScript |       -195 |          0 |         -1 |       -196 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/katex/katex.min.css                          | CSS        |         -1 |          0 |         -1 |         -2 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/katex/katex.min.js                           | JavaScript |         -1 |         -1 |         -1 |         -3 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/katex/mhchem.min.js                          | JavaScript |         -1 |          0 |         -1 |         -2 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/lute/lute.min.js                             | JavaScript |        -59 |          0 |         -5 |        -64 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/a11y/assistive-mml.js                | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/a11y/complexity.js                   | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/a11y/explorer.js                     | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/a11y/semantic-enrich.js              | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/asciimath.js                   | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/mml.js                         | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/mml/entities.js                | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex-base.js                    | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex-full.js                    | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex.js                         | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/action.js       | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/all-packages.js | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/ams.js          | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/amscd.js        | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/autoload.js     | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/bbox.js         | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/boldsymbol.js   | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/braket.js       | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/bussproofs.js   | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/cancel.js       | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/color.js        | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/colorV2.js      | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/configMacros.js | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/enclose.js      | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/extpfeil.js     | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/html.js         | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/mhchem.js       | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/newcommand.js   | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/noerrors.js     | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/noundefined.js  | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/physics.js      | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/require.js      | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/tagFormat.js    | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/textmacros.js   | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/unicode.js      | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/input/tex/extensions/verb.js         | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/sre/mathmaps/de.js                   | JavaScript |       -103 |          0 |         -2 |       -105 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/sre/mathmaps/en.js                   | JavaScript |       -109 |          0 |         -2 |       -111 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/sre/mathmaps/es.js                   | JavaScript |       -103 |          0 |         -2 |       -105 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/sre/mathmaps/fr.js                   | JavaScript |       -103 |          0 |         -2 |       -105 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/sre/mathmaps/mathmaps_ie.js          | JavaScript |       -517 |          0 |         -2 |       -519 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/sre/mathmaps/nemeth.js               | JavaScript |       -103 |          0 |         -2 |       -105 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/sre/sre-node.js                      | JavaScript |        -10 |         -1 |          0 |        -11 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/sre/sre_browser.js                   | JavaScript |       -447 |     -1,187 |          0 |     -1,634 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mathjax/tex-svg-full.js                      | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/mermaid/mermaid.min.js                       | JavaScript |         -1 |         -1 |         -1 |         -3 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/js/plantuml/plantuml-encoder.min.js             | JavaScript |         -1 |          0 |          0 |         -1 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/method.ts                                       | TypeScript |        -42 |        -20 |         -4 |        -66 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts/hint/index.ts                                | TypeScript |         97 |          1 |         -2 |         96 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts/markdown/setLute.ts                          | TypeScript |          0 |          2 |          0 |          2 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts/toolbar/MenuItem.ts                          | TypeScript |         18 |          1 |          0 |         19 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts/toolbar/setToolbar.ts                        | TypeScript |         53 |          5 |          0 |         58 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts/ui/initUI.ts                                 | TypeScript |         37 |          0 |          0 |         37 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts/util/addScript.ts                            | TypeScript |          1 |          4 |          0 |          5 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts/util/hasClosest.ts                           | TypeScript |         21 |          6 |          1 |         28 |
+| /Users/yunuszhang/code/demo/demo_study_vditor/vditor/src/ts/wysiwyg/index.ts                             | TypeScript |        221 |         11 |          0 |        232 |
+| Total                                                                                                    |            |    -11,590 |     -1,754 |     -1,198 |    -14,542 |
++----------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": true,
+        "module": "CommonJS",
+        "target": "ES5",
+        "lib": ["dom", "ESNext"],
+        "typeRoots": ["./node_modules/@types"],
+        "types": ["./types"],
+        "declaration": true,
+        "sourceMap": true,
+        "moduleResolution": "node"
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+}

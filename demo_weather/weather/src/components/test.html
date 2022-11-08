@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML5拖拽</title>
+    <meta charset="utf-8" />
+    <style>
+      #div1 {
+        width: 350px;
+        height: 70px;
+        padding: 10px;
+        border: 1px solid #aaaaaa;
+      }
+    </style>
+  </head>
+  <body>
+    <p>拖动img_w3slogo.gif图片到矩形框中:</p>
+    <div id="div1" ondragend="dragend(event)" ondrop="drop(event)"></div>
+    <br />
+    <img
+      id="drag1"
+      src="../assets/clock.png"
+      draggable="true"
+      ondragstart="drag(event)"
+      ondragend="dragend(event)"
+      width="300"
+      height="56"
+    />
+
+    <script>
+      function drag(ev) {
+        console.log("drag");
+      }
+
+      function dragend(ev) {
+        console.log("dragend");
+        const item = document.getElementById("drag1");
+        item.x = "100px";
+        item.y = "200px";
+      }
+
+      function drag(ev) {
+        console.log("drag");
+      }
+
+      function drop(ev) {
+        console.log("drop");
+      }
+    </script>
+  </body>
+</html>

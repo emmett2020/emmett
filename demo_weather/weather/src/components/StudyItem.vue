@@ -1,30 +1,24 @@
 <template>
-  <div id="main" position="absolute" width="100px" height="100px">
-    <img src="../assets/clock.png" />
-    <img src="../assets/clock.png" />
-    <p>hello world</p>
-    <!-- <img src="../assets/clock.png" top="10px" width="100px" height="100px" /> -->
-  </div>
+  <div id="vditor" />
 </template>
 
-<script lang="ts">
-import { ref, defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import Vditor from "vditor";
+import "vditor/dist/index.css";
 
-export default defineComponent({
-  setup() {
-    let name = "WeatherItem";
-    return { name };
-  },
+const vditor = ref<Vditor | null>(null);
+
+onMounted(() => {
+  vditor.value = new Vditor("vditor", {
+    after: () => {
+      // vditor.value is a instance of Vditor now and thus can be safely used here
+      vditor.value!.setValue(
+        "Vue Composition API + Vditor + TypeScript Minimal Example"
+      );
+    },
+  });
 });
 </script>
 
-<style scoped>
-img {
-  position: absolute;
-  height: 80px;
-  width: 80px;
-}
-p {
-  font-size: 20px;
-}
-</style>
+<style></style>

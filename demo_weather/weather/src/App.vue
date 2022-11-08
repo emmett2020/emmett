@@ -1,19 +1,19 @@
 <template>
-  <!-- <StudyItem></StudyItem> -->
-  <WeatherItem></WeatherItem>
+  <StudyItem></StudyItem>
+  <!-- <WeatherItem></WeatherItem> -->
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import WeatherItem from "./components/WeatherItem.vue";
+// import WeatherItem from "./components/WeatherItem.vue";
 import StudyItem from "./components/StudyItem.vue";
 
 export default defineComponent({
   name: "App",
   components: {
     // HelloWorld,
-    WeatherItem,
-    // StudyItem,
+    // WeatherItem,
+    StudyItem,
   },
 });
 </script>
