@@ -35,11 +35,9 @@
 
 <script lang="ts">
 import { ref, defineComponent, onMounted } from "vue";
-import draggable from "vuedraggable";
 
 export default defineComponent({
   components: {},
-  // props: ["noticeExceptWeatherImg"],
   setup(props) {
     let currentTime = ref("16:00");
     let wind = ref("微风");
@@ -102,9 +100,6 @@ export default defineComponent({
       noticeExceptWeatherImg,
     };
   },
-  // showNotice1() {
-  //   this.showNotice = !this.showNotice;
-  // },
 });
 </script>
 

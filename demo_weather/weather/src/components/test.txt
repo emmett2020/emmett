@@ -1,5 +1,0 @@
-<template #item= '{element}'>
-  <div class="item">
-  {{element.name}}
-  </div>
-</template>
