@@ -1,13 +1,7 @@
 #include <iostream>
-#include "demo_gcmalloc/gcmalloc.h"
-using namespace std;
+using namespace std;  // NOLINT
 
-int main(){
-    GC gc;
-    auto p = gc.malloc(10);
-    
-
-
-
-    return 0;
+auto main() -> int {
+  std::cout << "hello world" << std::endl;
+  return 0;
 }

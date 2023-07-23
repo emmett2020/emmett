@@ -1,0 +1,7 @@
+Checks: '
+  *,
+  -llvm*,
+  -fuchsia*,
+  -altera*
+'
+WarningsAsErrors: '*'

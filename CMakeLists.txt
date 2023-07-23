@@ -1,33 +1,87 @@
 cmake_minimum_required(VERSION 3.17)
 set(CMAKE_CXX_STANDARD 20)
-project(demo)
+set(CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-INCLUDE_DIRECTORIES(
-        include
-        /usr/local/mysql/include # mysql 头文件
-        /opt/homebrew/Cellar/fmt/7.1.3/include
-)
+project(main)
+add_executable(welcome main.cpp)
 
-LINK_DIRECTORIES(
-        /usr/local/mysql/lib
-        /opt/homebrew/Cellar/fmt/7.1.3/lib
-)
+# Autodetect platform
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	message(STATUS "Configuring for Linux")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	message(STATUS "Configuring for macOS")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	message(STATUS "Configuring for Windows")
+else()
+	message(STATUS "Configuring on/for ${CMAKE_SYSTEM_NAME}")
+endif()
 
-LINK_LIBRARIES(libmysqlclient.a)
+# Autodetect complier
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    message(STATUS "using Clang compiler")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+    message(STATUS "using AppleClang compiler")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    message(STATUS "using GCC compiler")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    message(STATUS "using MSVC compiler")
+else()
+    message(STATUS "!unknow compiler. ${CMAKE_CXX_COMPILER_ID}")
+endif()
 
-# code insight 会失效
-#set (demo_mmmalloc_dir demo_mmmalloc/*.h demo_mmmalloc/memlib.cpp)
+# TODO: autodetect specific dependency exists then set $ENV_HAS_MYSQL to true
+option(ENV_HAS_MYSQL            "the build envrionment has mysql dependency"          OFF)
+option(ENV_HAS_BOOST            "the build envrionment has boost dependency"          OFF)
+option(ENV_HAS_FMT              "the build envrionment has fmt dependency"            OFF)
+option(ENV_HAS_SPDLOG           "the build envrionment has spdlog dependency"         OFF)
+option(ENV_HAS_NLOHMANN-JSON    "the build envrionment has nlohmann-json dependency"  OFF)
 
-add_executable(demo
-        main.cpp
-        ${demo_malloc_dir}
-        demo_mmmalloc/mm.cpp
-        demo_mmmalloc/heap.cpp
-        demo_mmmalloc/heap.h
-        demo_mmmalloc/mm.h
-        demo_gcmalloc/gcmalloc.cpp
-        demo_gcmalloc/gcmalloc.h
-        )
+option(USE_XCODE            "use xcode to build projects"  OFF)
 
-target_link_libraries(demo libmysqlclient.a)
+option(BUILD_DEMOS          "build utility demos"           OFF)
+option(BUILD_LEETCODE       "build leetcode solutions"      OFF)
+option(BUILD_PIECES         "build knowledge pieces"        OFF)
+option(BUILD_PRESSURE       "build pressure"                OFF)
+option(BUILD_TOOLS          "build tools"                   OFF)
+option(BUILD_TUTORIAL       "build tutorial"                OFF)
+
+
+if (BUILD_DEMOS)
+        message(STATUS "Building demos. It may take several minutes......")
+        add_subdirectory(demos)
+else()
+        message(STATUS "Building demos off. You may use -DBUILD_DEMOS=ON to open.")
+endif()
+
+if (BUILD_LEETCODE)
+        message(STATUS "Building leetcode solutions. It may take several minutes......")
+        add_subdirectory(leetcode)
+else()
+        message(STATUS "Building leetcode solutions off. You may use -DBUILD_LEETCODE=ON to open.")
+endif()
+
+if (BUILD_PIECES)
+        message(STATUS "Building pieces. It may take several minutes......")
+        add_subdirectory(pieces)
+else()
+        message(STATUS "Building pieces off. You may use -DBUILD_PIECES=ON to open.")
+endif()
+
+if (BUILD_TOOLS)
+        message(STATUS "Building utility tools. It may take several minutes......")
+        add_subdirectory(tools)
+else()
+        message(STATUS "Building utility tools off. You may use -DBUILD_TOOLS=ON to open.")
+endif()
+
+if (BUILD_TUTORIAL)
+        message(STATUS "Building tutorial. It may take several minutes......")
+        add_subdirectory(tutorial)
+else()
+        message(STATUS "Building tutorial off. You may use -DBUILD_TUTORIAL=ON to open.")
+endif()
+
+
+
 
