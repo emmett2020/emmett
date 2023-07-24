@@ -4,6 +4,7 @@
     "leetcode",
     "multithreads",
     "NOLINTNEXTLINE",
-    "sigbus"
+    "sigbus",
+    "thirdparties"
   ]
 }

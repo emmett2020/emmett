@@ -1,14 +1,16 @@
-# Introduce
+# Introduction
 Record some common code. Mainly contains:
-- 🫣 Some messy code **pieces**. This usually contains a single piece of knowledge or a simple use of a technology.
-- 😃 Some fancy **demos**. This usually contains small items that combine many knowledge points.
-- 😊 Some useful **tools**. This holds the source code for some utility tools I wrote.
-- 🤔 Some useful **scripts**. `shell`, `python`, `lua` or other utility scripts are placed here.
-- 🤩 Some structured and meaningful codes for **tutorial**. It is associated with the blog I wrote. It can be used directly anywhere.
-- 😏 Some codes are stored for performance **pressure** measurement.
-- 😛 Some universal **config** files. Includes `yaml`, `.zshrc` and other configuration files. The env configuration is also in there.
-- 😎 Some **leetcode** solutions. 
-- 😧 Some things which are **not_classified**.
+- 🫣 Some messy code `pieces`. This usually contains a single piece of knowledge or a simple use of a technology.
+- 😃 Some fancy `demos`. This usually contains small items that combine many knowledge points.
+- 😊 Some useful `tools`. This holds the source code for some utility tools I wrote.
+- 🤔 Some useful `scripts`. `shell`, `python`, `lua` or other utility scripts are placed here.
+- 🤩 Some structured and meaningful codes for `tutorial`. It is associated with the blog I wrote. It can be used directly anywhere.
+- 😏 Some codes are stored for performance `pressure` measurement.
+- 😛 Some universal `config` files. Includes `yaml`, `.zshrc` and other configuration files. The env configuration is also in there.
+- 😎 Some `leetcode` solutions.
+- 🫡 Some really nice code, we put it in `thirdparties`.
+- 😮 It contains `annotations` and analyses I've written for some of the impressive open source code.
+- 😧 Some things which are `not_classified`.
  
 This project mainly uses `C++`, but will also use other languages and even include some `frontend` and `client` content. 
 Each folder contains the relevant environment dependencies and sub-project descriptions.
@@ -16,7 +18,7 @@ Each folder contains the relevant environment dependencies and sub-project descr
 # Usage
 When using this project, it is recommended to copy files from a certain directory to the newly created project, rather than directly reference the complete project. 
 
-## 1.Environment
+## 1. Environment
 
 | Type           | Value1        | Value2         |
 | :---           | :----:        | :----:         |
@@ -25,7 +27,7 @@ When using this project, it is recommended to copy files from a certain director
 
 Note: Some sub-projects require specific environmental dependencies. Details of such sub-projects are described in their `README.md`.
 
-## 2. Build
+## 2. Build project
 ```shell
 mkdir build && cd build
 
