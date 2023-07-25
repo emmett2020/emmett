@@ -1,6 +1,6 @@
 # Introduction
 Record some common code. Mainly contains:
-- 🫣 Some messy code `pieces`. This usually contains a single piece of knowledge or a simple use of a technology.
+- 😉 Some messy code `pieces`. This usually contains a single piece of knowledge or a simple use of a technology.
 - 😃 Some fancy `demos`. This usually contains small items that combine many knowledge points.
 - 😊 Some useful `tools`. This holds the source code for some utility tools I wrote.
 - 🤔 Some useful `scripts`. `shell`, `python`, `lua` or other utility scripts are placed here.
@@ -8,7 +8,7 @@ Record some common code. Mainly contains:
 - 😏 Some codes are stored for performance `pressure` measurement.
 - 😛 Some universal `config` files. Includes `yaml`, `.zshrc` and other configuration files. The env configuration is also in there.
 - 😎 Some `leetcode` solutions.
-- 🫡 Some really nice code, we put it in `thirdparties`.
+- ✨ Some really nice code, we put it in `thirdparties`.
 - 😮 It contains `annotations` and analyses I've written for some of the impressive open source code.
 - 😧 Some things which are `not_classified`.
  
