@@ -2,6 +2,7 @@ Checks: '
   *,
   -llvm*,
   -fuchsia*,
-  -altera*
+  -altera*,
+  -hicpp*
 '
 WarningsAsErrors: '*'
