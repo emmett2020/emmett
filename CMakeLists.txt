@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -45,7 +45,6 @@ option(BUILD_PIECES         "build knowledge pieces"        OFF)
 option(BUILD_PRESSURE       "build pressure"                OFF)
 option(BUILD_TOOLS          "build tools"                   OFF)
 option(BUILD_TUTORIAL       "build tutorial"                OFF)
-
 
 if (BUILD_DEMOS)
         message(STATUS "Building demos. It may take several minutes......")
