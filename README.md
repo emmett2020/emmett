@@ -11,6 +11,7 @@ Record some common code. Mainly contains:
 - ✨ Some really nice code, we put it in `thirdparties`.
 - 😮 It contains `annotations` and analyses I've written for some of the impressive open source code.
 - 😧 Some things which are `not_classified`.
+- 😧 Some awesome library and framework are placed int `thirdparties`.
  
 This project mainly uses `C++`, but will also use other languages and even include some `frontend` and `client` content. 
 Each folder contains the relevant environment dependencies and sub-project descriptions.
