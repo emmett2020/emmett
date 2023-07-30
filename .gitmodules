@@ -10,3 +10,9 @@
 [submodule "thirdparties/fmt"]
 	path = thirdparties/fmt
 	url = git@github.com:fmtlib/fmt.git
+[submodule "thirdparties/nanobench"]
+	path = thirdparties/nanobench
+	url = git@github.com:martinus/nanobench.git
+[submodule "thirdparties/benchmark"]
+	path = thirdparties/benchmark
+	url = git@github.com:google/benchmark.git

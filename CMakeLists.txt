@@ -31,13 +31,14 @@ else()
 endif()
 
 # TODO: autodetect specific dependency exists then set $ENV_HAS_MYSQL to true
+# TODO: default open thirdparties building.
 option(ENV_HAS_MYSQL            "the build envrionment has mysql dependency"          OFF)
 option(ENV_HAS_BOOST            "the build envrionment has boost dependency"          OFF)
 option(ENV_HAS_FMT              "the build envrionment has fmt dependency"            OFF)
 option(ENV_HAS_SPDLOG           "the build envrionment has spdlog dependency"         OFF)
 option(ENV_HAS_NLOHMANN-JSON    "the build envrionment has nlohmann-json dependency"  OFF)
 
-option(USE_XCODE            "use xcode to build projects"  OFF)
+option(USE_XCODE            "use xcode to build projects"   OFF)
 
 option(BUILD_DEMOS          "build utility demos"           OFF)
 option(BUILD_LEETCODE       "build leetcode solutions"      OFF)
@@ -81,6 +82,15 @@ else()
         message(STATUS "Building tutorial off. You may use -DBUILD_TUTORIAL=ON to open.")
 endif()
 
+option(BUILD_THIRDPARTIES   "Build with thirdparties which some libraries needed."  ON)
+if (BUILD_THIRDPARTIES)
+        message(STATUS "Building thirdparties default open. You may use -DBUILD_THIRDPARTIES=OFF to close it.")
+        add_subdirectory(thirdparties/nanobench)
 
+        message(STATUS "google benchmark needs googletest. The library will automatically download and build any required dependencies.")
+        message(STATUS "If you do not wish to build and run the tests, add -DBENCHMARK_ENABLE_GTEST_TESTS=OFF to close it")
+        set(BENCHMARK_DOWNLOAD_DEPENDENCIES ON)
+        add_subdirectory(thirdparties/benchmark)
+endif()
 
 

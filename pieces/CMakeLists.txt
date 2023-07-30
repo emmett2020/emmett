@@ -6,3 +6,6 @@ add_subdirectory(simply_use_sigbus)
 if (ENV_HAS_BOOST)
   add_subdirectory(simple_use_boost_message_queue)
 endif()
+
+add_subdirectory(string_view_or_string)
+
