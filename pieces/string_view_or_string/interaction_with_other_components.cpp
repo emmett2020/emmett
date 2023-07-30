@@ -10,8 +10,8 @@ void Func1(std::string_view str) {}
 void Func2(const std::string& str) {}
 
 static void UseStringView(benchmark::State& state) {
-  std::array<char, 1024> str{"hello world"};  // NOLINT
-  for (auto _ : state) {                      // NOLINT
+  std::array<char, 1024> str{"hello world"};
+  for (auto _ : state) {
     Func1({str.data(), str.size()});
   }
 }
@@ -19,8 +19,8 @@ static void UseStringView(benchmark::State& state) {
 BENCHMARK(UseStringView);  // NOLINT
 
 static void UseString(benchmark::State& state) {
-  std::array<char, 1024> str{"hello world"};  // NOLINT
-  for (auto _ : state) {                      // NOLINT
+  std::array<char, 1024> str{"hello world"};
+  for (auto _ : state) {
     Func1({str.begin(), str.end()});
   }
 }
