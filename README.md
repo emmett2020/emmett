@@ -5,7 +5,7 @@ Record some common code. Mainly contains:
 - 😊 Some useful `tools`. This holds the source code for some utility tools I wrote.
 - 🤔 Some useful `scripts`. `shell`, `python`, `lua` or other utility scripts are placed here.
 - 🤩 Some structured and meaningful codes for `tutorial`. It is associated with the blog I wrote. It can be used directly anywhere.
-- 😏 Some codes are stored for performance `pressure` measurement.
+- 😏 Some codes are stored in `bench` for performance measurement.
 - 😛 Some universal `config` files. Includes `yaml`, `.zshrc` and other configuration files. The env configuration is also in there.
 - 😎 Some `leetcode` solutions.
 - ✨ Some really nice code, we put it in `thirdparties`.

@@ -82,6 +82,13 @@ else()
         message(STATUS "Building tutorial off. You may use -DBUILD_TUTORIAL=ON to open.")
 endif()
 
+if (BUILD_BENCH)
+        message(STATUS "Building benchmark. It may take several minutes......")
+        add_subdirectory(bench)
+else()
+        message(STATUS "Building benchmark off. You may use -DBUILD_BENCH=ON to open.")
+endif()
+
 option(BUILD_THIRDPARTIES   "Build with thirdparties which some libraries needed."  ON)
 if (BUILD_THIRDPARTIES)
         message(STATUS "Building thirdparties default open. You may use -DBUILD_THIRDPARTIES=OFF to close it.")
