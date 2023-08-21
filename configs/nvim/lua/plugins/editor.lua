@@ -52,6 +52,11 @@ return {
       open_files_do_not_replace_types = { "terminal", "Trouble", "qf", "Outline" },
 
       filesystem = {
+        filtered_items = {
+          visible = true,
+          hide_dotfiles = false,
+          hide_gitignored = false,
+        },
         bind_to_cwd = false,
         follow_current_file = { enabled = true },
         use_libuv_file_watcher = true,
@@ -62,6 +67,16 @@ return {
         mappings = {
           ["<space>"] = "none",
         },
+      },
+
+      buffers = {
+        follow_current_file = {
+        enabled = true, -- This will find and focus the file in the active buffer every time
+                        -- the current file is changed while the tree is open.
+        leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+        },
+
+        group_empty_dirs = false, -- when true, empty folders will be grouped together
       },
 
       default_component_configs = {
@@ -492,9 +507,12 @@ If you rather use leap/flit instead, you can add the leap extra:
       },
     },
 
+    keys = {
+
+    },
+
     config = function(_, opts)
       require("project_nvim").setup(opts)
-      require("telescope").load_extension("projects")
     end,
   },
 }

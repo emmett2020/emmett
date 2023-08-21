@@ -7,6 +7,7 @@ require("load_lazy_nvim")
 
 -- 4. Load configs. Include keymaps, autocmds and others.
 local Config = require("config")
-Config.colorscheme = "tokyonight"
+Config.colorscheme = "gruvbox"
+-- Config.colorscheme = "tokyonight"
 -- Config.colorscheme = "catppuccin"
 Config.setup()
