@@ -44,4 +44,13 @@ return {
       },
     },
   },
+
+  -- Grouvbox
+  {
+    "morhetz/gruvbox",
+    lazy = true,
+    opts = {},
+    config = function()
+    end,
+  }
 }
