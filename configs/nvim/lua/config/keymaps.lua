@@ -2,6 +2,7 @@
 ---                      Keymaps                          ---
 -------------------------------------------------------------
 -- This file is automatically loaded by config.init
+-- You may find keymaps at there: https://neovim.io/doc/user/intro.html#notation
 
 local Util = require("util")
 

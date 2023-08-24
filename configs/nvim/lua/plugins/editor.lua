@@ -5,9 +5,8 @@
 local Util = require("util")
 
 return {
-
-  -- https://github.com/nvim-neo-tree/neo-tree.nvim
   -- file explorer
+  -- https://github.com/nvim-neo-tree/neo-tree.nvim
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
@@ -201,8 +200,8 @@ return {
     },
     opts = {
       defaults = {
-        prompt_prefix = " ",
-        selection_caret = " ",
+        prompt_prefix = "🔍 ",
+        selection_caret = "❆ ",
         mappings = {
           i = {
             ["<c-t>"] = function(...)
@@ -221,17 +220,35 @@ return {
               local line = action_state.get_current_line()
               Util.telescope("find_files", { hidden = true, default_text = line })()
             end,
-            ["<C-Down>"] = function(...)
+
+            -- history
+            ["<Down>"] = function(...)
               return require("telescope.actions").cycle_history_next(...)
             end,
-            ["<C-Up>"] = function(...)
+            ["<Up>"] = function(...)
               return require("telescope.actions").cycle_history_prev(...)
             end,
-            ["<C-f>"] = function(...)
+
+            -- control preview
+            ["<C-j>"] = function(...)
               return require("telescope.actions").preview_scrolling_down(...)
             end,
-            ["<C-b>"] = function(...)
+            ["<C-k>"] = function(...)
               return require("telescope.actions").preview_scrolling_up(...)
+            end,
+            ["<C-h>"] = function(...)
+              return require("telescope.actions").preview_scrolling_left(...)
+            end,
+            ["<C-l>"] = function(...)
+              return require("telescope.actions").preview_scrolling_right(...)
+            end,
+
+            -- split
+            ["<C-x>"] = function(...)
+              return require("telescope.actions").select_horizontal(...)
+            end,
+            ["<C-v>"] = function(...)
+              return require("telescope.actions").select_vertical(...)
             end,
           },
           n = {
@@ -242,6 +259,7 @@ return {
         },
       },
     },
+    extensions = {},
   },
 
   -- disable old installations of leap and flit. Optional so it doesn't appear under disabled plugins
@@ -504,20 +522,30 @@ If you rather use leap/flit instead, you can add the leap extra:
   {
     -- "ahmedkhalf/project.nvim",
     "nvim-telescope/telescope-project.nvim",
-
-    lazy = false,
+    lazy = true,
     opts = {
-      sync_root_with_cwd = true,
-      respect_buf_cwd = true,
-      update_focused_file = {
-        enable = true,
-        update_root = true,
+      base_dirs = {
+        "~/dev/src",
+        { "~/dev/src2" },
+        { "~/dev/src3", max_depth = 4 },
+        { path = "~/dev/src4" },
+        { path = "~/dev/src5", max_depth = 2 },
       },
+      hidden_files = true, -- default: false
+      theme = "dropdown",
+      order_by = "asc",
+      search_by = "title",
+      sync_with_nvim_tree = true, -- default false
+      -- default for on_project_selected = find project files
+      on_project_selected = function(prompt_bufnr)
+        local project_actions = require("telescope._extensions.project.actions")
+        -- Do anything you want in here. For example:
+        project_actions.change_working_directory(prompt_bufnr, false)
+        require("harpoon.ui").nav_file(1)
+      end,
     },
-
-    keys = {},
-
     config = function(_, opts)
+      require("project_nvim").setup(opts)
       require("telescope").load_extension("project")
     end,
   },
