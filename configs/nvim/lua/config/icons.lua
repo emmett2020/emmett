@@ -1,7 +1,12 @@
 ------------------------------------------------------
 ---        icons used by other plugins             ---
 ------------------------------------------------------
+-- Fancy icon resources:
+--   1. nerdfonts. Use cheat-sheet to select what icon you want,
+--                 Then move cursor above the icon and choose copy icon.
+--                 https://www.nerdfonts.com/cheat-sheet
 
+-- Default icons used in DailyVim.
 local icons = {
   dap = {
     Stopped = { "󰁕 ", "DiagnosticWarn", "DapStoppedLine" },
@@ -21,6 +26,8 @@ local icons = {
     modified = " ",
     removed = " ",
   },
+
+  -- Used for Snippet.
   kinds = {
     Array = " ",
     Boolean = " ",
