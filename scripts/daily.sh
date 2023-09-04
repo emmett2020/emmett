@@ -201,7 +201,7 @@ function install_lazygit() {
 		{
 			wget $link -O $tmp_gz
 			sudo mkdir $tmp
-			tar xf $tmp_gz -C $tmp
+			sudo tar xf $tmp_gz -C $tmp
 			sudo install "$tmp/lazygit" $install_path
 			sudo rm -rf $tmp
 			sudo rm $tmp_gz
@@ -209,7 +209,7 @@ function install_lazygit() {
 	else
 		wget $link -O $tmp_gz
 		sudo mkdir $tmp
-		tar xf $tmp_gz -C $tmp
+		sudo tar xf $tmp_gz -C $tmp
 		sudo install "$tmp/lazygit" $install_path
 		sudo rm -rf $tmp
 		sudo rm $tmp_gz
