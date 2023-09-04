@@ -7,7 +7,9 @@ local Config = require("config")
 
 return {
   "hrsh7th/nvim-cmp",
-  version = "*",
+  -- version = "*",
+  -- The latested version bug: enter <tab> will show <tab> character but not completion
+  commit = "51f1e11a89ec701221877532ee1a23557d291dd5",
   event = "InsertEnter",
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
