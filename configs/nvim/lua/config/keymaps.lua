@@ -130,8 +130,8 @@ if vim.lsp.inlay_hint then
 end
 
 -- lazygit
-map("n", "<leader>gg", function() Util.float_term({ "lazygit" }, { cwd = Util.get_root(), esc_esc = false, ctrl_hjkl = false }) end, { desc = "Lazygit (root dir)" })
-map("n", "<leader>gG", function() Util.float_term({ "lazygit" }, {esc_esc = false, ctrl_hjkl = false}) end, { desc = "Lazygit (cwd)" })
+map("n", "<leader>gG", function() Util.float_term({ "lazygit" }, { cwd = Util.get_root(), esc_esc = false, ctrl_hjkl = false }) end, { desc = "Lazygit(root)" })
+map("n", "<leader>gg", function() Util.float_term({ "lazygit" }, {esc_esc = false, ctrl_hjkl = false}) end, { desc = "Lazygit(cwd)" })
 
 -- quit
 map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit all" })
@@ -143,9 +143,9 @@ end
 
 -- floating terminal
 local lazyterm = function() Util.float_term(nil, { cwd = Util.get_root() }) end
-map("n", "<leader>ft", lazyterm, { desc = "Terminal (root dir)" })
-map("n", "<leader>fT", function() Util.float_term() end, { desc = "Terminal (cwd)" })
-map("n", "<c-/>", lazyterm, { desc = "Terminal (root dir)" })
+map("n", "<leader>fT", lazyterm, { desc = "Terminal(root)" })
+map("n", "<leader>ft", function() Util.float_term() end, { desc = "Terminal(cwd)" })
+map("n", "<c-/>", lazyterm, { desc = "Terminal(root)" })
 map("n", "<c-_>", lazyterm, { desc = "which_key_ignore" })
 
 -- Terminal Mappings

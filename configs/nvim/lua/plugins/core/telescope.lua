@@ -27,7 +27,7 @@ return {
     { "<leader>,", "<cmd>Telescope buffers show_all_buffers=true<cr>", desc = "File Buffers" },
     { "<leader>/", Util.telescope("live_grep", { cwd = false }), desc = "Grep(cwd)" },
     { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" },
-    { "<leader><space>", Util.telescope("files"), desc = "Find Files(root)" },
+    { "<leader><space>", Util.telescope("files", { cwd = false }), desc = "Find Files(cwd)" },
 
     { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "File Buffers" },
     -- find
