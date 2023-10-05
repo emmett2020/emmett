@@ -1,8 +1,8 @@
 local Util = require("lazy.core.util")
-
 local M = {}
 
 ---@type PluginLspOpts
+---@class PluginLspOpts
 M.opts = nil
 
 function M.enabled()
