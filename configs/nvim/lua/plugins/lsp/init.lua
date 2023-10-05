@@ -15,52 +15,85 @@ return {
         end,
       },
     },
+
     ---@class PluginLspOpts
     opts = {
       -- options for vim.diagnostic.config()
       diagnostics = {
         underline = true,
+
+        -- Update diagnostics in Insert mode (if false, diagnostics are updated on InsertLeave.
         update_in_insert = false,
+
         virtual_text = {
-          spacing = 4,
+          -- Amount of empty spaces inserted at the beginning of the virtual text
+          spacing = 2,
+
+          -- Use "if_many" to only show sources if there is
+          -- more than one diagnostic source in the buffer.
           source = "if_many",
-          prefix = "●",
-          -- this will set set the prefix to a function that returns the diagnostics icon based on the severity
-          -- this only works on a recent 0.10.0 build. Will be set to "●" when not supported
-          -- prefix = "icons",
+          prefix = "󰇥",
         },
         severity_sort = true,
       },
+
       -- Enable this to enable the builtin LSP inlay hints on Neovim >= 0.10.0
       -- Be aware that you also will need to properly configure your LSP server to
       -- provide the inlay hints.
       inlay_hints = {
         enabled = false,
       },
+
       -- add any global capabilities here
       capabilities = {},
+
       -- Automatically format on save
       autoformat = true,
+
       -- Enable this to show formatters used in a notification
       -- Useful for debugging formatter issues
-      format_notify = false,
+      format_notify = true,
+
       -- options for vim.lsp.buf.format
       -- `bufnr` and `filter` is handled by the DailyVim formatter,
       -- but can be also overridden when specified
       format = {
         formatting_options = nil,
-        timeout_ms = nil,
+
+        -- Time in milliseconds to block for formatting requests.
+        -- No effect if async=true
+        timeout_ms = 2000,
+
+        -- If true the method won't block. Defaults to false.
+        -- Editing the buffer while formatting asynchronous can lead to unexpected changes.
+        async = false,
       },
+
       -- LSP Server Settings
       ---@type lspconfig.options
+      ---@diagnostic disable
       servers = {
+        clangd = {
+          -- set to false if you don't want this server to be installed with mason
+          mason = true,
+
+          name = "mason-clangd",
+          cmd = {
+            "clangd",
+            "-j=8",
+            "--malloc-trim",
+            "--background-index",
+            "--pch-storage=memory",
+          },
+          filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto", "cu", "su" },
+        },
+
         jsonls = {},
         lua_ls = {
-          -- mason = false, -- set to false if you don't want this server to be installed with mason
-          -- Use this to add any additional keymaps
-          -- for specific lsp servers
+          -- Use this to add any additional keymaps for specific lsp servers
           ---@type LazyKeys[]
           -- keys = {},
+
           settings = {
             Lua = {
               workspace = {
@@ -73,38 +106,39 @@ return {
           },
         },
       },
-      -- you can do any additional lsp server setup here
-      -- return true if you don't want this server to be setup with lspconfig
-      ---@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
+      ---@diagnostic enable
+
       setup = {
         -- example to setup with typescript.nvim
         -- tsserver = function(_, opts)
         --   require("typescript").setup({ server = opts })
         --   return true
         -- end,
-        -- Specify * to use this function as a fallback for any server
-        -- ["*"] = function(server, opts) end,
       },
     },
+
     ---@param opts PluginLspOpts
     config = function(_, opts)
       local Util = require("util")
 
+      -- Neoconf.
       if Util.has("neoconf.nvim") then
         local plugin = require("lazy.core.config").spec.plugins["neoconf.nvim"]
         require("neoconf").setup(require("lazy.core.plugin").values(plugin, "opts", false))
       end
-      -- setup autoformat
+
+      -- Format.
       require("plugins.lsp.format").setup(opts)
       -- setup formatting and keymaps
       Util.on_attach(function(client, buffer)
         require("plugins.lsp.keymaps").on_attach(client, buffer)
       end)
 
-      local register_capability = vim.lsp.handlers["client/registerCapability"]
+      local old_register_capability = vim.lsp.handlers["client/registerCapability"]
 
+      ---@diagnostic disable-next-line
       vim.lsp.handlers["client/registerCapability"] = function(err, res, ctx)
-        local ret = register_capability(err, res, ctx)
+        local ret = old_register_capability(err, res, ctx)
         local client_id = ctx.client_id
         ---@type lsp.Client
         local client = vim.lsp.get_client_by_id(client_id)
@@ -113,22 +147,23 @@ return {
         return ret
       end
 
-      -- diagnostics
+      -- diagnostics icon
       for name, icon in pairs(require("config").icons.diagnostics) do
         name = "DiagnosticSign" .. name
         vim.fn.sign_define(name, { text = icon, texthl = name, numhl = "" })
       end
 
+      -- inlay hint
       local inlay_hint = vim.lsp.buf.inlay_hint or vim.lsp.inlay_hint
-
       if opts.inlay_hints.enabled and inlay_hint then
         Util.on_attach(function(client, buffer)
-          if client.supports_method('textDocument/inlayHint') then
+          if client.supports_method("textDocument/inlayHint") then
             inlay_hint(buffer, true)
           end
         end)
       end
 
+      -- virtual text
       if type(opts.diagnostics.virtual_text) == "table" and opts.diagnostics.virtual_text.prefix == "icons" then
         opts.diagnostics.virtual_text.prefix = vim.fn.has("nvim-0.10.0") == 0 and "●"
           or function(diagnostic)
@@ -177,7 +212,8 @@ return {
         all_mslp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
       end
 
-      local ensure_installed = {} ---@type string[]
+      ---@type string[]
+      local ensure_installed = {}
       for server, server_opts in pairs(servers) do
         if server_opts then
           server_opts = server_opts == true and {} or server_opts
@@ -235,7 +271,6 @@ return {
       ensure_installed = {
         "stylua",
         "shfmt",
-        -- "flake8",
       },
     },
     ---@param opts MasonSettings | {ensure_installed: string[]}
