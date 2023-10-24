@@ -88,7 +88,7 @@ return {
           filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto", "cu", "su" },
         },
 
-        jsonls = {},
+        -- jsonls = {},
         lua_ls = {
           -- Use this to add any additional keymaps for specific lsp servers
           ---@type LazyKeys[]
