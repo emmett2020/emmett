@@ -24,6 +24,7 @@ return {
     },
     { "<leader>e", "<leader>fe", desc = "File Explorer(cwd)", remap = true },
     { "<leader>E", "<leader>fE", desc = "File Explorer(root)", remap = true },
+    { "<leader>ot", "<cmd>Neotree filesystem reveal left<cr>", desc = "Move neotree to left"},
   },
   deactivate = function()
     vim.cmd([[Neotree close]])
