@@ -150,8 +150,10 @@ function M.float_term(cmd, opts)
   local termkey = vim.inspect({ cmd = cmd or "shell", cwd = opts.cwd, env = opts.env, count = vim.v.count1 })
 
   if terminals[termkey] and terminals[termkey]:buf_valid() then
+    -- Open already exists terminal.
     terminals[termkey]:toggle()
   else
+    -- Create a new terminal.
     terminals[termkey] = require("lazy.util").float_term(cmd, opts)
     local buf = terminals[termkey].buf
     vim.b[buf].lazyterm_cmd = cmd

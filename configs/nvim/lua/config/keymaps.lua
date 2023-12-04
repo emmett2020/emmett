@@ -142,9 +142,10 @@ if vim.fn.has("nvim-0.9.0") == 1 then
 end
 
 -- floating terminal
-local lazyterm = function() Util.float_term(nil, { cwd = Util.get_root() }) end
+local terminal_shell_cmd="/bin/bash" -- Change this to "/bin/zsh" or others if you need.
+local lazyterm = function() Util.float_term(terminal_shell_cmd, { cwd = Util.get_root() }) end
 map("n", "<leader>fT", lazyterm, { desc = "Terminal(root)" })
-map("n", "<leader>ft", function() Util.float_term() end, { desc = "Terminal(cwd)" })
+map("n", "<leader>ft", function() Util.float_term(terminal_shell_cmd) end, { desc = "Terminal(cwd)" })
 map("n", "<c-/>", lazyterm, { desc = "Terminal(root)" })
 map("n", "<c-_>", lazyterm, { desc = "which_key_ignore" })
 
