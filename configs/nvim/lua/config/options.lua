@@ -53,3 +53,4 @@ opt.winminwidth = 5 -- Minimum window width
 opt.wrap = false -- Disable line wrap
 opt.splitkeep = "screen" -- ?
 opt.shortmess:append({ C = true }) -- ?
+opt.shell = "/usr/bin/bash" -- Set default shell. Usually needed by :term command.
