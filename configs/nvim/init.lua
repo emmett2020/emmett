@@ -7,8 +7,8 @@ require("load_lazy")
 
 -- 4. Load configs. Include keymaps, autocmds and others.
 local Config = require("config")
--- Config.colorscheme = "edge"
-Config.colorscheme = "dracula"
+Config.colorscheme = "edge"
+-- Config.colorscheme = "dracula"
 -- Config.colorscheme = "onedark"
 -- Config.colorscheme = "dracula"
 -- Config.colorscheme = "gruvbox"
