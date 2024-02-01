@@ -25,7 +25,7 @@ return {
   version = false,
   keys = {
     { "<leader>,", "<cmd>Telescope buffers show_all_buffers=true<cr>", desc = "File Buffers" },
-    { "<leader>/", Util.telescope("live_grep", { cwd = false }), desc = "Grep(cwd)" },
+    { "<leader>/", Util.telescope("live_grep", { cwd = false }), desc = "Search Content(cwd)" },
     { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" },
     { "<leader><space>", Util.telescope("files", { cwd = false }), desc = "Find Files(cwd)" },
 
@@ -54,9 +54,9 @@ return {
     { "<leader>sH", "<cmd>Telescope highlights<cr>", desc = "Search Highlight Groups" },
     { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Key Maps" },
     { "<leader>sM", "<cmd>Telescope man_pages<cr>", desc = "Man Pages" },
-    { "<leader>sm", "<cmd>Telescope marks<cr>", desc = "Jump to Mark" },
+    { "<leader>sm", "<cmd>Telescope marks<cr>", desc = "Marks" },
     { "<leader>so", "<cmd>Telescope vim_options<cr>", desc = "Options" },
-    { "<leader>sR", "<cmd>Telescope resume<cr>", desc = "Resume" },
+    -- { "<leader>sR", "<cmd>Telescope resume<cr>", desc = "Resume" },
     { "<leader>sw", Util.telescope("grep_string", { cwd = false, word_match = "-w" }), desc = "Word(cwd)" },
     { "<leader>sW", Util.telescope("grep_string", { word_match = "-w" }), desc = "Word(root)" },
     { "<leader>sv", Util.telescope("grep_string", { cwd = false }), mode = "v", desc = "Selection(cwd)" },

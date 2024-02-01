@@ -1,6 +1,7 @@
 -----------------------------------------------
 ---                DailyVim's option        ---
 -----------------------------------------------
+--- https://neovim.io/doc/user/options.html
 
 vim.g.mapleader = " " -- leader key
 vim.g.maplocalleader = "\\" -- ?
@@ -54,3 +55,8 @@ opt.wrap = false -- Disable line wrap
 opt.splitkeep = "screen" -- ?
 opt.shortmess:append({ C = true }) -- ?
 opt.shell = "/usr/bin/bash" -- Set default shell. Usually needed by :term command.
+
+-- Allow specified keys that move the cursor left/right to move to the previous/next line
+-- when the cursor is on the first/last character in the line.
+-- There have some limits when using this options. Plz read this option linkage.
+opt.whichwrap = "h,l"
