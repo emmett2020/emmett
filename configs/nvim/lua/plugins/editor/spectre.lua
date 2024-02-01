@@ -5,7 +5,8 @@ return {
   cmd = "Spectre",
     -- stylua: ignore
     keys = {
-      { "<leader>sr", function() require("spectre").open() end, desc = "Replace in files" },
+      { "<leader>sr", function() require("spectre").open() end, desc = "Replace" },
+      { "<leader>sR", function() require('spectre').open_file_search()  end, desc = "Replace in current buffer" },
     },
   opts = {
     color_devicons = true,
