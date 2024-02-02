@@ -18,7 +18,6 @@ opt.conceallevel = 3 -- Hide * markup for bold and italic
 opt.confirm = true -- Confirm to save changes before exiting modified buffer
 opt.cursorline = true -- Enable highlighting of the current line
 opt.expandtab = true -- Use spaces instead of tabs
-opt.formatoptions = "jcroqlnt" -- tcqj
 opt.grepformat = "%f:%l:%c:%m"
 opt.grepprg = "rg --vimgrep"
 opt.ignorecase = true -- Ignore case
@@ -56,7 +55,8 @@ opt.splitkeep = "screen" -- ?
 opt.shortmess:append({ C = true }) -- ?
 opt.shell = "/usr/bin/bash" -- Set default shell. Usually needed by :term command.
 
--- Allow specified keys that move the cursor left/right to move to the previous/next line
--- when the cursor is on the first/last character in the line.
--- There have some limits when using this options. Plz read this option linkage.
+-- Allow specified keys that move the cursor left/right to move to the
+-- previous/next line when the cursor is on the first/last character in the
+-- line. There have some limits when using this options. Plz read this option
+-- linkage.
 opt.whichwrap = "h,l"

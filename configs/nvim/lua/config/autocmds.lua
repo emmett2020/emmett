@@ -91,3 +91,15 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
   end,
 })
+
+-- When you create a new line from a comment line, the comment is automatically
+-- added to the next newly created line. The autocmd below turns this off.
+-- Don't automatically add comments to new lines via 'o' but enables '<enter>'.
+-- Note that in nvim you need to turn this function off via autocmd.
+-- For more details: https://neovim.io/doc/user/change.html#formatting
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+  pattern = "*",
+  callback = function()
+    vim.opt.formatoptions = vim.opt.formatoptions - { "o" }
+  end,
+})

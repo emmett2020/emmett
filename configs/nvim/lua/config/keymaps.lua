@@ -21,13 +21,6 @@ local function map_shortcut(mode, lhs, rhs, opts)
   end
 end
 
--- Map some special keys.
-map_shortcut({ "n", "x" }, "<BS>", "x", {})
-
--- Better move.
-map_shortcut({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-map_shortcut({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-
 ------------------------
 ------------------------ Window
 ------------------------
@@ -94,6 +87,7 @@ end
 
 -- Save buffer.
 map_shortcut({ "i", "v", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save buffer" })
+map_shortcut({ "v", "n" }, "<leader>.", "<cmd>w<cr><esc>", { desc = "Save buffer" })
 
 -- Create buffer.
 map_shortcut("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New buffer" })
@@ -142,19 +136,26 @@ end
 ------------------------
 ------------------------ Toggle options
 ------------------------
--- stylua: ignore start
 map_shortcut("n", "<leader>of", require("plugins.lsp.format").toggle, { desc = "Toggle format on Save" })
-map_shortcut("n", "<leader>os", function() Util.toggle("spell") end, { desc = "Toggle Spelling" })
-map_shortcut("n", "<leader>ow", function() Util.toggle("wrap") end, { desc = "Toggle Word Wrap" })
-map_shortcut("n", "<leader>ol", function() Util.toggle_number() end, { desc = "Toggle Line Numbers" })
+map_shortcut("n", "<leader>os", function()
+  Util.toggle("spell")
+end, { desc = "Toggle Spelling" })
+map_shortcut("n", "<leader>ow", function()
+  Util.toggle("wrap")
+end, { desc = "Toggle Word Wrap" })
+map_shortcut("n", "<leader>ol", function()
+  Util.toggle_number()
+end, { desc = "Toggle Line Numbers" })
 map_shortcut("n", "<leader>od", Util.toggle_diagnostics, { desc = "Toggle Diagnostics" })
 local conceallevel = vim.o.conceallevel > 0 and vim.o.conceallevel or 3
-map_shortcut("n", "<leader>oc", function() Util.toggle("conceallevel", false, {0, conceallevel}) end, { desc = "Toggle Conceal" })
+map_shortcut("n", "<leader>oc", function()
+  Util.toggle("conceallevel", false, { 0, conceallevel })
+end, { desc = "Toggle Conceal" })
 if vim.lsp.inlay_hint then
-  map_shortcut("n", "<leader>oh", function() vim.lsp.inlay_hint(0, nil) end, { desc = "Toggle Inlay Hints" })
+  map_shortcut("n", "<leader>oh", function()
+    vim.lsp.inlay_hint(0, nil)
+  end, { desc = "Toggle Inlay Hints" })
 end
-
--- stylua: ignore end
 
 ------------------------
 ------------------------ Terminal
@@ -199,11 +200,17 @@ map_shortcut("v", ">", ">gv")
 -- Lazy nvim.
 map_shortcut("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
--- stylua: ignore start
 -- Lazygit
-map_shortcut("n", "<leader>gG", function() Util.float_term({ "lazygit" }, { cwd = Util.get_root(), esc_esc = false, ctrl_hjkl = false }) end, { desc = "Lazygit(root)" })
-map_shortcut("n", "<leader>gg", function() Util.float_term({ "lazygit" }, {esc_esc = false, ctrl_hjkl = false}) end, { desc = "Lazygit(cwd)" })
--- stylua: ignore end
+map_shortcut("n", "<leader>gG", function()
+  Util.float_term({ "lazygit" }, { cwd = Util.get_root(), esc_esc = false, ctrl_hjkl = false })
+end, { desc = "Lazygit(root)" })
+map_shortcut("n", "<leader>gg", function()
+  Util.float_term({ "lazygit" }, { esc_esc = false, ctrl_hjkl = false })
+end, { desc = "Lazygit(cwd)" })
 
 -- quit
 map_shortcut("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit nvim" })
+
+-- Better move.
+map_shortcut({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+map_shortcut({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
