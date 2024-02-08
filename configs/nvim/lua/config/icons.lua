@@ -1,6 +1,7 @@
 ------------------------------------------------------
 ---        icons used by other plugins             ---
 ------------------------------------------------------
+-- You can safely replace these icons to make a fancy neovim.
 -- Fancy icon resources:
 --   1. nerdfonts. Use cheat-sheet to select what icon you want,
 --                 Then move cursor above the icon and choose copy icon.
@@ -8,6 +9,7 @@
 
 -- Default icons used in DailyVim.
 local icons = {
+  -- Used for debug adapter
   dap = {
     Stopped = { "󰁕 ", "DiagnosticWarn", "DapStoppedLine" },
     Breakpoint = " ",
@@ -15,12 +17,16 @@ local icons = {
     BreakpointRejected = { " ", "DiagnosticError" },
     LogPoint = ".>",
   },
+
+  -- Used for diagnostics.
   diagnostics = {
     Error = " ",
     Warn = " ",
     Hint = " ",
     Info = " ",
   },
+
+  -- Used for git.
   git = {
     added = " ",
     modified = " ",

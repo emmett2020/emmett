@@ -70,20 +70,13 @@ map_shortcut("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
 ------------------------
 ------------------------ Buffer
 ------------------------
--- Delete buffer use miniremove plugin.
--- Go to buffer.
+-- The buffer delete operation is supported miniremove plugin.
+-- Go to buffer. Use bufferline vim.
 map_shortcut("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Other buffer" })
-if Util.has("bufferline.nvim") then
-  map_shortcut("n", "[b", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer" })
-  map_shortcut("n", "]b", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer" })
-  map_shortcut("n", "<leader>bh", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer" })
-  map_shortcut("n", "<leader>bj", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer" })
-else
-  map_shortcut("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
-  map_shortcut("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
-  map_shortcut("n", "<leader>bh", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
-  map_shortcut("n", "<leader>bl", "<cmd>bnext<cr>", { desc = "Next buffer" })
-end
+map_shortcut("n", "[b", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer" })
+map_shortcut("n", "]b", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer" })
+map_shortcut("n", "<leader>bh", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer" })
+map_shortcut("n", "<leader>bl", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer" })
 
 -- Save buffer.
 map_shortcut({ "i", "v", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save buffer" })
@@ -189,9 +182,6 @@ map_shortcut("n", "<c-_>", lazyterm, { desc = "which_key_ignore" })
 ------------------------
 ------------------------ Utilities
 ------------------------
-
--- Keywordprg.
-map_shortcut("n", "<leader>K", "<cmd>norm! K<cr>", { desc = "Keywordprg" })
 
 -- Better indenting.
 map_shortcut("v", "<", "<gv")

@@ -19,7 +19,7 @@ vim.opt.rtp:prepend(vim.env.LAZY or lazy_path)
 -- 2. Load all plugins placed at `plugins`.
 require("lazy").setup({
   spec = {
-    { import = "plugins" },
+    { import = "plugins/" },
     { import = "plugins/coding/" },
     { import = "plugins/core/" },
     { import = "plugins/editor/" },
@@ -36,7 +36,8 @@ require("lazy").setup({
     -- when starting an installation during startup.
     colorscheme = { "tokyonight", "habamax" },
   },
-  checker = { enabled = true }, -- Automatically check for plugin updates
+-- Automatically check for plugin updates
+  checker = { enabled = true },  
   performance = {
     rtp = {
       -- disable some rtp plugins

@@ -13,17 +13,16 @@ return {
       function()
         require("neo-tree.command").execute({ toggle = true, dir = Util.get_root() })
       end,
-      desc = "File Explorer(root)",
+      desc = "File explorer(git)",
     },
     {
       "<leader>fe",
       function()
         require("neo-tree.command").execute({ toggle = true, dir = vim.loop.cwd() })
       end,
-      desc = "File Explorer(cwd)",
+      desc = "File explorer",
     },
-    { "<leader>e", "<leader>fe", desc = "File Explorer(cwd)", remap = true },
-    { "<leader>E", "<leader>fE", desc = "File Explorer(root)", remap = true },
+    { "<leader>e", "<leader>fe", desc = "File explorer", remap = true },
     { "<leader>ot", "<cmd>Neotree filesystem reveal left<cr>", desc = "Move neotree to left"},
   },
   deactivate = function()

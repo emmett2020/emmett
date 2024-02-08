@@ -2,6 +2,7 @@
 ---            Validate version and check envrionment             ---
 ---------------------------------------------------------------------
 
+-- Check all the necessary plugins and report error if no exists.
 local M = {}
 
 -- Options

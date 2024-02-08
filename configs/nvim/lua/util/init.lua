@@ -1,4 +1,6 @@
 local Util = require("lazy.core.util")
+local Config = require("lazy.core.config")
+local Plugin = require("lazy.core.plugin")
 
 local M = {}
 
@@ -69,7 +71,7 @@ end
 
 ---@param plugin string
 function M.has(plugin)
-  return require("lazy.core.config").spec.plugins[plugin] ~= nil
+  return Config.spec.plugins[plugin] ~= nil
 end
 
 function M.fg(name)
@@ -89,13 +91,13 @@ function M.on_very_lazy(fn)
   })
 end
 
+-- Get "opts" of a specific plugin.
 ---@param name string
-function M.opts(name)
-  local plugin = require("lazy.core.config").plugins[name]
+function M.opts_of_plugin(name)
+  local plugin = Config.plugins[name]
   if not plugin then
     return {}
   end
-  local Plugin = require("lazy.core.plugin")
   return Plugin.values(plugin, "opts", false)
 end
 
@@ -286,7 +288,6 @@ end
 ---@param name string
 ---@param fn fun(name:string)
 function M.on_load(name, fn)
-  local Config = require("lazy.core.config")
   if Config.plugins[name] and Config.plugins[name]._.loaded then
     vim.schedule(function()
       fn(name)

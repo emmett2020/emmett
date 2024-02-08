@@ -15,3 +15,6 @@ Config.colorscheme = "edge"
 -- Config.colorscheme = "tokyonight"
 -- Config.colorscheme = "catppuccin"
 Config.setup()
+
+-- 5. Other DIY configs.
+require("util/hourly_notify").start_report()

@@ -1,7 +1,7 @@
 -----------------------------------------------------------------
 ---                          Autocmds                         ---
 -----------------------------------------------------------------
--- This file is automatically loaded by config.init.
+-- This file is automatically loaded by config/init.lua
 
 local function augroup(name)
   return vim.api.nvim_create_augroup("DailyVim_" .. name, { clear = true })
