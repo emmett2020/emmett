@@ -7,7 +7,8 @@ return {
   "nvim-treesitter/nvim-treesitter",
   version = "*",
   build = ":TSUpdate",
-  event = { "BufReadPost", "BufNewFile" },
+  -- event = { "BufReadPost", "BufNewFile" },
+  event = { "LazyFile" },
   dependencies = {
     "nvim-treesitter/nvim-treesitter-textobjects",
   },
@@ -23,8 +24,6 @@ return {
       "lua",
       "python",
       "yaml",
-      "html",
-      "json",
       "markdown",
       "vim",
       "vimdoc",
@@ -55,7 +54,7 @@ return {
           ["]F"] = { query = "@function.outer", desc = "Next function end" },
         },
         goto_previous_start = {
-          ["[c"] = { query = "@class.outer", desc = "Prevclass start" },
+          ["[c"] = { query = "@class.outer", desc = "Prev class start" },
           ["[f"] = { query = "@function.outer", desc = "Prev function start" },
         },
         goto_previous_end = {
@@ -69,7 +68,19 @@ return {
   config = function(_, opts)
     require("nvim-treesitter.configs").setup(opts)
     require("util").on_load("which-key.nvim", function()
-      vim.notify("TODO. Register keys")
+      local a = {
+        ["c"] = "Class",
+        ["f"] = "Function",
+      }
+      local i = {
+        ["c"] = "Class",
+        ["f"] = "Function",
+      }
+      require("which-key").register({
+        mode = { "o", "x" },
+        i = i,
+        a = a,
+      })
     end)
   end,
 }

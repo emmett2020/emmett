@@ -36,16 +36,13 @@ require("lazy").setup({
     -- when starting an installation during startup.
     colorscheme = { "tokyonight", "habamax" },
   },
--- Automatically check for plugin updates
-  checker = { enabled = true },  
+  -- Automatically check for plugin updates
+  checker = { enabled = true },
   performance = {
     rtp = {
       -- disable some rtp plugins
       disabled_plugins = {
         "gzip",
-        -- "matchit",
-        -- "matchparen",
-        -- "netrwPlugin",
         "tarPlugin",
         "tohtml",
         "tutor",

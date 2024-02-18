@@ -1,3 +1,23 @@
+-----------------------------------
+-- Index     Name
+--  01       tokyonight
+--  02       catppuccin
+--  03       gruvbox
+--  04       dracula
+--  05       edge
+--  06       nightfox
+--  07       nord
+--  08       onedark
+--  09       onenord
+--  10       everforest
+--  11       aurora
+--  12       kanagawa
+--  13       pastelnight
+--  14       tol
+--  15       sweetie
+--  16       bluloco
+-----------------------------------
+
 return {
   -- tokyonight
   {
@@ -44,7 +64,7 @@ return {
     },
   },
 
-  -- Grouvbox
+  -- gruvbox
   {
     "morhetz/gruvbox",
     lazy = true,
@@ -52,7 +72,7 @@ return {
     config = function() end,
   },
 
-  -- darcula
+  -- dracula
   {
     "Mofiqul/dracula.nvim",
     lazy = true,
@@ -101,5 +121,37 @@ return {
   {
     "ray-x/aurora",
     lazy = true,
+  },
+
+  -- kanagawa
+  {
+    "rebelot/kanagawa.nvim",
+    lazy = true,
+  },
+
+  -- pastelnight
+  {
+    "pauchiner/pastelnight.nvim",
+    lazy = true,
+    opts = {},
+  },
+
+  -- tol.nvim
+  {
+    "dustypomerleau/tol.nvim",
+    lazy = true,
+  },
+
+  -- sweetie
+  {
+    "NTBBloodbath/sweetie.nvim",
+    lazy = true,
+  },
+
+  -- bluloco
+  {
+    "uloco/bluloco.nvim",
+    lazy = true,
+    dependencies = { "rktjmp/lush.nvim" },
   },
 }

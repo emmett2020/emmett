@@ -1,15 +1,12 @@
 --------------------------------------------------
 ---      telescope and it's extensions         ---
 --------------------------------------------------
----
---- !!!Note all telescope's extensions aren't installed here,
---- !!!     extensions are just configed here.
----
+--- https://github.com/nvim-telescope/telescope.nvim
+--- NOTE: Telescope's extensions are not installed here. Extensions are
+--- just configed here.
 
-local Util = require("util")
-
--- Project manager.
 -- https://github.com/nvim-telescope/telescope-project.nvim
+-- Project manager.
 local project = {
   order_by = "asc",
   search_by = "title",
@@ -17,87 +14,36 @@ local project = {
 }
 
 -- fuzzy finder
--- https://github.com/nvim-telescope/telescope.nvim
 return {
   "nvim-telescope/telescope.nvim",
-  -- tag = "0.1.2",
+  dependencies = {
+    -- Some telescope extensions.
+    { "nvim-telescope/telescope-live-grep-args.nvim" },
+    { "xiyaowong/telescope-emoji" },
+  },
   cmd = "Telescope",
-  version = false,
   keys = {
-    -- git
-    { "<leader>,",        "<cmd>Telescope buffers show_all_buffers=true<cr>",                desc = "Show files" },
-    { "<leader>/",        Util.telescope("live_grep", { cwd = false }),                      desc = "Search file content" },
-    { "<leader><leader>", Util.telescope("files", { cwd = false }),                          desc = "Find file" },
-    { "<leader>ff",       Util.telescope("files"),                                           desc = "Find file(git)" },
-    { "<leader>fr",       Util.telescope("oldfiles", { cwd = vim.loop.cwd() }),              desc = "Recent files" },
-
-    -- git
-    { "<leader>gc",       "<cmd>Telescope git_commits<CR>",                                  desc = "Commits" },
-    { "<leader>gs",       "<cmd>Telescope git_status<CR>",                                   desc = "Status" },
+    -- special
+    { "<leader>,", "<cmd>Telescope buffers show_all_buffers=true<cr>", desc = "Buffers" },
+    { "<leader><leader>", "<cmd>Telescope find_files<cr>", desc = "Find file" },
+    { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent files" },
 
     -- search
-    { '<leader>s"',       "<cmd>Telescope registers<cr>",                                    desc = "Registers" },
-    { "<leader>sa",       "<cmd>Telescope autocommands<cr>",                                 desc = "Auto Commands" },
-    { "<leader>sb",       "<cmd>Telescope current_buffer_fuzzy_find<cr>",                    desc = "Current Buffer" },
-    { "<leader>sc",       "<cmd>Telescope command_history<cr>",                              desc = "Command History" },
-    { "<leader>sC",       "<cmd>Telescope commands<cr>",                                     desc = "Commands" },
-    { "<leader>sd",       "<cmd>Telescope diagnostics bufnr=0<cr>",                          desc = "Document Diagnostics" },
-    { "<leader>sD",       "<cmd>Telescope diagnostics<cr>",                                  desc = "Workspace Diagnostics" },
-    { "<leader>sg",       Util.telescope("live_grep", { cwd = false }),                      desc = "Grep(cwd)" },
-    { "<leader>sG",       Util.telescope("live_grep"),                                       desc = "Grep(root)" },
-    { "<leader>sh",       "<cmd>Telescope help_tags<cr>",                                    desc = "Help Pages" },
-    { "<leader>sH",       "<cmd>Telescope highlights<cr>",                                   desc = "Search Highlight Groups" },
-    { "<leader>sk",       "<cmd>Telescope keymaps<cr>",                                      desc = "Key Maps" },
-    { "<leader>sM",       "<cmd>Telescope man_pages<cr>",                                    desc = "Man Pages" },
-    { "<leader>sm",       "<cmd>Telescope marks<cr>",                                        desc = "Marks" },
-    { "<leader>so",       "<cmd>Telescope vim_options<cr>",                                  desc = "Options" },
-    -- { "<leader>sR", "<cmd>Telescope resume<cr>", desc = "Resume" },
-    { "<leader>sw",       Util.telescope("grep_string", { cwd = false, word_match = "-w" }), desc = "Word(cwd)" },
-    { "<leader>sW",       Util.telescope("grep_string", { word_match = "-w" }),              desc = "Word(root)" },
-    { "<leader>sv",       Util.telescope("grep_string", { cwd = false }),                    mode = "v",                       desc = "Selection(cwd)" },
-    { "<leader>sV",       Util.telescope("grep_string"),                                     mode = "v",                       desc = "Selection(root)" },
-    { "<leader>uC",       Util.telescope("colorscheme", { enable_preview = true }),          desc = "Colorscheme With Preview" },
-    {
-      "<leader>ss",
-      Util.telescope("lsp_document_symbols", {
-        symbols = {
-          "Class",
-          "Function",
-          "Method",
-          "Constructor",
-          "Interface",
-          "Module",
-          "Struct",
-          "Trait",
-          "Field",
-          "Property",
-        },
-      }),
-      desc = "Symbols",
-    },
-    {
-      "<leader>sS",
-      Util.telescope("lsp_dynamic_workspace_symbols", {
-        symbols = {
-          "Class",
-          "Function",
-          "Method",
-          "Constructor",
-          "Interface",
-          "Module",
-          "Struct",
-          "Trait",
-          "Field",
-          "Property",
-        },
-      }),
-      desc = "Symbol(Workspace)",
-    },
-    {
-      "<leader>fp",
-      ":lua require'telescope'.extensions.project.project{display_type = 'full'}<CR>",
-      desc = "Projects",
-    },
+    { '<leader>s"', "<cmd>Telescope registers<cr>", desc = "Registers" },
+    { "<leader>sa", "<cmd>Telescope autocommands<cr>", desc = "Auto commands" },
+    { "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Current buffer" },
+    { "<leader>sc", "<cmd>Telescope command_history<cr>", desc = "Command history" },
+    { "<leader>sC", "<cmd>Telescope commands<cr>", desc = "Commands" },
+    { "<leader>sd", "<cmd>Telescope diagnostics bufnr=0<cr>", desc = "Document diagnostics" },
+    { "<leader>sD", "<cmd>Telescope diagnostics<cr>", desc = "Workspace diagnostics" },
+    { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Key maps" },
+    { "<leader>sM", "<cmd>Telescope man_pages<cr>", desc = "Man pages" },
+    { "<leader>sm", "<cmd>Telescope marks<cr>", desc = "Marks" },
+    { "<leader>so", "<cmd>Telescope vim_options<cr>", desc = "Options" },
+    { "<leader>ss", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Symbols" },
+    { "<leader>sS", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Symbols(workspace)" },
+    { "<leader>se", "<cmd>Telescope emoji<cr>", desc = "Emoji" },
+    { "<leader>uC", "<cmd>Telescope colorscheme<cr>", desc = "Colorscheme" },
   },
   opts = {
     defaults = {
@@ -105,26 +51,6 @@ return {
       selection_caret = "❆ ",
       mappings = {
         i = {
-          -- This is `trouble` plugin's keymapping.
-          ["<c-t>"] = function(...)
-            return require("trouble.providers.telescope").open_with_trouble(...)
-          end,
-          ["<a-t>"] = function(...)
-            return require("trouble.providers.telescope").open_selected_with_trouble(...)
-          end,
-
-          --
-          ["<a-i>"] = function()
-            local action_state = require("telescope.actions.state")
-            local line = action_state.get_current_line()
-            Util.telescope("find_files", { no_ignore = true, default_text = line })()
-          end,
-          ["<a-h>"] = function()
-            local action_state = require("telescope.actions.state")
-            local line = action_state.get_current_line()
-            Util.telescope("find_files", { hidden = true, default_text = line })()
-          end,
-
           -- history
           ["<Down>"] = function(...)
             return require("telescope.actions").cycle_history_next(...)
@@ -162,8 +88,28 @@ return {
         },
       },
     },
+    extensions = {
+      project = project,
+    },
   },
-  extensions = {
-    project = project,
-  },
+  config = function(_, opts)
+    require("telescope").setup(opts)
+
+    -- live_grep_args
+    require("telescope").load_extension("live_grep_args")
+    vim.keymap.set(
+      "n",
+      "<leader>/",
+      require("telescope").extensions.live_grep_args.live_grep_args,
+      { desc = "Live grep" }
+    )
+    local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
+    vim.keymap.set("n", "<leader>sw", function()
+      require("telescope.builtin").grep_string({ word_match = "-w" })
+    end, { desc = "Search word" })
+    vim.keymap.set("v", "<leader>sv", live_grep_args_shortcuts.grep_visual_selection, { desc = "Search selection" })
+
+    -- Project
+    vim.keymap.set("n", "<leader>fp", require("telescope").extensions.project.project, { desc = "Projects" })
+  end,
 }

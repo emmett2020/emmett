@@ -3,16 +3,24 @@
 -----------------------------------------------
 --- https://neovim.io/doc/user/options.html
 
-vim.g.mapleader = " " -- leader key
+vim.g.mapleader = " " -- Leader key
 vim.g.maplocalleader = "\\" -- ?
 
 -- Fix markdown indentation settings
 vim.g.markdown_recommended_style = 0
 
+-- Disable some providers which we won't use.
+-- Otherwise you'll find warnning/error messages in :checkhealth
+-- Providers: https://neovim.io/doc/user/provider.html
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+
+vim.g.netrw_fastbrowse = 0 -- Close netrw after opening the file
+
 -- detail options
 local opt = vim.opt
 opt.autowrite = true -- Enable auto write
--- opt.clipboard = "unnamedplus" -- Sync with system clipboard
+-- opt.clipboard = "unnamed" -- Sync with system clipboard
 opt.completeopt = "menu,menuone,noselect"
 opt.conceallevel = 3 -- Hide * markup for bold and italic
 opt.confirm = true -- Confirm to save changes before exiting modified buffer

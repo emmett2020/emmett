@@ -35,11 +35,6 @@ local lsp_server = {
   },
 }
 
-local Util = require("util")
-local Keymaps = require("plugins.lsp.keymaps")
-local Format = require("plugins.lsp.format")
-local Icons = require("config").icons
-
 return {
   -- https://github.com/neovim/nvim-lspconfig
   -- Some plugins are installed in lspconfig in the following order
@@ -57,12 +52,12 @@ return {
     opts = {
       servers = lsp_server,
 
-      diagnostics = {             -- The options for vim.diagnostic.config()
+      diagnostics = { -- The options for vim.diagnostic.config()
         underline = true,
         update_in_insert = false, -- Update diagnostics in Insert mode.
         virtual_text = {
           prefix = "󰇥",
-          spacing = 2,        -- Amount of empty spaces inserted at the beginning
+          spacing = 2, -- Amount of empty spaces inserted at the beginning
           source = "if_many", -- Use "if_many" to only show sources if there is more than one diagnostic source in the buffer.
         },
         severity_sort = true,
@@ -75,8 +70,8 @@ return {
         enabled = false,
       },
 
-      autoformat = true,   -- Automatically format on save
-      format = {           -- This option will be used in format.lua
+      autoformat = true, -- Automatically format on save
+      format = { -- This option will be used in format.lua
         formatting_options = nil,
         timeout_ms = 2000, -- Time in milliseconds to block for formatting requests.
       },
@@ -87,9 +82,9 @@ return {
       require("neodev").setup({})
 
       -- Setup formatting and keymaps.
-      Format.setup(opts)
-      Util.on_attach(function(client, buffer)
-        Keymaps.set_keymap(client, buffer)
+      require("plugins.lsp.format").setup(opts)
+      require("util").on_attach(function(client, buffer)
+        require("plugins.lsp.keymaps").set_keymap(client, buffer)
       end)
 
       -- Update keymaps when capability changes.
@@ -103,12 +98,12 @@ return {
       vim.lsp.handlers["client/registerCapability"] = function(err, res, ctx)
         local ret = old_register_capability(err, res, ctx)
         local buffer = vim.api.nvim_get_current_buf()
-        Keymaps.set_keymap(_, buffer)
+        require("plugins.lsp.keymaps").set_keymap(_, buffer)
         return ret
       end
 
       -- Diagnostics icon
-      for name, icon in pairs(Icons.diagnostics) do
+      for name, icon in pairs(require("config").icons.diagnostics) do
         name = "DiagnosticSign" .. name
         vim.fn.sign_define(name, { text = icon, texthl = name, numhl = "" })
       end
@@ -119,7 +114,7 @@ return {
       -- Inlay hint
       local inlay_hint = vim.lsp.buf.inlay_hint or vim.lsp.inlay_hint
       if opts.inlay_hints.enabled and inlay_hint then
-        Util.on_attach(function(client, buffer)
+        require("util").on_attach(function(client, buffer)
           if client.supports_method("textDocument/inlayHint") then
             inlay_hint(buffer, true)
           end
@@ -129,7 +124,7 @@ return {
       -- Virtual text
       if type(opts.diagnostics.virtual_text) == "table" and opts.diagnostics.virtual_text.prefix == "icons" then
         opts.diagnostics.virtual_text.prefix = function(diagnostic)
-          local icons = Icons.diagnostics
+          local icons = require("config").icons.diagnostics
           for d, icon in pairs(icons) do
             if diagnostic.severity == vim.diagnostic.severity[d:upper()] then
               return icon
@@ -176,6 +171,9 @@ return {
 
       -- The mason must be setup ahead of mason-lspconfig.
       -- The ensure installed server will be installed here.
+      -- mason.nvim is optimized to load as little as possible during setup.
+      -- Lazy-loading the plugin, or somehow deferring the setup, is not
+      -- recommended.
       require("mason").setup()
       require("mason-lspconfig").setup({ ensure_installed = ensure_installed, handlers = { setup } })
       require("nvim-lightbulb").setup({
@@ -212,22 +210,22 @@ return {
 
   -- https://github.com/jose-elias-alvarez/null-ls.nvim
   -- A lua language server protocol server.
-  {
-    "jose-elias-alvarez/null-ls.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    opts = function()
-      local nls = require("null-ls")
-      return {
-        root_dir = require("null-ls.utils").root_pattern(".null-ls-root", ".neoconf.json", "Makefile", ".git"),
-        sources = {
-          nls.builtins.formatting.fish_indent,
-          nls.builtins.diagnostics.fish,
-          nls.builtins.formatting.stylua,
-          nls.builtins.formatting.shfmt,
-        },
-      }
-    end,
-  },
+  -- {
+  --   "jose-elias-alvarez/null-ls.nvim",
+  --   event = { "BufReadPre", "BufNewFile" },
+  --   opts = function()
+  --     local nls = require("null-ls")
+  --     return {
+  --       root_dir = require("null-ls.utils").root_pattern(".null-ls-root", ".neoconf.json", "Makefile", ".git"),
+  --       sources = {
+  --         nls.builtins.formatting.fish_indent,
+  --         nls.builtins.diagnostics.fish,
+  --         nls.builtins.formatting.stylua,
+  --         nls.builtins.formatting.shfmt,
+  --       },
+  --     }
+  --   end,
+  -- },
 
   -- https://github.com/kosayoda/nvim-lightbulb
   -- shows a lightbulb in the sign column whenever a textDocument/codeAction is available at the current cursor position.

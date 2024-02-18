@@ -1,5 +1,4 @@
 -- Better `vim.notify()`
-local Util = require("util")
 return {
   "rcarriga/nvim-notify",
   opts = {

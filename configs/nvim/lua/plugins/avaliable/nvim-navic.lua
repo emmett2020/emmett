@@ -1,7 +1,6 @@
--- lsp symbol navigation for lualine.
--- This shows where in the code structure you are
--- within functions, classes, etc - in the statusline.
 -- https://github.com/SmiteshP/nvim-navic
+-- Lsp symbol navigation for lualine.
+-- This shows where in the code structure you are within functions, classes, etc
 local Util = require("util")
 local Config = require("config")
 
@@ -19,13 +18,11 @@ return {
   opts = function()
     return {
       separator = " ",
-      highlight = true,
+      -- highlight = true,
       depth_limit = 0,
       depth_limit_indicator = "..",
       icons = Config.icons.kinds,
-      -- Single click to goto element,
-      -- double click to open nvim-navbuddy on the clicked element.
-      click = true,
+      click = false,
     }
   end,
 }
