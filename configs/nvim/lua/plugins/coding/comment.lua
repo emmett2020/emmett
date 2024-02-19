@@ -18,7 +18,7 @@ return {
       "<leader>cc",
       function()
         return vim.api.nvim_get_vvar("count") == 0 and "<Plug>(comment_toggle_linewise_current)"
-          or "<Plug>(comment_toggle_linewise_count)"
+            or "<Plug>(comment_toggle_linewise_count)"
       end,
       desc = "Comment",
       expr = true,
@@ -33,5 +33,5 @@ return {
       mode = { "x" },
     },
   },
-  lazy = false,
+  lazy = true,
 }

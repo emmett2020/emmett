@@ -46,18 +46,19 @@ return {
   --    nvim-lightbulb
   {
     "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
+    -- event = { "BufReadPre", "BufNewFile" },
+    event = "LazyFile",
 
     ---@class PluginLspOpts
     opts = {
       servers = lsp_server,
 
-      diagnostics = { -- The options for vim.diagnostic.config()
+      diagnostics = {             -- The options for vim.diagnostic.config()
         underline = true,
         update_in_insert = false, -- Update diagnostics in Insert mode.
         virtual_text = {
           prefix = "󰇥",
-          spacing = 2, -- Amount of empty spaces inserted at the beginning
+          spacing = 2,        -- Amount of empty spaces inserted at the beginning
           source = "if_many", -- Use "if_many" to only show sources if there is more than one diagnostic source in the buffer.
         },
         severity_sort = true,
@@ -70,8 +71,8 @@ return {
         enabled = false,
       },
 
-      autoformat = true, -- Automatically format on save
-      format = { -- This option will be used in format.lua
+      autoformat = true,   -- Automatically format on save
+      format = {           -- This option will be used in format.lua
         formatting_options = nil,
         timeout_ms = 2000, -- Time in milliseconds to block for formatting requests.
       },
@@ -153,21 +154,6 @@ return {
         require("lspconfig")[server].setup(server_opts)
       end
 
-      -- Get all the servers that are available by mason-lspconfig
-      local mason_supported_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
-
-      -- Get ensure_installed servers and install other server.
-      ---@type string[]
-      local ensure_installed = {}
-      for server, server_opts in pairs(servers) do
-        if server_opts.mason == false or not vim.tbl_contains(mason_supported_servers, server) then
-          -- setup this server by lspconfig
-          setup(server)
-        else
-          -- setup this server by mason-lspconfig and mason.
-          ensure_installed[#ensure_installed + 1] = server
-        end
-      end
 
       -- The mason must be setup ahead of mason-lspconfig.
       -- The ensure installed server will be installed here.
@@ -175,10 +161,10 @@ return {
       -- Lazy-loading the plugin, or somehow deferring the setup, is not
       -- recommended.
       require("mason").setup()
-      require("mason-lspconfig").setup({ ensure_installed = ensure_installed, handlers = { setup } })
+      require("mason-lspconfig").setup({ handlers = { setup } })
       require("nvim-lightbulb").setup({
         autocmd = { enabled = true },
-        sign = { text = "💡" },
+        sign = { text = "" },
       })
     end,
   },

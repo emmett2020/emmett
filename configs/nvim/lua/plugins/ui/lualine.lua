@@ -8,72 +8,30 @@
 -- | A | B | C                             X | Y | Z |
 -- +-------------------------------------------------+
 
-local Config = require("config")
-
--- We should add some custom keymap.
-local function GotoBuffer(prev)
-  local B = require("lualine.components.buffers")
-  if #B.bufpos2nr <= 1 then
-    return
-  end
-
-  -- Current buffer and index
-  local buf_num = vim.api.nvim_get_current_buf()
-  local buf_idx = -1
-  for idx, num in ipairs(B.bufpos2nr) do
-    if buf_num == num then
-      buf_idx = idx
-    end
-  end
-
-  if prev then
-    buf_idx = buf_idx - 1
-    if buf_idx < 1 then
-      buf_idx = #B.bufpos2nr
-    end
-  else
-    buf_idx = buf_idx + 1
-    if buf_idx > #B.bufpos2nr then
-      buf_idx = 1
-    end
-  end
-  vim.api.nvim_set_current_buf(B.bufpos2nr[buf_idx])
-end
-
-local function PrevBuffer()
-  GotoBuffer(true)
-end
-
-local function NextBuffer()
-  GotoBuffer(false)
-end
-
-local function HideLualine()
-  require("lualine").hide({
-    place = { "statusline", "tabline", "winbar" },
-    unhide = false,
-  })
-end
-
-local function ShowLualine()
-  require("lualine").hide({
-    place = { "statusline", "tabline", "winbar" },
-    unhide = true,
-  })
-end
-
 return {
   "nvim-lualine/lualine.nvim",
   event = "VeryLazy",
-  lazy = true,
+  init = function()
+    vim.g.lualine_laststatus = vim.o.laststatus
+    if vim.fn.argc(-1) > 0 then
+      vim.o.statusline = " "
+    else
+      vim.o.laststatus = 0
+    end
+  end,
   opts = function()
-    local icons = Config.icons
+    -- PERF: we don't need this lualine require madness
+    local lualine_require = require("lualine_require")
+    lualine_require.require = require
+
+    local icons = require("config").icons
+    vim.o.laststatus = vim.g.lualine_laststatus
 
     return {
       options = {
         theme = "auto",
         globalstatus = true,
-        disabled_filetypes = { statusline = { "dashboard", "alpha" } },
+        disabled_filetypes = { statusline = { "dashboard", "alpha", "starter" } },
       },
 
       -- Lualine (bottom line)
@@ -84,6 +42,16 @@ return {
           {
             "diff",
             symbols = { added = icons.git.added, modified = icons.git.modified, removed = icons.git.removed },
+            source = function()
+              local gitsigns = vim.b.gitsigns_status_dict
+              if gitsigns then
+                return {
+                  added = gitsigns.added,
+                  modified = gitsigns.changed,
+                  removed = gitsigns.removed,
+                }
+              end
+            end,
           },
         },
         lualine_c = {},
@@ -92,8 +60,8 @@ return {
         },
         lualine_y = {},
         lualine_z = {
-          { "progress", separator = "|", padding = { left = 1, right = 1 } },
-          { "location", separator = "|", padding = { left = 1, right = 1 } },
+          { "progress", separator = "", padding = { left = 1, right = 0 } },
+          { "location", separator = "", padding = { left = 0, right = 1 } },
         },
       },
 
@@ -127,17 +95,5 @@ return {
 
   config = function(_, opts)
     require("lualine").setup(opts)
-    vim.keymap.set({ "n", "v" }, "<leader>bh", PrevBuffer, { desc = "Prev buffer" })
-    vim.keymap.set({ "n", "v" }, "<leader>bl", NextBuffer, { desc = "Next buffer" })
-    vim.keymap.set({ "n", "v" }, "[b", PrevBuffer, { desc = "Prev buffer" })
-    vim.keymap.set({ "n", "v" }, "]b", NextBuffer, { desc = "Next buffer" })
-
-    -- We hide lualine first and show it after enter a buffer
-    -- Otherwise it will shown at Alpha plugin and netrw plugin.
-    HideLualine()
-    vim.api.nvim_create_autocmd({ "BufEnter" }, {
-      pattern = "*",
-      callback = ShowLualine,
-    })
   end,
 }

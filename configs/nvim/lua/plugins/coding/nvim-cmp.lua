@@ -11,8 +11,6 @@
 -- More sources will be found at:
 --              https://github.com/hrsh7th/nvim-cmp/wiki/List-of-sources
 
-local Config = require("config")
-
 return {
   "hrsh7th/nvim-cmp",
 
@@ -71,9 +69,9 @@ return {
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_next_item()
-          -- You could replace the expand_or_jumpable() calls
-          -- with expand_or_locally_jumpable()
-          -- the way you will only jump inside the snippet region
+            -- You could replace the expand_or_jumpable() calls
+            -- with expand_or_locally_jumpable()
+            -- the way you will only jump inside the snippet region
           elseif luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
           elseif has_words_before() then
@@ -103,7 +101,7 @@ return {
       formatting = {
         -- Icons
         format = function(_, item)
-          local icons = Config.icons.kinds
+          local icons = require("config").icons.kinds
           if icons[item.kind] then
             item.kind = icons[item.kind] .. item.kind
           end

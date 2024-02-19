@@ -3,8 +3,6 @@
 -- At the end of each match, letting you quickly jump to.
 return {
   "folke/flash.nvim",
-  event = "VeryLazy",
-  ---@type Flash.Config
   opts = {},
   keys = {
     -- stylua: ignore start

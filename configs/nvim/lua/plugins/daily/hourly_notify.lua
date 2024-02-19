@@ -26,7 +26,7 @@ function M.message()
   return "one hour"
 end
 
-function M.start_report()
+function M.setup()
   local cur_time_ms = os.time() * 1000
   local timeout = M.milliseconds_to_next_hour(cur_time_ms)
   M.timer:start(timeout, 3600000, function()

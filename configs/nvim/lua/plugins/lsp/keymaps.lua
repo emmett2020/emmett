@@ -10,30 +10,27 @@ M.keys = nil
 -- @return (LazyKeys|{has?:string})[]
 function M.get()
   if not M.keys then
-    -- The telescope must exist.
-    local telescope = require("telescope.builtin")
-
     -- stylua: ignore start
     ---@class PluginLspKeys
     M.keys = {
-      { "<leader>cd", vim.diagnostic.open_float,                                             desc = "Diagnostic" },
-      { "<leader>cl", "<cmd>LspInfo<cr>",                                                    desc = "Lsp info" },
-      { "gd",         function() telescope.lsp_definitions({ reuse_win = true }) end,        desc = "Goto definition",        has = "definition", },
-      { "gr",         "<cmd>Telescope lsp_references<cr>",                                   desc = "Goto references" },
-      { "gD",         vim.lsp.buf.declaration,                                               desc = "Goto declaration" },
-      { "gI",         function() telescope.lsp_implementations({ reuse_win = true }) end,    desc = "Goto implementation", },
-      { "gy",         function() telescope.lsp_type_definitions({ reuse_win = true }) end,   desc = "Goto T[y]pe Definition", },
-      { "K",          vim.lsp.buf.hover,                                                     desc = "Hover" },
-      { "gK",         vim.lsp.buf.signature_help,                                            desc = "Signature help",         has = "signatureHelp" },
-      { "]d",         M.diagnostic_goto(true),                                               desc = "Next Diagnostic" },
-      { "[d",         M.diagnostic_goto(false),                                              desc = "Prev Diagnostic" },
-      { "]e",         M.diagnostic_goto(true, "ERROR"),                                      desc = "Next Error" },
-      { "[e",         M.diagnostic_goto(false, "ERROR"),                                     desc = "Prev Error" },
-      { "]w",         M.diagnostic_goto(true, "WARN"),                                       desc = "Next Warning" },
-      { "[w",         M.diagnostic_goto(false, "WARN"),                                      desc = "Prev Warning" },
-      { "<leader>cf", function() require("plugins.lsp.format").format({ force = true }) end, desc = "Format" },
-      { "<leader>cr", vim.lsp.buf.rename,                                                    desc = "Rename",                 has = "rename" },
-      { "<leader>ca", vim.lsp.buf.code_action,                                               desc = "Code Action",            mode = { "n", "v" },  has = "codeAction" },
+      { "<leader>cd", vim.diagnostic.open_float,                                                              desc = "Diagnostic" },
+      { "<leader>cl", "<cmd>LspInfo<cr>",                                                                     desc = "Lsp info" },
+      { "gd",         function() require("telescope.builtin").lsp_definitions({ reuse_win = true }) end,      desc = "Goto definition",        has = "definition", },
+      { "gr",         "<cmd>Telescope lsp_references<cr>",                                                    desc = "Goto references" },
+      { "gD",         vim.lsp.buf.declaration,                                                                desc = "Goto declaration" },
+      { "gI",         function() require("telescope.builtin").lsp_implementations({ reuse_win = true }) end,  desc = "Goto implementation", },
+      { "gy",         function() require("telescope.builtin").lsp_type_definitions({ reuse_win = true }) end, desc = "Goto T[y]pe Definition", },
+      { "K",          vim.lsp.buf.hover,                                                                      desc = "Hover" },
+      { "gK",         vim.lsp.buf.signature_help,                                                             desc = "Signature help",         has = "signatureHelp" },
+      { "]d",         M.diagnostic_goto(true),                                                                desc = "Next Diagnostic" },
+      { "[d",         M.diagnostic_goto(false),                                                               desc = "Prev Diagnostic" },
+      { "]e",         M.diagnostic_goto(true, "ERROR"),                                                       desc = "Next Error" },
+      { "[e",         M.diagnostic_goto(false, "ERROR"),                                                      desc = "Prev Error" },
+      { "]w",         M.diagnostic_goto(true, "WARN"),                                                        desc = "Next Warning" },
+      { "[w",         M.diagnostic_goto(false, "WARN"),                                                       desc = "Prev Warning" },
+      { "<leader>cf", function() require("plugins.lsp.format").format({ force = true }) end,                  desc = "Format" },
+      { "<leader>cr", vim.lsp.buf.rename,                                                                     desc = "Rename",                 has = "rename" },
+      { "<leader>ca", vim.lsp.buf.code_action,                                                                desc = "Code Action",            mode = { "n", "v" },  has = "codeAction" },
       -- stylua: ignore end
       {
         "<leader>cA",

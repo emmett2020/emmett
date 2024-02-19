@@ -1,7 +1,6 @@
 -----------------------------
 ----------------------------- lsp format wrapper
 -----------------------------
-local Util = require("lazy.core.util")
 local M = {}
 
 ---@class PluginLspOpts
@@ -34,9 +33,9 @@ function M.toggle()
     M.opts.autoformat = not M.opts.autoformat
   end
   if M.opts.autoformat then
-    Util.info("Enabled format on save", { title = "Format" })
+    require("lazy.core.util").info("Enabled format on save", { title = "Format" })
   else
-    Util.warn("Disabled format on save", { title = "Format" })
+    require("lazy.core.util").warn("Disabled format on save", { title = "Format" })
   end
 end
 

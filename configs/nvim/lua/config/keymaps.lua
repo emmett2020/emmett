@@ -1,25 +1,11 @@
 -------------------------------------------------------------
 ---                      Keymaps                          ---
 -------------------------------------------------------------
--- This file is automatically loaded by config.init
--- You may find keymaps at there: https://neovim.io/doc/user/intro.html#notation
+-- This file is automatically loaded by config/init.lua
+-- Keymaps:  https://neovim.io/doc/user/intro.html#notation
 
 local Util = require("util")
-
-local function map(mode, lhs, rhs, opts)
-  local keys = require("lazy.core.handler").handlers.keys
-  ---@cast keys LazyKeysHandler
-  -- https://github.com/folke/lazy.nvim/blob/main/lua/lazy/core/handler/keys.lua
-  -- Do not create the keymap if a LazyKeysHandler exists.
-  if not keys.active[keys.parse({ lhs, mode = mode, id = "" }).id] then
-    opts = opts or {}
-    opts.silent = opts.silent ~= false
-    if opts.remap and not vim.g.vscode then
-      opts.remap = nil
-    end
-    vim.keymap.set(mode, lhs, rhs, opts)
-  end
-end
+local map = vim.keymap.set
 
 ------------------------
 ------------------------ Window
@@ -81,16 +67,23 @@ map({ "v", "n" }, "<leader>.", "<cmd>w<cr><esc>", { desc = "Save" })
 -- Create buffer.
 map("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New buffer" })
 
+-- Goto buffer
+map("n", "<leader>bp", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
+map("n", "<leader>bn", "<cmd>bnext<cr>", { desc = "Next buffer" })
+map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
+map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
+
+
 ------------------------
 ------------------------ Search
 ------------------------
 
 -- Go to search result by '*' or '/' command.
 -- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
-map("n", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
+map("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next search result" })
 map("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
 map("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
-map("n", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
+map("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev search result" })
 map("x", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
 map("o", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
 
@@ -115,55 +108,24 @@ map(
 ------------------------
 ------------------------ Toggle options
 ------------------------
-map("n", "<leader>of", require("plugins.lsp.format").toggle, { desc = "Toggle format on Save" })
-map("n", "<leader>os", function()
-  Util.toggle("spell")
-end, { desc = "Toggle Spelling" })
-map("n", "<leader>ow", function()
-  Util.toggle("wrap")
-end, { desc = "Toggle Word Wrap" })
-map("n", "<leader>ol", function()
-  Util.toggle_number()
-end, { desc = "Toggle Line Numbers" })
-map("n", "<leader>od", Util.toggle_diagnostics, { desc = "Toggle Diagnostics" })
-local conceallevel = vim.o.conceallevel > 0 and vim.o.conceallevel or 3
-map("n", "<leader>oc", function()
-  Util.toggle("conceallevel", false, { 0, conceallevel })
-end, { desc = "Toggle Conceal" })
-if vim.lsp.inlay_hint then
-  map("n", "<leader>oh", function()
-    vim.lsp.inlay_hint(0, nil)
-  end, { desc = "Toggle Inlay Hints" })
-end
+-- stylua: ignore start
+map("n", "<leader>of", require("plugins.lsp.format").toggle, { desc = "Toggle format on save" })
+map("n", "<leader>os", function() Util.toggle("spell") end, { desc = "Toggle spelling" })
+map("n", "<leader>ow", function() Util.toggle("wrap") end, { desc = "Toggle word wrap" })
+map("n", "<leader>ol", function() Util.toggle_number() end, { desc = "Toggle line numbers" })
+map("n", "<leader>od", Util.toggle_diagnostics, { desc = "Toggle diagnostics" })
+map("n", "<leader>ot", function() if vim.b.ts_highlight then vim.treesitter.stop() else vim.treesitter.start() end end,
+  { desc = "Toggle treesitter" })
+-- stylua: ignore end
 
 ------------------------
 ------------------------ Terminal
 ------------------------
--- Go to terminal
-map("t", "<C-h>", "<cmd>wincmd h<cr>", { desc = "Left window" })
-map("t", "<C-j>", "<cmd>wincmd j<cr>", { desc = "Lower window" })
-map("t", "<C-k>", "<cmd>wincmd k<cr>", { desc = "Upper window" })
-map("t", "<C-l>", "<cmd>wincmd l<cr>", { desc = "Right window" })
-
--- Hide or show terminal
-map("t", "<C-/>", "<cmd>close<cr>", { desc = "Hide/Show Terminal" })
 
 -- Control terminal.
 map("t", "<c-_>", "<cmd>close<cr>", { desc = "which_key_ignore" })
 map("t", "<esc>", "<c-\\><c-n>", { desc = "Enter Normal Mode" })
 
--- Floating terminal.
--- Change this to "/bin/zsh" or others if you need.
-local terminal_shell_cmd = "/bin/bash"
-local lazyterm = function()
-  Util.float_term(terminal_shell_cmd, { cwd = Util.get_root() })
-end
-map("n", "<leader>fT", lazyterm, { desc = "Terminal(root)" })
-map("n", "<leader>ft", function()
-  Util.float_term(terminal_shell_cmd)
-end, { desc = "Terminal(cwd)" })
-map("n", "<c-/>", lazyterm, { desc = "Terminal(root)" })
-map("n", "<c-_>", lazyterm, { desc = "which_key_ignore" })
 
 ------------------------
 ------------------------ Utilities
@@ -175,11 +137,6 @@ map("v", ">", ">gv")
 
 -- Lazy nvim.
 map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
-
--- Lazygit
-map("n", "<leader>gg", function()
-  Util.float_term({ "lazygit" }, { esc_esc = false, ctrl_hjkl = false })
-end, { desc = "Lazygit" })
 
 -- quit
 map({ "n", "x" }, "<leader>qq", "<cmd>qa<cr>", { desc = "Quit nvim" })

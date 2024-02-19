@@ -38,6 +38,13 @@ return {
       lsp_doc_border = true,        -- add a border to hover docs and signature help
     },
 
+    cmdline = {
+      format = {
+        search_down = { icon = "" },
+        search_up = { icon = "" },
+      },
+    },
+
     lsp = {
       override = {
         ["vim.lsp.util.convert_input_to_markdown_lines"] = true,

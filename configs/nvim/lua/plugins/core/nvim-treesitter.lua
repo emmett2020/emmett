@@ -7,13 +7,21 @@ return {
   "nvim-treesitter/nvim-treesitter",
   version = "*",
   build = ":TSUpdate",
-  -- event = { "BufReadPost", "BufNewFile" },
-  event = { "LazyFile" },
+  event = { "LazyFile", "VeryLazy" },
   dependencies = {
     "nvim-treesitter/nvim-treesitter-textobjects",
   },
-  cmd = { "TSUpdateSync" },
-
+  cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
+  init = function(plugin)
+    -- Referenced by LazyVim@10.x @folke
+    -- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
+    -- This is needed because a bunch of plugins no longer `require("nvim-treesitter")`, which
+    -- no longer trigger the **nvim-treeitter** module to be loaded in time.
+    -- Luckily, the only thins that those plugins need are the custom queries, which we make available
+    -- during startup.
+    require("lazy.core.loader").add_to_rtp(plugin)
+    require("nvim-treesitter.query_predicates")
+  end,
   opts = {
     highlight = { enable = true },
     indent = { enable = true },
@@ -31,19 +39,10 @@ return {
 
     -- See nvim-treesitter-textobjects for more choices.
     textobjects = {
-      select = {
+      -- PERF: currently "select" has very slow startup perfomance.
+      -- move according to textobjects
+      move = {
         enable = true,
-        lookahead = true,
-        keymaps = { -- select according to textobjects
-          ["ac"] = { query = "@class.outer", desc = "Class" },
-          ["ic"] = { query = "@class.inner", desc = "Class" },
-          ["af"] = { query = "@function.outer", desc = "Function" },
-          ["if"] = { query = "@function.inner", desc = "Function" },
-        },
-      },
-      move = { -- move according to textobjects
-        enable = true,
-        set_jumps = true,
         goto_next_start = {
           ["]c"] = { query = "@class.outer", desc = "Next class start" },
           ["]f"] = { query = "@function.outer", desc = "Next function start" },
@@ -67,20 +66,5 @@ return {
 
   config = function(_, opts)
     require("nvim-treesitter.configs").setup(opts)
-    require("util").on_load("which-key.nvim", function()
-      local a = {
-        ["c"] = "Class",
-        ["f"] = "Function",
-      }
-      local i = {
-        ["c"] = "Class",
-        ["f"] = "Function",
-      }
-      require("which-key").register({
-        mode = { "o", "x" },
-        i = i,
-        a = a,
-      })
-    end)
   end,
 }

@@ -5,13 +5,13 @@
 return {
   "folke/todo-comments.nvim",
   cmd = { "TodoTrouble", "TodoTelescope" },
-  event = { "BufReadPost", "BufNewFile" },
+  event = "LazyFile",
   config = true,
   keys = {
     -- stylua: ignore start
     { "]t",         function() require("todo-comments").jump_next() end, desc = "Next special comment" },
     { "[t",         function() require("todo-comments").jump_prev() end, desc = "Prev special comment" },
-    { "<leader>st", "<cmd>TodoTelescope keywords=TODO<cr>",              desc = "TODO" },
+    { "<leader>sT", "<cmd>TodoTelescope keywords=TODO<cr>",              desc = "TODO" },
     { "<leader>xt", "<cmd>TodoTrouble keywords=TODO<cr>",                desc = "TODO" },
     { "<leader>xw", "<cmd>TodoTrouble keywords=WARN,WARNING,XXX<cr>",    desc = "WARN/WARNING/XXX" },
     { "<leader>xn", "<cmd>TodoTrouble keywords=NOTE,INFO<cr>",           desc = "NOTE/INFO" },
