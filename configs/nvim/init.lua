@@ -1,17 +1,12 @@
--- 1. Load config/options.lua
+-- 1. Load config/options.lua at first
 require("config.options")
 
--- 2. Install then load lazy.nvim
--- 3. Load all plugins which placed in lua/plugin by lazy.nvim just installed.
-require("load_lazy")
+-- 2. Install and load lazy.nvim
+--    Load all plugins which placed in lua/plugin by lazy.nvim just installed.
+require("lazy_load")
 
--- 4. Load configs. Include keymaps, autocmds and others.
+-- 3. Load configs. Include keymaps, autocmds and others.
 local Config = require("config")
-Config.colorscheme = "edge"
--- Config.colorscheme = "dracula"
--- Config.colorscheme = "onedark"
--- Config.colorscheme = "dracula"
--- Config.colorscheme = "gruvbox"
--- Config.colorscheme = "tokyonight"
--- Config.colorscheme = "catppuccin"
+Config.colorscheme = "pastelnight"
+-- Config.colorscheme = "edge"
 Config.setup()

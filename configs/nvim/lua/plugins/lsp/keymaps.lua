@@ -1,34 +1,37 @@
+-----------------------------
+----------------------------- Lsp Keymaps
+-----------------------------
 local M = {}
 
 ---@type PluginLspKeys
-M._keys = nil
+M.keys = nil
 
----@return (LazyKeys|{has?:string})[]
+-- Return a table contains all keys.
+-- @return (LazyKeys|{has?:string})[]
 function M.get()
-  local format = function()
-    require("plugins.lsp.format").format({ force = true })
-  end
-  if not M._keys then
-  ---@class PluginLspKeys
-    -- stylua: ignore
-    M._keys =  {
-      { "<leader>cd", vim.diagnostic.open_float, desc = "Diagnostic" },
-      { "<leader>cl", "<cmd>LspInfo<cr>", desc = "Lsp info" },
-      { "gd", function() require("telescope.builtin").lsp_definitions({ reuse_win = true }) end, desc = "Goto definition", has = "definition" },
-      { "gr", "<cmd>Telescope lsp_references<cr>", desc = "Goto references" },
-      { "gD", vim.lsp.buf.declaration, desc = "Goto declaration" },
-      { "gI", function() require("telescope.builtin").lsp_implementations({ reuse_win = true }) end, desc = "Goto implementation" },
-      { "gy", function() require("telescope.builtin").lsp_type_definitions({ reuse_win = true }) end, desc = "Goto T[y]pe Definition" },
-      { "K", vim.lsp.buf.hover, desc = "Hover" },
-      { "gK", vim.lsp.buf.signature_help, desc = "Signature help", has = "signatureHelp" },
-      { "]d", M.diagnostic_goto(true), desc = "Next Diagnostic" },
-      { "[d", M.diagnostic_goto(false), desc = "Prev Diagnostic" },
-      { "]e", M.diagnostic_goto(true, "ERROR"), desc = "Next Error" },
-      { "[e", M.diagnostic_goto(false, "ERROR"), desc = "Prev Error" },
-      { "]w", M.diagnostic_goto(true, "WARN"), desc = "Next Warning" },
-      { "[w", M.diagnostic_goto(false, "WARN"), desc = "Prev Warning" },
-      { "<leader>cf", format, desc = "Format document", has = "formatting" },
-      { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" }, has = "codeAction" },
+  if not M.keys then
+    -- stylua: ignore start
+    ---@class PluginLspKeys
+    M.keys = {
+      { "<leader>cd", vim.diagnostic.open_float,                                                              desc = "Diagnostic" },
+      { "<leader>cl", "<cmd>LspInfo<cr>",                                                                     desc = "Lsp info" },
+      { "gd",         function() require("telescope.builtin").lsp_definitions({ reuse_win = true }) end,      desc = "Goto definition",        has = "definition", },
+      { "gr",         "<cmd>Telescope lsp_references<cr>",                                                    desc = "Goto references" },
+      { "gD",         vim.lsp.buf.declaration,                                                                desc = "Goto declaration" },
+      { "gI",         function() require("telescope.builtin").lsp_implementations({ reuse_win = true }) end,  desc = "Goto implementation", },
+      { "gy",         function() require("telescope.builtin").lsp_type_definitions({ reuse_win = true }) end, desc = "Goto T[y]pe Definition", },
+      { "K",          vim.lsp.buf.hover,                                                                      desc = "Hover" },
+      { "gK",         vim.lsp.buf.signature_help,                                                             desc = "Signature help",         has = "signatureHelp" },
+      { "]d",         M.diagnostic_goto(true),                                                                desc = "Next diagnostic" },
+      { "[d",         M.diagnostic_goto(false),                                                               desc = "Prev diagnostic" },
+      { "]e",         M.diagnostic_goto(true, "ERROR"),                                                       desc = "Next error" },
+      { "[e",         M.diagnostic_goto(false, "ERROR"),                                                      desc = "Prev error" },
+      { "]w",         M.diagnostic_goto(true, "WARN"),                                                        desc = "Next warning" },
+      { "[w",         M.diagnostic_goto(false, "WARN"),                                                       desc = "Prev warning" },
+      { "<leader>cf", function() require("plugins.lsp.format").format({ force = true }) end,                  desc = "Format" },
+      { "<leader>cr", vim.lsp.buf.rename,                                                                     desc = "Rename",                 has = "rename" },
+      { "<leader>ca", vim.lsp.buf.code_action,                                                                desc = "Code action",            mode = { "n", "v" },  has = "codeAction" },
+      -- stylua: ignore end
       {
         "<leader>cA",
         function()
@@ -43,30 +46,21 @@ function M.get()
         end,
         desc = "Source Action",
         has = "codeAction",
-      }
+      },
     }
-    if require("util").has("inc-rename.nvim") then
-      M._keys[#M._keys + 1] = {
-        "<leader>cr",
-        function()
-          local inc_rename = require("inc_rename")
-          return ":" .. inc_rename.config.cmd_name .. " " .. vim.fn.expand("<cword>")
-        end,
-        expr = true,
-        desc = "Rename",
-        has = "rename",
-      }
-    else
-      M._keys[#M._keys + 1] = { "<leader>cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" }
-    end
   end
-  return M._keys
+  return M.keys
 end
 
+-- The shortcut key of a method is registered only when the lsp client supports
+-- the method. This function is used to determine whether a specific lsp client
+-- supports a certain method.
 ---@param method string
-function M.has(buffer, method)
+function M.support_method(buffer, method)
+  -- Make sure method equals "xxx/${method}"
   method = method:find("/") and method or "textDocument/" .. method
-  local clients = vim.lsp.get_active_clients({ bufnr = buffer })
+
+  local clients = vim.lsp.get_clients({ bufnr = buffer })
   for _, client in ipairs(clients) do
     if client.supports_method(method) then
       return true
@@ -75,9 +69,11 @@ function M.has(buffer, method)
   return false
 end
 
-function M.resolve(buffer)
+-- Get keymaps which could be used directly by vim api.
+function M.resolve()
   local Keys = require("lazy.core.handler.keys")
-  local keymaps = {} ---@type table<string,LazyKeys|{has?:string}>
+  --@type table<string,LazyKeys|{has?:string}>
+  local keymaps = {}
 
   local function add(keymap)
     local keys = Keys.parse(keymap)
@@ -87,37 +83,37 @@ function M.resolve(buffer)
       keymaps[keys.id] = keys
     end
   end
+
+  -- Add default keymaps.
   for _, keymap in ipairs(M.get()) do
     add(keymap)
-  end
-
-  local opts = require("util").opts("nvim-lspconfig")
-  local clients = vim.lsp.get_active_clients({ bufnr = buffer })
-  for _, client in ipairs(clients) do
-    local maps = opts.servers[client.name] and opts.servers[client.name].keys or {}
-    for _, keymap in ipairs(maps) do
-      add(keymap)
-    end
   end
   return keymaps
 end
 
-function M.on_attach(client, buffer)
+-- Set keymaps.
+function M.set_keymap(_, buffer)
   local Keys = require("lazy.core.handler.keys")
-  local keymaps = M.resolve(buffer)
+  local keymaps = M.resolve()
 
   for _, keys in pairs(keymaps) do
-    if not keys.has or M.has(buffer, keys.has) then
+    if not keys.has or M.support_method(buffer, keys.has) then
       local opts = Keys.opts(keys)
-      ---@diagnostic disable-next-line: no-unknown
+      ---@diagnostic disable-next-line: inject-field
       opts.has = nil
+
+      ---@diagnostic disable-next-line: inject-field
       opts.silent = opts.silent ~= false
+
+      ---@diagnostic disable-next-line: inject-field
       opts.buffer = buffer
       vim.keymap.set(keys.mode or "n", keys.lhs, keys.rhs, opts)
     end
   end
 end
 
+-- If next == true, then goto next diagnostic. Otherwise goto previous diagnostic.
+-- The serverity identifies diagnostic level.
 function M.diagnostic_goto(next, severity)
   local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
   severity = severity and vim.diagnostic.severity[severity] or nil

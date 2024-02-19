@@ -1,29 +1,29 @@
--- Finds and lists all of the TODO, HACK, BUG, etc comment
--- in your project and loads them into a browsable list.
 -- https://github.com/folke/todo-comments.nvim
+-- Finds and lists all of the TODO, HACK, BUG, etc comment in your project and
+-- loads them into a browsable list.
 
 return {
   "folke/todo-comments.nvim",
   cmd = { "TodoTrouble", "TodoTelescope" },
-  event = { "BufReadPost", "BufNewFile" },
+  event = "LazyFile",
   config = true,
-    -- stylua: ignore
-    keys = {
-      { "]t", function() require("todo-comments").jump_next() end, desc = "Next todo comment" },
-      { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous todo comment" },
-      { "<leader>xt", "<cmd>TodoTrouble<cr>", desc = "Todo (Trouble)" },
-      { "<leader>xT", "<cmd>TodoTrouble keywords=TODO,FIX,FIXME<cr>", desc = "Todo/Fix/Fixme (Trouble)" },
-      { "<leader>st", "<cmd>TodoTelescope<cr>", desc = "Todo" },
-      { "<leader>sT", "<cmd>TodoTelescope keywords=TODO,FIX,FIXME<cr>", desc = "Todo/Fix/Fixme" },
-    },
+  keys = {
+    -- stylua: ignore start
+    { "]t",         function() require("todo-comments").jump_next() end, desc = "Next special comment" },
+    { "[t",         function() require("todo-comments").jump_prev() end, desc = "Prev special comment" },
+    { "<leader>sT", "<cmd>TodoTelescope keywords=TODO<cr>",              desc = "TODO" },
+    { "<leader>xt", "<cmd>TodoTrouble keywords=TODO<cr>",                desc = "TODO" },
+    { "<leader>xw", "<cmd>TodoTrouble keywords=WARN,WARNING,XXX<cr>",    desc = "WARN/WARNING/XXX" },
+    { "<leader>xn", "<cmd>TodoTrouble keywords=NOTE,INFO<cr>",           desc = "NOTE/INFO" },
+    { "<leader>xf", "<cmd>TodoTrouble keywords=FIX,FIXME,BUG,ISSUE<cr>", desc = "BUG/FIX/FIXME/ISSUE" },
+    -- stylua: ignore end
+  },
   opts = {
-    -- keywords recognized as todo comments
-    keywords = {
+    keywords = { -- keywords recognized as todo comments
       FIX = {
         icon = " ", -- icon used for the sign, and in search results
         color = "error", -- can be a hex color, or a named color (see below)
-        alt = { "FIXME", "BUG", "FIXIT", "ISSUE" }, -- a set of other keywords that all map to this FIX keywords
-        -- signs = false, -- configure signs for some keywords individually
+        alt = { "FIXME", "BUG", "ISSUE" }, -- a set of other keywords that all map to this FIX keywords
       },
       TODO = { icon = " ", color = "info" },
       HACK = { icon = " ", color = "warning" },

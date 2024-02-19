@@ -1,16 +1,20 @@
 -----------------------------------------------------------------
 ---                          Autocmds                         ---
 -----------------------------------------------------------------
--- This file is automatically loaded by config.init.
+-- This file is automatically loaded by config/init.lua
 
 local function augroup(name)
-  return vim.api.nvim_create_augroup("DailyVim_" .. name, { clear = true })
+  return vim.api.nvim_create_augroup("dailyvim_" .. name, { clear = true })
 end
 
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
   group = augroup("checktime"),
-  command = "checktime",
+  callback = function()
+    if vim.o.buftype ~= "nofile" then
+      vim.cmd('checktime')
+    end
+  end
 })
 
 -- Highlight on yank
@@ -25,19 +29,22 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.api.nvim_create_autocmd({ "VimResized" }, {
   group = augroup("resize_splits"),
   callback = function()
+    local current_tab = vim.fn.tabpagenr()
     vim.cmd("tabdo wincmd =")
+    vim.cmd("tabnext " .. current_tab)
   end,
 })
 
 -- go to last loc when opening a buffer
 vim.api.nvim_create_autocmd("BufReadPost", {
   group = augroup("last_loc"),
-  callback = function()
+  callback = function(event)
     local exclude = { "gitcommit" }
-    local buf = vim.api.nvim_get_current_buf()
-    if vim.tbl_contains(exclude, vim.bo[buf].filetype) then
+    local buf = event.buf
+    if vim.tbl_contains(exclude, vim.bo[buf].filetype) or vim.b[buf].dailyvim_last_loc then
       return
     end
+    vim.b[buf].dailyvim_last_loc = true
     local mark = vim.api.nvim_buf_get_mark(buf, '"')
     local lcount = vim.api.nvim_buf_line_count(buf)
     if mark[1] > 0 and mark[1] <= lcount then
@@ -56,6 +63,7 @@ vim.api.nvim_create_autocmd("FileType", {
     "man",
     "notify",
     "qf",
+    "query",
     "spectre_panel",
     "startuptime",
     "tsplayground",
@@ -63,6 +71,7 @@ vim.api.nvim_create_autocmd("FileType", {
     "checkhealth",
     "neotest-summary",
     "neotest-output-panel",
+    "toggleterm"
   },
   callback = function(event)
     vim.bo[event.buf].buflisted = false
@@ -89,5 +98,17 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     end
     local file = vim.loop.fs_realpath(event.match) or event.match
     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
+  end,
+})
+
+-- When you create a new line from a comment line, the comment is automatically
+-- added to the next newly created line. The autocmd below turns this off.
+-- Don't automatically add comments to new lines via 'o' but enables '<enter>'.
+-- Note that in nvim you need to turn this function off via autocmd.
+-- For more details: https://neovim.io/doc/user/change.html#formatting
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+  pattern = "*",
+  callback = function()
+    vim.opt.formatoptions = vim.opt.formatoptions - { "o" }
   end,
 })

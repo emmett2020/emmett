@@ -1,16 +1,23 @@
--- Auto completion.
 -- https://github.com/hrsh7th/nvim-cmp
--- You may reference to this document:
--- https://github.com/hrsh7th/nvim-cmp/wiki/Example-mappings
+-- Wiki: https://github.com/hrsh7th/nvim-cmp/wiki
+-- nvim-cmp: Automatic completion.
 
-local Config = require("config")
+-- Currently used sources:
+-- 1.lsp        https://github.com/hrsh7th/cmp-nvim-lsp
+-- 2.buffer     https://github.com/hrsh7th/cmp-buffer
+-- 3.path       https://github.com/hrsh7th/cmp-path
+-- 4.lua        https://github.com/saadparwaiz1/cmp_luasnip
+--              https://github.com/L3MON4D3/LuaSnip
+-- More sources will be found at:
+--              https://github.com/hrsh7th/nvim-cmp/wiki/List-of-sources
 
 return {
   "hrsh7th/nvim-cmp",
-  -- version = "*",
-  -- The latested version bug: enter <tab> will show <tab> character but not completion
-  -- commit = "51f1e11a89ec701221877532ee1a23557d291dd5",
-  event = "InsertEnter",
+
+  -- 1.cmp-nvim-lsp: Serve more capabilities than default lsp client.
+  -- 2.cmp-buffer:  have everything nicely collected in a single completion popup.
+  -- 3.cmp-path:    paths of files and folders.
+  -- 4.cmp_luasnip: luasnip completion source for nvim-cmp.
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-buffer",
@@ -18,6 +25,10 @@ return {
     "saadparwaiz1/cmp_luasnip",
   },
 
+  -- Suggested usage by nvim-cmp.
+  event = { "InsertEnter" },
+
+  -- Real options.
   opts = function()
     local cmp = require("cmp")
     local defaults = require("cmp.config.default")()
@@ -35,19 +46,32 @@ return {
       completion = {
         completeopt = "menu,menuone,noinsert",
       },
+
+      -- See the linakge above.
+      sources = cmp.config.sources({
+        { name = "nvim_lsp" },
+        { name = "buffer" },
+        { name = "path" },
+        { name = "luasnip" },
+      }),
+
+      -- Enable luasnip.
+      -- The detailed configuration of luasnip will be found at luanip.lua
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
         end,
       },
+
+      -- Set keys. Only uses these three keys is enough.
       mapping = cmp.mapping.preset.insert({
         -- Use <Tab> to navigate between hint table.
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_next_item()
-          -- You could replace the expand_or_jumpable() calls
-          -- with expand_or_locally_jumpable()
-          -- the way you will only jump inside the snippet region
+            -- You could replace the expand_or_jumpable() calls
+            -- with expand_or_locally_jumpable()
+            -- the way you will only jump inside the snippet region
           elseif luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
           elseif has_words_before() then
@@ -57,6 +81,7 @@ return {
           end
         end, { "i", "s" }),
 
+        -- Backward.
         ["<S-Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_prev_item()
@@ -66,34 +91,17 @@ return {
             fallback()
           end
         end, { "i", "s" }),
-        ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-        ["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-Space>"] = cmp.mapping.complete(),
-        ["<C-e>"] = cmp.mapping.abort(),
 
         -- Accept currently selected item.
         -- Set `select` to `false` to only confirm explicitly selected items.
         ["<CR>"] = cmp.mapping.confirm({ select = true }),
-
-        -- Accept currently selected item.
-        -- Set `select` to `false` to only confirm explicitly selected items.
-        ["<S-CR>"] = cmp.mapping.confirm({
-          behavior = cmp.ConfirmBehavior.Replace,
-          select = true,
-        }),
       }),
 
-      sources = cmp.config.sources({
-        { name = "nvim_lsp" },
-        { name = "luasnip" },
-        { name = "buffer" },
-        { name = "path" },
-      }),
-
+      -- Refine the apperance of nvim-cmp.
       formatting = {
-        -- You can also choose web-dev-icons.
+        -- Icons
         format = function(_, item)
-          local icons = Config.icons.kinds
+          local icons = require("config").icons.kinds
           if icons[item.kind] then
             item.kind = icons[item.kind] .. item.kind
           end

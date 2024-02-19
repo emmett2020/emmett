@@ -21,7 +21,7 @@ function M.get_root()
   local roots = {}
 
   if path then
-    for _, client in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
+    for _, client in pairs(vim.lsp.get_clients({ bufnr = 0 })) do
       local workspace = client.config.workspace_folders
       local paths = workspace and vim.tbl_map(function(ws)
         return vim.uri_to_fname(ws.uri)
@@ -72,13 +72,6 @@ function M.has(plugin)
   return require("lazy.core.config").spec.plugins[plugin] ~= nil
 end
 
-function M.fg(name)
-  ---@type {foreground?:number}?
-  local hl = vim.api.nvim_get_hl and vim.api.nvim_get_hl(0, { name = name }) or vim.api.nvim_get_hl_id_by_name(name)
-  local fg = hl and hl.fg or hl.foreground
-  return fg and { fg = string.format("#%06x", fg) }
-end
-
 ---@param fn fun()
 function M.on_very_lazy(fn)
   vim.api.nvim_create_autocmd("User", {
@@ -89,93 +82,14 @@ function M.on_very_lazy(fn)
   })
 end
 
+-- Get "opts" of a specific plugin.
 ---@param name string
-function M.opts(name)
+function M.opts_of_plugin(name)
   local plugin = require("lazy.core.config").plugins[name]
   if not plugin then
     return {}
   end
-  local Plugin = require("lazy.core.plugin")
-  return Plugin.values(plugin, "opts", false)
-end
-
--- This will return a function that calls telescope.
--- The cwd value default equals to util.get_root().
--- for `files`, git_files or find_files will be chosen depending on .git
-function M.telescope(builtin, opts)
-  local params = { builtin = builtin, opts = opts }
-  return function()
-    builtin = params.builtin
-    opts = params.opts
-    opts = vim.tbl_deep_extend("force", { cwd = M.get_root() }, opts or {})
-    if builtin == "files" then
-      if vim.loop.fs_stat((opts.cwd or vim.loop.cwd()) .. "/.git") then
-        opts.show_untracked = true
-        builtin = "git_files"
-      else
-        builtin = "find_files"
-      end
-    end
-    if opts.cwd and opts.cwd ~= vim.loop.cwd() then
-      opts.attach_mappings = function(_, map)
-        map("i", "<a-c>", function()
-          local action_state = require("telescope.actions.state")
-          local line = action_state.get_current_line()
-          M.telescope(
-            params.builtin,
-            vim.tbl_deep_extend("force", {}, params.opts or {}, { cwd = false, default_text = line })
-          )()
-        end)
-        return true
-      end
-    end
-
-    require("telescope.builtin")[builtin](opts)
-  end
-end
-
----@type table<string,LazyFloat>
-local terminals = {}
-
--- Opens a floating terminal (interactive by default)
----@param cmd? string[]|string
----@param opts? LazyCmdOptions|{interactive?:boolean, esc_esc?:false, ctrl_hjkl?:false}
-function M.float_term(cmd, opts)
-  opts = vim.tbl_deep_extend("force", {
-    ft = "lazyterm",
-    size = { width = 0.9, height = 0.9 },
-  }, opts or {}, { persistent = true })
-  ---@cast opts LazyCmdOptions|{interactive?:boolean, esc_esc?:false}
-
-  local termkey = vim.inspect({ cmd = cmd or "shell", cwd = opts.cwd, env = opts.env, count = vim.v.count1 })
-
-  if terminals[termkey] and terminals[termkey]:buf_valid() then
-    -- Open already exists terminal.
-    terminals[termkey]:toggle()
-  else
-    -- Create a new terminal.
-    terminals[termkey] = require("lazy.util").float_term(cmd, opts)
-    local buf = terminals[termkey].buf
-    vim.b[buf].lazyterm_cmd = cmd
-    if opts.esc_esc == false then
-      vim.keymap.set("t", "<esc>", "<esc>", { buffer = buf, nowait = true })
-    end
-    if opts.ctrl_hjkl == false then
-      vim.keymap.set("t", "<c-h>", "<c-h>", { buffer = buf, nowait = true })
-      vim.keymap.set("t", "<c-j>", "<c-j>", { buffer = buf, nowait = true })
-      vim.keymap.set("t", "<c-k>", "<c-k>", { buffer = buf, nowait = true })
-      vim.keymap.set("t", "<c-l>", "<c-l>", { buffer = buf, nowait = true })
-    end
-
-    vim.api.nvim_create_autocmd("BufEnter", {
-      buffer = buf,
-      callback = function()
-        vim.cmd.startinsert()
-      end,
-    })
-  end
-
-  return terminals[termkey]
+  return require("lazy.core.plugin").values(plugin, "opts", false)
 end
 
 ---@param silent boolean?
@@ -286,8 +200,7 @@ end
 ---@param name string
 ---@param fn fun(name:string)
 function M.on_load(name, fn)
-  local Config = require("lazy.core.config")
-  if Config.plugins[name] and Config.plugins[name]._.loaded then
+  if require("lazy.core.config").plugins[name] and require("lazy.core.config").plugins[name]._.loaded then
     vim.schedule(function()
       fn(name)
     end)

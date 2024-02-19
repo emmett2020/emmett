@@ -1,295 +1,222 @@
-return {
-  -- lspconfig
-  {
-    "neovim/nvim-lspconfig",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      { "folke/neoconf.nvim", cmd = "Neoconf", config = false, dependencies = { "nvim-lspconfig" } },
-      { "folke/neodev.nvim", opts = {} },
-      "mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      {
-        "hrsh7th/cmp-nvim-lsp",
-        cond = function()
-          return require("util").has("nvim-cmp")
-        end,
+-- Must use a init.lua since some files in "plugin/" not meet "LazyPluginSpec"
+-- format, e.g. format.lua
+
+-- Installed or reused.
+local lsp_server = {
+  clangd = {
+    -- Set to false if you don't want this server to be installed by mason.
+    mason = true,
+    name = "mason-clangd",
+    cmd = {
+      "clangd",
+      "-j=8",
+      "--malloc-trim",
+      "--background-index",
+      "--pch-storage=memory",
+    },
+    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto", "cu", "su" },
+  },
+
+  lua_ls = {
+    settings = {
+      Lua = {
+        workspace = {
+          checkThirdParty = false,
+        },
+        completion = {
+          callSnippet = "Replace",
+        },
+        -- To suppress undefined global vim
+        diagnostics = {
+          globals = { "vim" },
+        },
       },
     },
+  },
+}
+
+return {
+  -- https://github.com/neovim/nvim-lspconfig
+  -- Some plugins are installed in lspconfig in the following order
+  --    neodev
+  --    format
+  --    keymap
+  --    mason
+  --    mason-lspconfig
+  --    nvim-lightbulb
+  {
+    "neovim/nvim-lspconfig",
+    -- event = { "BufReadPre", "BufNewFile" },
+    event = "LazyFile",
 
     ---@class PluginLspOpts
     opts = {
-      -- options for vim.diagnostic.config()
-      diagnostics = {
+      servers = lsp_server,
+
+      diagnostics = {             -- The options for vim.diagnostic.config()
         underline = true,
-
-        -- Update diagnostics in Insert mode (if false, diagnostics are updated on InsertLeave.
-        update_in_insert = false,
-
+        update_in_insert = false, -- Update diagnostics in Insert mode.
         virtual_text = {
-          -- Amount of empty spaces inserted at the beginning of the virtual text
-          spacing = 2,
-
-          -- Use "if_many" to only show sources if there is
-          -- more than one diagnostic source in the buffer.
-          source = "if_many",
           prefix = "󰇥",
+          spacing = 2,        -- Amount of empty spaces inserted at the beginning
+          source = "if_many", -- Use "if_many" to only show sources if there is more than one diagnostic source in the buffer.
         },
         severity_sort = true,
+        float = {
+          border = "single",
+        },
       },
 
-      -- Enable this to enable the builtin LSP inlay hints on Neovim >= 0.10.0
-      -- Be aware that you also will need to properly configure your LSP server to
-      -- provide the inlay hints.
       inlay_hints = {
         enabled = false,
       },
 
-      -- add any global capabilities here
-      capabilities = {},
-
-      -- Automatically format on save
-      autoformat = true,
-
-      -- Enable this to show formatters used in a notification
-      -- Useful for debugging formatter issues
-      format_notify = true,
-
-      -- options for vim.lsp.buf.format
-      -- `bufnr` and `filter` is handled by the DailyVim formatter,
-      -- but can be also overridden when specified
-      format = {
+      autoformat = true,   -- Automatically format on save
+      format = {           -- This option will be used in format.lua
         formatting_options = nil,
-
-        -- Time in milliseconds to block for formatting requests.
-        -- No effect if async=true
-        timeout_ms = 2000,
-
-        -- If true the method won't block. Defaults to false.
-        -- Editing the buffer while formatting asynchronous can lead to unexpected changes.
-        async = false,
-      },
-
-      -- LSP Server Settings
-      ---@type lspconfig.options
-      ---@diagnostic disable
-      servers = {
-        clangd = {
-          -- set to false if you don't want this server to be installed with mason
-          mason = true,
-
-          name = "mason-clangd",
-          cmd = {
-            "clangd",
-            "-j=8",
-            "--malloc-trim",
-            "--background-index",
-            "--pch-storage=memory",
-          },
-          filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto", "cu", "su" },
-        },
-
-        -- jsonls = {},
-        lua_ls = {
-          -- Use this to add any additional keymaps for specific lsp servers
-          ---@type LazyKeys[]
-          -- keys = {},
-
-          settings = {
-            Lua = {
-              workspace = {
-                checkThirdParty = false,
-              },
-              completion = {
-                callSnippet = "Replace",
-              },
-            },
-          },
-        },
-      },
-      ---@diagnostic enable
-
-      setup = {
-        -- example to setup with typescript.nvim
-        -- tsserver = function(_, opts)
-        --   require("typescript").setup({ server = opts })
-        --   return true
-        -- end,
+        timeout_ms = 2000, -- Time in milliseconds to block for formatting requests.
       },
     },
 
-    ---@param opts PluginLspOpts
+    ---@param opts PluginLspOpts which we configured above.
     config = function(_, opts)
-      local Util = require("util")
+      require("neodev").setup({})
 
-      -- Neoconf.
-      if Util.has("neoconf.nvim") then
-        local plugin = require("lazy.core.config").spec.plugins["neoconf.nvim"]
-        require("neoconf").setup(require("lazy.core.plugin").values(plugin, "opts", false))
-      end
-
-      -- Format.
+      -- Setup formatting and keymaps.
       require("plugins.lsp.format").setup(opts)
-      -- setup formatting and keymaps
-      Util.on_attach(function(client, buffer)
-        require("plugins.lsp.keymaps").on_attach(client, buffer)
+      require("util").on_attach(function(client, buffer)
+        require("plugins.lsp.keymaps").set_keymap(client, buffer)
       end)
 
+      -- Update keymaps when capability changes.
+      -- Set keymap in the initialization of lsp server and client.
+      -- The client/registerCapability request is sent from the server to the
+      -- client to register for a new capability on the client side. Not all
+      -- clients need to support dynamic capability registration.
+      -- This request is used during the initial communication between the lsp
+      -- server and the client.
       local old_register_capability = vim.lsp.handlers["client/registerCapability"]
-
-      ---@diagnostic disable-next-line
       vim.lsp.handlers["client/registerCapability"] = function(err, res, ctx)
         local ret = old_register_capability(err, res, ctx)
-        local client_id = ctx.client_id
-        ---@type lsp.Client
-        local client = vim.lsp.get_client_by_id(client_id)
         local buffer = vim.api.nvim_get_current_buf()
-        require("plugins.lsp.keymaps").on_attach(client, buffer)
+        require("plugins.lsp.keymaps").set_keymap(_, buffer)
         return ret
       end
 
-      -- diagnostics icon
+      -- Diagnostics icon
       for name, icon in pairs(require("config").icons.diagnostics) do
         name = "DiagnosticSign" .. name
         vim.fn.sign_define(name, { text = icon, texthl = name, numhl = "" })
       end
 
-      -- inlay hint
+      -- Diagnostics
+      vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
+
+      -- Inlay hint
       local inlay_hint = vim.lsp.buf.inlay_hint or vim.lsp.inlay_hint
       if opts.inlay_hints.enabled and inlay_hint then
-        Util.on_attach(function(client, buffer)
+        require("util").on_attach(function(client, buffer)
           if client.supports_method("textDocument/inlayHint") then
             inlay_hint(buffer, true)
           end
         end)
       end
 
-      -- virtual text
+      -- Virtual text
       if type(opts.diagnostics.virtual_text) == "table" and opts.diagnostics.virtual_text.prefix == "icons" then
-        opts.diagnostics.virtual_text.prefix = vim.fn.has("nvim-0.10.0") == 0 and "●"
-          or function(diagnostic)
-            local icons = require("config").icons.diagnostics
-            for d, icon in pairs(icons) do
-              if diagnostic.severity == vim.diagnostic.severity[d:upper()] then
-                return icon
-              end
+        opts.diagnostics.virtual_text.prefix = function(diagnostic)
+          local icons = require("config").icons.diagnostics
+          for d, icon in pairs(icons) do
+            if diagnostic.severity == vim.diagnostic.severity[d:upper()] then
+              return icon
             end
           end
+        end
       end
 
-      vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
-
+      -- Server and capabilities.
       local servers = opts.servers
-      local has_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
       local capabilities = vim.tbl_deep_extend(
         "force",
         {},
         vim.lsp.protocol.make_client_capabilities(),
-        has_cmp and cmp_nvim_lsp.default_capabilities() or {},
-        opts.capabilities or {}
+        require("cmp_nvim_lsp").default_capabilities() or {}
       )
+      -- The client capabilities aren't be nil table.
+      assert(type(capabilities) ~= "nil")
 
+      -- Setup a specific server by lspconfig.
       local function setup(server)
         local server_opts = vim.tbl_deep_extend("force", {
           capabilities = vim.deepcopy(capabilities),
         }, servers[server] or {})
 
-        if opts.setup[server] then
-          if opts.setup[server](server, server_opts) then
-            return
-          end
-        elseif opts.setup["*"] then
-          if opts.setup["*"](server, server_opts) then
-            return
-          end
-        end
         require("lspconfig")[server].setup(server_opts)
       end
 
-      -- get all the servers that are available thourgh mason-lspconfig
-      local have_mason, mlsp = pcall(require, "mason-lspconfig")
-      local all_mslp_servers = {}
-      if have_mason then
-        all_mslp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
-      end
 
-      ---@type string[]
-      local ensure_installed = {}
-      for server, server_opts in pairs(servers) do
-        if server_opts then
-          server_opts = server_opts == true and {} or server_opts
-          -- run manual setup if mason=false or if this is a server that cannot be installed with mason-lspconfig
-          if server_opts.mason == false or not vim.tbl_contains(all_mslp_servers, server) then
-            setup(server)
-          else
-            ensure_installed[#ensure_installed + 1] = server
-          end
-        end
-      end
-
-      if have_mason then
-        mlsp.setup({ ensure_installed = ensure_installed, handlers = { setup } })
-      end
-
-      if Util.lsp_get_config("denols") and Util.lsp_get_config("tsserver") then
-        local is_deno = require("lspconfig.util").root_pattern("deno.json", "deno.jsonc")
-        Util.lsp_disable("tsserver", is_deno)
-        Util.lsp_disable("denols", function(root_dir)
-          return not is_deno(root_dir)
-        end)
-      end
+      -- The mason must be setup ahead of mason-lspconfig.
+      -- The ensure installed server will be installed here.
+      -- mason.nvim is optimized to load as little as possible during setup.
+      -- Lazy-loading the plugin, or somehow deferring the setup, is not
+      -- recommended.
+      require("mason").setup()
+      require("mason-lspconfig").setup({ handlers = { setup } })
+      require("nvim-lightbulb").setup({
+        autocmd = { enabled = true },
+        sign = { text = "" },
+      })
     end,
   },
 
-  -- formatters
+  -- https://github.com/williamboman/mason.nvim
+  -- A package manager.
+  -- Setup this plugin at lspconfig.
   {
-    "jose-elias-alvarez/null-ls.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = { "mason.nvim" },
-    opts = function()
-      local nls = require("null-ls")
-      return {
-        root_dir = require("null-ls.utils").root_pattern(".null-ls-root", ".neoconf.json", "Makefile", ".git"),
-        sources = {
-          nls.builtins.formatting.fish_indent,
-          nls.builtins.diagnostics.fish,
-          nls.builtins.formatting.stylua,
-          nls.builtins.formatting.shfmt,
-          -- nls.builtins.diagnostics.flake8,
-        },
-      }
-    end,
-  },
-
-  -- cmdline tools and lsp servers
-  {
-
     "williamboman/mason.nvim",
     cmd = "Mason",
     keys = { { "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" } },
     build = ":MasonUpdate",
-    opts = {
-      ensure_installed = {
-        "stylua",
-        "shfmt",
-      },
-    },
-    ---@param opts MasonSettings | {ensure_installed: string[]}
-    config = function(_, opts)
-      require("mason").setup(opts)
-      local mr = require("mason-registry")
-      local function ensure_installed()
-        for _, tool in ipairs(opts.ensure_installed) do
-          local p = mr.get_package(tool)
-          if not p:is_installed() then
-            p:install()
-          end
-        end
-      end
-      if mr.refresh then
-        mr.refresh(ensure_installed)
-      else
-        ensure_installed()
-      end
-    end,
+  },
+
+  -- https://github.com/williamboman/mason-lspconfig.nvim
+  -- Extension to mason.nvim that makes it easier to use lspconfig with
+  -- mason.nvim.
+  -- Setup this plugin at lspconfig.
+  {
+    "williamboman/mason-lspconfig.nvim",
+  },
+
+  -- https://github.com/folke/neodev.nvim
+  -- Full signature help, docs and completion for the nvim lua API.
+  -- Setup this plugin at lspconfig.
+  {
+    "folke/neodev.nvim",
+  },
+
+  -- https://github.com/jose-elias-alvarez/null-ls.nvim
+  -- A lua language server protocol server.
+  -- {
+  --   "jose-elias-alvarez/null-ls.nvim",
+  --   event = { "BufReadPre", "BufNewFile" },
+  --   opts = function()
+  --     local nls = require("null-ls")
+  --     return {
+  --       root_dir = require("null-ls.utils").root_pattern(".null-ls-root", ".neoconf.json", "Makefile", ".git"),
+  --       sources = {
+  --         nls.builtins.formatting.fish_indent,
+  --         nls.builtins.diagnostics.fish,
+  --         nls.builtins.formatting.stylua,
+  --         nls.builtins.formatting.shfmt,
+  --       },
+  --     }
+  --   end,
+  -- },
+
+  -- https://github.com/kosayoda/nvim-lightbulb
+  -- shows a lightbulb in the sign column whenever a textDocument/codeAction is available at the current cursor position.
+  -- We need this since since without this we cann't get a hint whehter current line has a code action.
+  {
+    "kosayoda/nvim-lightbulb",
   },
 }
