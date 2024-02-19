@@ -68,8 +68,8 @@ map({ "v", "n" }, "<leader>.", "<cmd>w<cr><esc>", { desc = "Save" })
 map("n", "<leader>bn", "<cmd>enew<cr>", { desc = "New buffer" })
 
 -- Goto buffer
-map("n", "<leader>bp", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
-map("n", "<leader>bn", "<cmd>bnext<cr>", { desc = "Next buffer" })
+map("n", "<leader>bh", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
+map("n", "<leader>bl", "<cmd>bnext<cr>", { desc = "Next buffer" })
 map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
 
