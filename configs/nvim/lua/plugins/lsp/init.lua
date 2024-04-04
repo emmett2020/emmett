@@ -10,7 +10,7 @@ local lsp_server = {
     cmd = {
       "clangd",
       "-j=8",
-      "--malloc-trim",
+      -- "--malloc-trim",
       "--background-index",
       "--pch-storage=memory",
     },

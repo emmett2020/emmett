@@ -58,7 +58,6 @@ opt.updatetime = 200               -- Save swap file and trigger CursorHold
 opt.wildmode = "longest:full,full" -- Command-line completion mode
 opt.winminwidth = 5                -- Minimum window width
 opt.wrap = false                   -- Disable line wrap
-opt.shell = "/usr/bin/bash"        -- Set default shell. Usually needed by :term command.
 opt.smoothscroll = true
 
 -- Allow specified keys that move the cursor left/right to move to the
