@@ -1,4 +1,9 @@
 # Changelog
+## 1.0.3 (2024-07-11)
+### Features
+1. Add pylsp for python files. Default use pylint and yapf.
+2. Add a new theme eldritch
+
 ## 1.0.2 (2024-04-04)
 ### Features
 1. Support neovide in MacOS.

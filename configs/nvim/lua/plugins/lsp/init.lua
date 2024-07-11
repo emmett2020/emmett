@@ -10,7 +10,7 @@ local lsp_server = {
     cmd = {
       "clangd",
       "-j=8",
-      -- "--malloc-trim",
+      "--malloc-trim",
       "--background-index",
       "--pch-storage=memory",
     },
@@ -33,6 +33,34 @@ local lsp_server = {
       },
     },
   },
+
+  pylsp = {
+    settings = {
+      pylsp = {
+        plugins = {
+          -- formatter options
+          black = { enabled = false },    -- Too strict
+          autopep8 = { enabled = false }, -- Too Old
+          yapf = { enabled = true },      -- Enough
+
+          -- linter options
+          pylint = { enabled = true, executable = "pylint" },
+          pyflakes = { enabled = false },
+          pycodestyle = { enabled = false },
+
+          -- type checker
+          pylsp_mypy = { enabled = false },
+
+          -- auto-completion options
+          jedi_completion = { fuzzy = false },
+
+          -- import sorting
+          pyls_isort = { enabled = false },
+        },
+      },
+    },
+  },
+
 }
 
 return {
