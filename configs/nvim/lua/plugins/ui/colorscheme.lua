@@ -154,4 +154,10 @@ return {
     lazy = true,
     dependencies = { "rktjmp/lush.nvim" },
   },
+
+  {
+    "eldritch-theme/eldritch.nvim",
+    lazy = true,
+    dependencies = { "rktjmp/lush.nvim" },
+  },
 }
