@@ -1,24 +1,24 @@
 FROM ubuntu
-LABEL maintainer="xiaoming2020"
+LABEL maintainer="emmettzhang"
 
 # 1. Make the entire build process non-interactive
 ARG DEBIAN_FRONTEND=noninteractive
 
-# 2.Build a separate layer of core tool images. 
+# 2.Build a separate layer of core tool images.
 #   Tools are arranged alphabetically for easy maintenance
 RUN echo "**************Core Frame******************" \
     && apt-get update \
     && apt-get install -y \
     	build-essential \
-    	cargo \ 
-    	clang-format \ 
+    	cargo \
+    	clang-format \
     	cmake \
-    	cpplint \ 
+    	cpplint \
     	curl \
     	gdb \
     	gnutls-bin \
     	git \
-    	git-lfs \ 
+    	git-lfs \
     	g++ \
     	iputils-ping \
     	libboost-all-dev \
@@ -27,7 +27,7 @@ RUN echo "**************Core Frame******************" \
     	libssl-dev \
     	make \
     	net-tools \
-    	npm \ 
+    	npm \
     	nghttp2 \
 	    python3 \
     	python3-pip \
