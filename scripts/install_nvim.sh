@@ -43,8 +43,9 @@ function install_neovim() {
       exit 1
     fi
 
-    [[ -d "${NEOVIM_CONFIG_PATH}" ]] && rm -r ${NEOVIM_CONFIG_PATH}
-    cp -raf "${default_cfg}" "${NEOVIM_CONFIG_PATH}/"
+    [[ -d "${NEOVIM_CONFIG_PATH}" ]] && rm -r "${NEOVIM_CONFIG_PATH}"
+    mkdir -p "${NEOVIM_CONFIG_PATH}"
+    cp -r "${default_cfg}/"* "${NEOVIM_CONFIG_PATH}/"
 
     rm -rf ${tmp_path}
     ${NEOVIM_INSTALL_PATH}/bin/nvim --version
