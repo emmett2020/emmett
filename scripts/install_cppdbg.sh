@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 CPPDBG_VERSION="1.21.6"
 CPPDBG_LINK="https://github.com/microsoft/vscode-cpptools/releases/download/v${CPPDBG_VERSION}/cpptools-linux.vsix"

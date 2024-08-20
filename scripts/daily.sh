@@ -5,6 +5,7 @@
 # @introduction: Used for daily develop.
 # ##################################
 
+set -e
 DAILY_SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
 
 SYSTEM_TYPE="unknown"

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 LAZYGIT_VERSION="0.43.1"
 LAZYGIT_LINK="https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"

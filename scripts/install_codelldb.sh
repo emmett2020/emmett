@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 CODELLDB_VERSION="1.10.0"
 CODELLDB_INSTALL_PATH="$HOME/.local/share/nvim/codelldb/"

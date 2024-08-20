@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 RIPGREP_VERSION="14.1.0"
 RIPGREP_LINK="https://github.com/BurntSushi/ripgrep/releases/download/${RIPGREP_VERSION}/ripgrep_${RIPGREP_VERSION}_amd64.deb"

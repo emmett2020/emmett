@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 FDFIND_VERSION="10.1.0"
 FDFIND_LINK="https://github.com/sharkdp/fd/releases/download/v${FDFIND_VERSION}/fd_${FDFIND_VERSION}_amd64.deb"
