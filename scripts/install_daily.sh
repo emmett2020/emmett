@@ -7,7 +7,6 @@
 
 set -e
 
-
 DAILY_SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
 SYSTEM_TYPE="unknown"
 SYSTEM_VERSION=""
@@ -15,12 +14,10 @@ SYSTEM_ARCH=""
 
 # Get system informations.
 function get_system_info() {
-	if [ -n "$(uname -a | grep Ubuntu)" ]; then
+	if grep -q "Ubuntu" "/etc/os-release" ; then
 	  SYSTEM_TYPE="Ubuntu"
 	  SYSTEM_VERSION=$(cat /etc/os-release | grep VERSION_ID | awk -F\" '{print $2}')
 	  SYSTEM_ARCH=$(uname -m)
-	elif [ -n "$(uname -a | grep Darwin)" ]; then
-	  SYSTEM_TYPE="Macos"
 	fi
 }
 
@@ -49,36 +46,14 @@ function install_daily_commands() {
   bash "${DAILY_SCRIPT_DIR}"/install_zsh_plugins.sh
 }
 
-# This script only support enhanced getopt version.
-function check_getopt_version() {
-	getopt -T &>/dev/null
-	[ $? -ne 4 ] && {
-		echo "Only support enhanced getopt version."
-		exit 1
-	}
-}
-
 # Check that this script works in the current environment.
 function check_env() {
-	# check_getopt_version
   echo "${SYSTEM_TYPE}"
 	get_system_info
 	if [[ "$SYSTEM_TYPE" != "Ubuntu" ]]; then
 		echo "Only support Ubuntu currently."
 		exit 1
 	fi
-}
-
-function help() {
-	echo "------------------------------------------------------------"
-	echo "    Enjoy your life                                        "
-	echo "------------------------------------------------------------"
-	echo "Usage: daily.sh -i command"
-	echo "Examples:"
-	echo "1. daily.sh -i daily" echo "    Install stable version of daily commands collection."
-	echo "Options:"
-	echo "-h, --help      Display this usage."
-	echo "-i, --install   Install specific command."
 }
 
 function option_not_supported_now() {
@@ -93,43 +68,5 @@ function option_not_supported_now() {
 # Firstly, check local envrionment.
 check_env
 
-# Then, get user inputed options.
-# $@ is all command line parameters passed to the script.
-# -o is for short options like -v
-# -l is for long options with double dash like --version
-# the comma separates different long options
-options=$(getopt -o "+hi:" -l "install:,help" -- "$@")
-[[ $? -ne 0 ]] && {
-	echo "Try '$0 --help' for more information."
-	exit 1
-}
-eval set -- "$options"
-
-while true; do
-	case "$1" in
-	-i | --install)
-		COMMAND="$2"
-		shift 2
-		;;
-	-h | --help)
-		help
-		exit 0
-		;;
-	--)
-		shift
-		break
-		;;
-	*)
-		help
-		exit 1
-		;;
-	esac
-done
-
-
-# Last, execute command.
-if [[ "${COMMAND}" == "daily" ]]; then
-  install_daily_commands
-else
-  option_not_supported_now
-fi
+# Then, execute command.
+install_daily_commands
