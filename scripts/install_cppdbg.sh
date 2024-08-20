@@ -2,7 +2,7 @@
 set -e
 
 CPPDBG_VERSION="1.21.6"
-CPPDBG_LINK="https://github.com/microsoft/vscode-cpptools/releases/download/v${CPPDBG_VERSION}/cpptools-linux.vsix"
+CPPDBG_LINK="https://github.com/microsoft/vscode-cpptools/releases/tag/v${CPPDBG_VERSION}/cpptools-linux-x64.vsix"
 CPPDBG_INSTALL_PATH="$HOME/.local/share/nvim/cppdbg/"
 
 function exist_cppdbg() {
@@ -15,22 +15,26 @@ function exist_cppdbg() {
 	fi
 }
 
-function get_cppdbg_version() {
-  echo "We don't have a good way to get cppdbg version."
-}
-
 function install_cppdbg() {
-	local vsix_path="/tmp/cpptools-linux.vsix"
-	local unzip_path="/tmp/cppdbg/"
-  echo " Installing cppdbg ${CPPDBG_VERSION} ......"
-  echo " Link: ${CPPDBG_LINK}"
-  wget  ${CPPDBG_LINK} -O ${vsix_path}
-  unzip ${vsix_path} -d ${unzip_path}
-  [[ -d ${CPPDBG_INSTALL_PATH} ]] && rm ${CPPDBG_INSTALL_PATH}
-  mkdir -p ${CPPDBG_INSTALL_PATH}
+  echo "  Link: ${CPPDBG_LINK}"
+  echo "  cppdbg will be installed into: ${CPPDBG_INSTALL_PATH}"
+  echo -e "  ......\n\n"
+
+	local tmp_path="${HOME}/.tmp_install"
+	local unzip_path="${tmp_path}/cppdbg/"
+
+  [[ -d "${CPPDBG_INSTALL_PATH}" ]] && rm -r "${CPPDBG_INSTALL_PATH}"
+  mkdir -p "${CPPDBG_INSTALL_PATH}"
+  mkdir -p "${unzip_path}"
+
+  wget ${CPPDBG_LINK} -O "${tmp_path}/cpptools.vsix"
+  unzip "${tmp_path}/cpptools.vsix" -d ${unzip_path}
   mv "${unzip_path}/extension" "${CPPDBG_INSTALL_PATH}"
   chmod +x "${CPPDBG_INSTALL_PATH}/extension/debugAdapters/bin/OpenDebugAD7"
-  sudo rm ${vsix_path}
-  sudo rm -r ${unzip_path}
-	echo "Installed cppdbg $version."
+
+  rm -r ${tmp_path}
+  echo "  Installed cppdbg: ${CPPDBG_VERSION}"
 }
+
+# TODO: ERROR
+# install_cppdbg

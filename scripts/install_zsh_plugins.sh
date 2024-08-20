@@ -22,7 +22,6 @@ function install_zsh_plugins() {
   echo "  Other plugins used and supported by zsh: git z extract"
   echo -e "  ......\n\n"
 
-
   [[ -d "${POWERLEVEL10k_INSTALL_PATH}" ]]           &&  rm -r "${POWERLEVEL10k_INSTALL_PATH}"
   [[ -d "${ZSH_AUTOSUGGESTIONS_INSTALL_PATH}" ]]     &&  rm -r "${ZSH_AUTOSUGGESTIONS_INSTALL_PATH}"
   [[ -d "${ZSH_SYNTAX_HIGHLIGHTING_INSTALL_PATH}" ]] &&  rm -r "${ZSH_SYNTAX_HIGHLIGHTING_INSTALL_PATH}"

@@ -6,8 +6,8 @@
 # ##################################
 
 set -e
-DAILY_SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
 
+DAILY_SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
 SYSTEM_TYPE="unknown"
 SYSTEM_VERSION=""
 SYSTEM_ARCH=""
@@ -38,6 +38,14 @@ function exist_command() {
 # development. Versions of commands should be stable.
 function install_daily_commands() {
   bash "${DAILY_SCRIPT_DIR}"/install_cmake.sh
+  bash "${DAILY_SCRIPT_DIR}"/install_codelldb.sh
+  bash "${DAILY_SCRIPT_DIR}"/install_cppdbg.sh
+  bash "${DAILY_SCRIPT_DIR}"/install_fdfind.sh
+  bash "${DAILY_SCRIPT_DIR}"/install_lazygit.sh
+  bash "${DAILY_SCRIPT_DIR}"/install_nvim.sh
+  bash "${DAILY_SCRIPT_DIR}"/install_ripgrep.sh
+  bash "${DAILY_SCRIPT_DIR}"/install_zsh.sh
+  bash "${DAILY_SCRIPT_DIR}"/install_zsh_plugins.sh
 }
 
 # This script only support enhanced getopt version.
@@ -117,7 +125,7 @@ while true; do
 done
 
 # Last, execute command.
-if [[ ${COMMAND} == "daily" ]]; then
+if [[ "${COMMAND}" == "daily" ]]; then
   install_daily_commands
 else
   option_not_supported_now

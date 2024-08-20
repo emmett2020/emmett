@@ -13,7 +13,7 @@ function get_neovim_version() {
 }
 
 function install_neovim() {
-    local tmp_path="${HOME}/tmp"
+    local tmp_path="${HOME}/.tmp_install"
     [[ -d "${tmp_path}" ]] && rm -rf "${tmp_path}"
     [[ -d "${NEOVIM_INSTALL_PATH}" ]] && rm -rf "${NEOVIM_INSTALL_PATH}"
     mkdir -p "${tmp_path}"

@@ -35,6 +35,7 @@ RUN echo "**************Core Frame******************" \
     	         telnet              \
     	         tree                \
     	         tzdata              \
+    	         unzip               \
     	         vim                 \
     	         wget                \
     	         zsh

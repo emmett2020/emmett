@@ -10,12 +10,18 @@ function get_fdfind_version() {
 }
 
 function install_fdfind() {
-	local tmp="/tmp/fdfind.deb"
-  echo " Installing fdfind ${FDFIND_VERSION} ......"
-  echo " Link: ${RIPGREP_LINK}"
-  wget ${RIPGREP_LINK} -O ${tmp}
-  sudo dpkg -i ${tmp}
-  rm ${tmp}
+  echo "  Installing fdfind ${FDFIND_VERSION} (needs sudo permission) ......"
+  echo "  fdfind Link: ${FDFIND_LINK}"
+
+	local tmp="${HOME}/.tmp_install"
+  [[ -d "${tmp}" ]] && rm -r "${tmp}"
+  mkdir -p "${tmp}"
+
+  wget ${FDFIND_LINK} -O "${tmp}/fdfind.deb"
+  sudo dpkg -i "${tmp}/fdfind.deb"
+  rm -r ${tmp}
 	fd --version
 }
+
+install_fdfind
 
