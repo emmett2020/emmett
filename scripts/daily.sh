@@ -7,6 +7,7 @@
 
 set -e
 
+
 DAILY_SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
 SYSTEM_TYPE="unknown"
 SYSTEM_VERSION=""
@@ -59,7 +60,8 @@ function check_getopt_version() {
 
 # Check that this script works in the current environment.
 function check_env() {
-	check_getopt_version
+	# check_getopt_version
+  echo "${SYSTEM_TYPE}"
 	get_system_info
 	if [[ "$SYSTEM_TYPE" != "Ubuntu" ]]; then
 		echo "Only support Ubuntu currently."
@@ -123,6 +125,7 @@ while true; do
 		;;
 	esac
 done
+
 
 # Last, execute command.
 if [[ "${COMMAND}" == "daily" ]]; then
