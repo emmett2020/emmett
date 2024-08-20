@@ -43,21 +43,12 @@ RUN echo "**************Core Frame******************" \
 
 RUN echo "**************Next Frame******************" \
 # [emmett git repo]
-    && git clone https://github.com/emmett2020/emmett.git                  \
-# [terminal]
-    && chsh -s /bin/zsh                                                                                \
-    && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
-    && git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting   \
-    && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions   \
-    && git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k \
-    && rm -f ~/.zshrc && cp emmett/configs/daily ~/.zshrc \
-    && /bin/zsh -c "source ~/.zshrc"          \
-# [nvim]
-    && bash emmett/scripts/daily.sh -i daily  \
-    && mv emmett/configs/nvim ${HOME}/.config \
+    && git clone https://github.com/emmett2020/emmett.git \
+# [daily]
+    && bash emmett/scripts/install_daily.sh               \
 # [git]
-    && git config --global http.sslVerify false \
-    && git config --global http.postBuffer 1048576000 \
+    && git config --global http.sslVerify false           \
+    && git config --global http.postBuffer 1048576000     \
 # [clear]
     && rm -rf emmett                          \
     && apt-get autoclean
