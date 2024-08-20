@@ -1,0 +1,63 @@
+FROM ubuntu
+LABEL maintainer="emmett"
+
+# 1. Make the entire build process non-interactive
+ARG DEBIAN_FRONTEND=noninteractive
+
+# 2.Build a separate layer of core tool images.
+#   Tools are arranged alphabetically for easy maintenance
+RUN echo "**************Core Frame******************" \
+    && apt-get update              \
+    && apt-get install -y          \
+    	         build-essential     \
+    	         cargo               \
+    	         cmake               \
+    	         cpplint             \
+    	         curl                \
+    	         gdb                 \
+    	         gnutls-bin          \
+    	         git                 \
+    	         git-lfs             \
+    	         g++                 \
+    	         iputils-ping        \
+    	         libboost-all-dev    \
+               libmysqlclient-dev  \
+    	         libnghttp2-dev      \
+    	         libssl-dev          \
+    	         make                \
+    	         net-tools           \
+    	         nghttp2             \
+	             python3             \
+    	         python3-pip         \
+    	         strace              \
+    	         tcpdump             \
+    	         telnet              \
+    	         tree                \
+    	         tzdata              \
+    	         vim                 \
+    	         wget                \
+    	         zsh
+#    	pstack doesn't exits in ubuntu 24.04
+
+RUN echo "**************Next Frame******************" \
+# [emmett git repo]
+    && git clone https://github.com/emmett2020/emmett.git                  \
+# [terminal]
+    && chsh -s /bin/zsh                                                                                \
+    && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    && git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting   \
+    && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions   \
+    && git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k \
+    && rm -f ~/.zshrc && cp emmett/configs/daily ~/.zshrc \
+    && /bin/zsh -c "source ~/.zshrc"          \
+# [nvim]
+    && bash emmett/scripts/daily.sh -i daily  \
+    && mv emmett/configs/nvim ${HOME}/.config \
+# [git]
+    && git config --global http.sslVerify false \
+    && git config --global http.postBuffer 1048576000 \
+# [clear]
+    && rm -rf emmett                          \
+    && apt-get autoclean
+
+CMD ["/bin/zsh"]
