@@ -13,6 +13,7 @@ function get_ripgrep_version() {
 function install_ripgrep() {
   echo "  Installing ripgrep ${RIPGREP_VERSION} ......"
   echo "  Link: ${RIPGREP_LINK}"
+  echo -e "  ......\n\n"
 
 	local tmp="${HOME}/.tmp_install"
   [[ -d "${tmp}" ]] && rm -r "${tmp}"

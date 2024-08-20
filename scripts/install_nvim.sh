@@ -13,17 +13,17 @@ function get_neovim_version() {
 }
 
 function install_neovim() {
-    local tmp_path="${HOME}/.tmp_install"
-    [[ -d "${tmp_path}" ]] && rm -rf "${tmp_path}"
-    [[ -d "${NEOVIM_INSTALL_PATH}" ]] && rm -rf "${NEOVIM_INSTALL_PATH}"
-    mkdir -p "${tmp_path}"
-    mkdir -p "${NEOVIM_INSTALL_PATH}"
-
     echo "  Installing neovim ${NEOVIM_VERSION}"
     echo "  Link: ${NEOVIM_LINK}"
     echo "  Neovim will be installed into: ${NEOVIM_INSTALL_PATH}"
     echo "  Neovim configs will be installed into: ${NEOVIM_CONFIG_PATH}"
     echo -e "  ......\n\n"
+
+    local tmp_path="${HOME}/.tmp_install"
+    [[ -d "${tmp_path}" ]] && rm -rf "${tmp_path}"
+    [[ -d "${NEOVIM_INSTALL_PATH}" ]] && rm -rf "${NEOVIM_INSTALL_PATH}"
+    mkdir -p "${tmp_path}"
+    mkdir -p "${NEOVIM_INSTALL_PATH}"
 
     wget ${NEOVIM_LINK} -O "${tmp_path}/nvim-linux.tar.gz"
 

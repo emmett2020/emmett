@@ -14,6 +14,7 @@ function install_lazygit() {
   echo "  Installing lazygit ${LAZYGIT_VERSION} (needs sudo permission) ......"
   echo "  Lazygit Link: ${LAZYGIT_LINK}"
   echo "  Lazygit install path: ${LAZYGIT_INSTALL_PATH}"
+  echo -e "  ......\n\n"
 
 	local tmp="${HOME}/.tmp_install"
 	local tmp_gz="${tmp}/lazygit.tar.gz"

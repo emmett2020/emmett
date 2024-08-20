@@ -12,6 +12,7 @@ function get_fdfind_version() {
 function install_fdfind() {
   echo "  Installing fdfind ${FDFIND_VERSION} (needs sudo permission) ......"
   echo "  fdfind Link: ${FDFIND_LINK}"
+  echo -e "  ......\n\n"
 
 	local tmp="${HOME}/.tmp_install"
   [[ -d "${tmp}" ]] && rm -r "${tmp}"
