@@ -11,8 +11,6 @@ RUN echo "**************Core Frame******************" \
     && apt-get install -y          \
                sudo                \
     	         build-essential     \
-    	         cargo               \
-    	         cmake               \
     	         cpplint             \
     	         curl                \
     	         gdb                 \
@@ -20,6 +18,7 @@ RUN echo "**************Core Frame******************" \
     	         git                 \
     	         git-lfs             \
     	         g++                 \
+    	         htop                \
     	         iputils-ping        \
     	         libboost-all-dev    \
                libmysqlclient-dev  \
@@ -37,15 +36,15 @@ RUN echo "**************Core Frame******************" \
     	         tzdata              \
     	         unzip               \
     	         vim                 \
-    	         wget                \
-    	         zsh
-#    	pstack doesn't exits in ubuntu 24.04
+    	         wget
 
 RUN echo "**************Next Frame******************" \
 # [emmett git repo]
     && git clone https://github.com/emmett2020/emmett.git \
+    && cd emmett                             \
+    && git checkout upgrade-daily-dockerfile \
 # [daily]
-    && bash emmett/scripts/install_daily.sh               \
+    && bash scripts/install_daily.sh               \
 # [git]
     && git config --global http.sslVerify false           \
     && git config --global http.postBuffer 1048576000     \
