@@ -31,6 +31,21 @@ return {
     -- Register all keymaps when both mini.ai and which-key loaded.
     require("util").on_load("which-key.nvim", function()
       local a = {
+        -- { "a ", desc = "Whitespace" },
+        -- { 'a"', desc = '"' },
+        -- { "a'", desc = "'" },
+        -- { "a(", desc = "(" },
+        -- { "a)", desc = ")" },
+        -- { "a<", desc = "<" },
+        -- { "a>", desc = ">" },
+        -- { "a?", desc = "User prompt" },
+        -- { "a[", desc = "[" },
+        -- { "a]", desc = "]" },
+        -- { "a_", desc = "Underscore" },
+        -- { "a`", desc = "`" },
+        -- { "a{", desc = "{" },
+        -- { "a}", desc = "}" },
+
         [" "] = "Whitespace",
         ['"'] = '"',
         ["'"] = "'",
@@ -47,7 +62,7 @@ return {
         _ = "Underscore",
       }
       local i = vim.deepcopy(a)
-      require("which-key").register({
+      require("which-key").add({
         mode = { "o", "x" },
         i = i,
         a = a,
