@@ -41,10 +41,8 @@ RUN echo "**************Core Frame******************" \
 RUN echo "**************Next Frame******************" \
 # [emmett git repo]
     && git clone https://github.com/emmett2020/emmett.git \
-    && cd emmett                             \
-    && git checkout upgrade-daily-dockerfile \
 # [daily]
-    && bash scripts/install_daily.sh               \
+    && bash emmett/scripts/install_daily.sh \
 # [git]
     && git config --global http.sslVerify false           \
     && git config --global http.postBuffer 1048576000     \
