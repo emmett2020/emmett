@@ -1,4 +1,13 @@
 # Changelog
+## 1.0.4 (2024-08-22)
+### Features
+1. Upgrade all plugins to latest
+2. Use new spec for which-key
+
+### Bug fixes
+1. Fix again <tab> jump back to code snippets bug. Just remove the feature which could use <tab> jump inside the code snippets.
+
+
 ## 1.0.3 (2024-07-11)
 ### Features
 1. Add pylsp for python files. Default use pylint and yapf.
