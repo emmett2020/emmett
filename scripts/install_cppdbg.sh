@@ -28,7 +28,7 @@ function install_cppdbg() {
   mkdir -p "${unzip_path}"
 
   wget ${CPPDBG_LINK} -O "${tmp_path}/cpptools.vsix"
-  unzip "${tmp_path}/cpptools.vsix" -d ${unzip_path}
+  unzip -q "${tmp_path}/cpptools.vsix" -d ${unzip_path}
   mv "${unzip_path}/extension" "${CPPDBG_INSTALL_PATH}"
   chmod +x "${CPPDBG_INSTALL_PATH}/extension/debugAdapters/bin/OpenDebugAD7"
 

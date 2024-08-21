@@ -27,7 +27,7 @@ function install_codelldb() {
   mkdir -p "${unzip_path}"
 
   wget ${CODELLDB_LINK} -O "${tmp_path}/codelldb.vsix"
-  unzip "${tmp_path}/codelldb.vsix" -d ${unzip_path}
+  unzip -q "${tmp_path}/codelldb.vsix" -d ${unzip_path}
   mv "${unzip_path}/extension" ${CODELLDB_INSTALL_PATH}
   chmod +x "${CODELLDB_INSTALL_PATH}/extension/adapter/codelldb"
 
