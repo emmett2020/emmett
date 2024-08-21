@@ -30,27 +30,36 @@ return {
 
     -- Register all keymaps when both mini.ai and which-key loaded.
     require("util").on_load("which-key.nvim", function()
-      local a = {
-        [" "] = "Whitespace",
-        ['"'] = '"',
-        ["'"] = "'",
-        ["`"] = "`",
-        ["("] = "(",
-        [")"] = ")",
-        [">"] = ">",
-        ["<lt>"] = "<",
-        ["]"] = "]",
-        ["["] = "[",
-        ["{"] = "{",
-        ["}"] = "}",
-        ["?"] = "User prompt",
-        _ = "Underscore",
-      }
-      local i = vim.deepcopy(a)
-      require("which-key").register({
-        mode = { "o", "x" },
-        i = i,
-        a = a,
+      require("which-key").add({
+        mode = { "n", "o", "x" },
+        { "a ", desc = "Whitespace", },
+        { 'a"', desc = '"', },
+        { "a'", desc = "'", },
+        { "a`", desc = "`", },
+        { "a(", desc = "(", },
+        { "a)", desc = ")", },
+        { "a>", desc = ">", },
+        { "a<", desc = "<", },
+        { "a]", desc = "]", },
+        { "a[", desc = "[", },
+        { "a{", desc = "{", },
+        { "a}", desc = "}", },
+        { "a?", desc = "User prompt", },
+        { "a_", desc = "Underscore" },
+        { "i ", desc = "Whitespace", },
+        { 'i"', desc = '"', },
+        { "i'", desc = "'", },
+        { "i`", desc = "`", },
+        { "i(", desc = "(", },
+        { "i)", desc = ")", },
+        { "i>", desc = ">", },
+        { "i<", desc = "<", },
+        { "i]", desc = "]", },
+        { "i[", desc = "[", },
+        { "i{", desc = "{", },
+        { "i}", desc = "}", },
+        { "i?", desc = "User prompt", },
+        { "i_", desc = "Underscore" },
       })
     end)
   end,
