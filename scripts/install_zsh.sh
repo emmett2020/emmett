@@ -18,7 +18,7 @@ function install_zsh() {
   [[ -d "${tmp}" ]] && rm -r "${tmp}"
   mkdir -p "${tmp}"
 
-  sudo apt install zsh
+  sudo apt install zsh -y
   chsh -s /bin/zsh
   [[ -d "${OH_MY_ZSH_INSTALL_PATH}" ]] &&  rm -r "${OH_MY_ZSH_INSTALL_PATH}"
   [[ -f "${HOME}/.zshrc" ]] &&  rm -r "${HOME}/.zshrc"
