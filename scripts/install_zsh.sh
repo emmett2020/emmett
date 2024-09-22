@@ -2,12 +2,14 @@
 set -e
 
 # 1. /path-to-emmett/configs/zshrc/daily must be existed.
+# 2. Could be used both on Ubuntu and MacOS
 
 link_oh_my_zsh=https://install.ohmyz.sh/
 link_zsh_syntax_highlighting=https://github.com/zsh-users/zsh-syntax-highlighting
 link_zsh_auto_suggestions=https://github.com/zsh-users/zsh-autosuggestions
 link_powerlevel10k=https://gitee.com/romkatv/powerlevel10k.git
 link_eza="https://github.com/eza-community/eza/releases/download/v0.19.4/eza_x86_64-unknown-linux-gnu.tar.gz"
+link_chroma="https://github.com/alecthomas/chroma/releases/download/v2.14.0/chroma-2.14.0-linux-amd64.tar.gz"
 
 cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
 omz_custom="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}"
@@ -73,10 +75,14 @@ function install_zsh() {
   # 4. Install eva
   wget "${link_eza}" -O "${tmp}/eva.tar.gz"
   tar -xzf "${tmp}/eva.tar.gz" -C "${tmp}"
-  ls ${tmp}
   mv "${tmp}/eza" "/usr/local/bin"
 
-  # 5. Copy zshrc from emmett repo
+  # 5. Install chroma
+  wget "${link_chroma}" -O "${tmp}/chroma.tar.gz"
+  tar -xzf "${tmp}/chroma.tar.gz" -C "${tmp}"
+  mv "${tmp}/chroma" "/usr/local/bin"
+
+  # 6. Copy zshrc from emmett repo
   cp "${zshrc_path}" ~/.zshrc
 
   rm -rf ${tmp}
