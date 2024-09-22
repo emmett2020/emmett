@@ -43,7 +43,6 @@ function install_daily_commands() {
   bash "${DAILY_SCRIPT_DIR}"/install_nvim.sh
   bash "${DAILY_SCRIPT_DIR}"/install_ripgrep.sh
   bash "${DAILY_SCRIPT_DIR}"/install_zsh.sh
-  bash "${DAILY_SCRIPT_DIR}"/install_zsh_plugins.sh
 }
 
 # Check that this script works in the current environment.
