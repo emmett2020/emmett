@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 
 # 1. /path-to-emmett/configs/zshrc/daily must be existed.
 # 2. Could be used both on Ubuntu and MacOS
