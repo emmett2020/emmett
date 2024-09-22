@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 # 1. /path-to-emmett/configs/zshrc/daily must be existed.
 # 2. Could be used both on Ubuntu and MacOS
@@ -21,6 +21,14 @@ dir_powerlevel10k="${omz_custom}/themes/powerlevel10k"
 
 emmett_path="${cur_dir}/.."
 zshrc_path="${emmett_path}/configs/zshrc/daily"
+
+function get_system_info() {
+	if grep -q "Ubuntu" "/etc/os-release" ; then
+	  SYSTEM_TYPE="Ubuntu"
+	  SYSTEM_VERSION=$(cat /etc/os-release | grep VERSION_ID | awk -F\" '{print $2}')
+	  SYSTEM_ARCH=$(uname -m)
+	fi
+}
 
 
 function check_zshrc() {
@@ -50,7 +58,7 @@ function print_hint() {
   echo "  Please use: source ~/.zshrc to apply newest config."
 }
 
-function install_zsh() {
+function install_omz() {
 	local tmp="${HOME}/.tmp_install"
   [[ -d "${tmp}" ]] && rm -r "${tmp}"
   mkdir -p "${tmp}"
@@ -60,8 +68,22 @@ function install_zsh() {
   [[ -d "${dir_zsh_auto_suggesstions}" ]]   && rm -r "${dir_zsh_auto_suggesstions}"
   [[ -d "${dir_zsh_syntax_highlighting}" ]] && rm -r "${dir_zsh_syntax_highlighting}"
 
-  # 1. Install zsh
-  sudo apt install -y zsh
+  source "${cur_dir}/detect_os.sh"
+  if [[ "${OS}" == "MacOS" ]]; then
+    brew install zsh chroma eva
+  elif [[ "${OS}" == "Ubuntu" ]]; then
+    sudo apt install -y zsh
+
+    wget "${link_eza}" -O "${tmp}/eva.tar.gz"
+    tar -xzf "${tmp}/eva.tar.gz" -C "${tmp}"
+    mv "${tmp}/eza" "/usr/local/bin"
+
+    wget "${link_chroma}" -O "${tmp}/chroma.tar.gz"
+    tar -xzf "${tmp}/chroma.tar.gz" -C "${tmp}"
+    mv "${tmp}/chroma" "/usr/local/bin"
+  else
+    exit 1
+  fi
 
   # 2. Install oh my zsh
   wget "${link_oh_my_zsh}" -O "${tmp}/oh_my_zsh.sh"
@@ -72,16 +94,6 @@ function install_zsh() {
   git clone "${link_zsh_auto_suggestions}"    "${dir_zsh_auto_suggesstions}"
   git clone --depth=1 "${link_powerlevel10k}" "${dir_powerlevel10k}"
 
-  # 4. Install eva
-  wget "${link_eza}" -O "${tmp}/eva.tar.gz"
-  tar -xzf "${tmp}/eva.tar.gz" -C "${tmp}"
-  mv "${tmp}/eza" "/usr/local/bin"
-
-  # 5. Install chroma
-  wget "${link_chroma}" -O "${tmp}/chroma.tar.gz"
-  tar -xzf "${tmp}/chroma.tar.gz" -C "${tmp}"
-  mv "${tmp}/chroma" "/usr/local/bin"
-
   # 6. Copy zshrc from emmett repo
   cp "${zshrc_path}" ~/.zshrc
 
@@ -89,5 +101,5 @@ function install_zsh() {
 }
 
 check_zshrc
-install_zsh
+install_omz
 print_hint
