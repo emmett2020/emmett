@@ -54,6 +54,7 @@ function print_hint() {
   echo "  powerlevel10k download  link: ${link_powerlevel10k}"
   echo "  powerlevel10k installed path: ${dir_powerlevel10k}"
   echo "  eza download link: ${link_eza}"
+  echo "  chroma download link: ${link_chroma}"
   echo "  Successfully installed zsh, omz, themes, config and plugins."
   echo "  Please use: source ~/.zshrc to apply newest config."
 }
