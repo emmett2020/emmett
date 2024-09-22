@@ -1,60 +1,80 @@
 #!/bin/bash
+
 set -e
 
-CUR_SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
-NEOVIM_VERSION="0.10.1"
-NEOVIM_INSTALL_PATH="${HOME}/.neovim/"
-NEOVIM_LINK="https://github.com/neovim/neovim/releases/download/v${NEOVIM_VERSION}/nvim-linux64.tar.gz"
-NEOVIM_CONFIG_PATH="${HOME}/.config/nvim"
+nvim_version="0.10.1"
+link_ubuntu_nvim="https://github.com/neovim/neovim/releases/download/v${nvim_version}/nvim-linux64.tar.gz"
+dir_nvim="${HOME}/.neovim/"
+dir_nvim_config="${HOME}/.config/nvim"
 
-function get_neovim_version() {
-	INSTALLED_VERSION=$(nvim --version | grep NVIM | awk -Fv '{print $2}')
-	return $?
-}
+cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
+dir_emmett="${cur_dir}/.."
+dir_emmett_nvim_config="${dir_emmett}/configs/nvim"
+dir_temp="${HOME}/.tmp_install"
 
-function install_neovim() {
-    echo "  Installing neovim ${NEOVIM_VERSION}"
-    echo "  Link: ${NEOVIM_LINK}"
-    echo "  Neovim will be installed into: ${NEOVIM_INSTALL_PATH}"
-    echo "  Neovim configs will be installed into: ${NEOVIM_CONFIG_PATH}"
-    echo -e "  ......\n\n"
-
-    local tmp_path="${HOME}/.tmp_install"
-    [[ -d "${tmp_path}" ]] && rm -rf "${tmp_path}"
-    [[ -d "${NEOVIM_INSTALL_PATH}" ]] && rm -rf "${NEOVIM_INSTALL_PATH}"
-    mkdir -p "${tmp_path}"
-    mkdir -p "${NEOVIM_INSTALL_PATH}"
-
-    wget ${NEOVIM_LINK} -O "${tmp_path}/nvim-linux.tar.gz"
-
-    local unzip_path="${tmp_path}/neovim"
-    mkdir -p "${unzip_path}"
-    tar -xzf "${tmp_path}/nvim-linux.tar.gz" -C ${unzip_path}
-    mv "${unzip_path}/nvim-linux64/bin"   "${NEOVIM_INSTALL_PATH}/bin"
-    mv "${unzip_path}/nvim-linux64/lib"   "${NEOVIM_INSTALL_PATH}/lib"
-    mv "${unzip_path}/nvim-linux64/share" "${NEOVIM_INSTALL_PATH}/share"
-
-    local emmett_path="${CUR_SCRIPT_DIR}/.."
-    local default_cfg="${emmett_path}/configs/nvim"
- 
-    if [[ ! -d "${default_cfg}" ]]; then
-      echo "  Cann't find nvim/ in emmett repo."
-      echo "  Path of nvim: ${default_cfg} "
+function check_nvim_config() {
+    if [[ ! -d "${dir_emmett_nvim_config}" ]]; then
+      echo "  Cann't find nvim/ in emmett repo. Search path: ${dir_emmett_nvim_config}"
+      exit 1
+    fi
+    if [[ -d "${dir_nvim_config}" ]]; then
+      echo "  Remove or save ${dir_nvim_config} first."
       exit 1
     fi
 
-    [[ -d "${NEOVIM_CONFIG_PATH}" ]] && rm -r "${NEOVIM_CONFIG_PATH}"
-    mkdir -p "${NEOVIM_CONFIG_PATH}"
-    cp -r "${default_cfg}/"* "${NEOVIM_CONFIG_PATH}/"
-
-    rm -rf ${tmp_path}
-    ${NEOVIM_INSTALL_PATH}/bin/nvim --version
-
-    echo -e "  Neovim installed successfully.\n"
-    echo '  You should add '${HOME}/.neovim/bin' into $PATH in your .zshrc and enable it:'
-    echo 'export PATH="${HOME}/.neovim/bin:$PATH"'
-    echo 'source "${HOME}/.zshrc"'
-    return 0
+    mkdir -p "${dir_nvim_config}"
+    cp -r "${dir_emmett_nvim_config}/"* "${dir_nvim_config}/"
 }
 
-install_neovim
+
+function print_hint() {
+    echo "  Neovim installed path: ${dir_nvim}"
+    echo "  Neovim configs   path: ${dir_nvim_config}"
+    echo "  Neovim ${nvim_version} installed successfully."
+
+    echo '  You should add '${HOME}/.neovim/bin' into $PATH in your .zshrc and enable it.'
+}
+
+
+function install_neovim_ubuntu() {
+    wget ${link_ubuntu_nvim} -O "${dir_temp}/nvim.tar.gz"
+
+    local unzip_path="${dir_temp}/neovim"
+    mkdir -p "${unzip_path}"
+    tar -xzf "${dir_temp}/nvim.tar.gz" -C ${unzip_path}
+
+    mv "${unzip_path}/nvim-linux64/bin"   "${dir_nvim}/bin"
+    mv "${unzip_path}/nvim-linux64/lib"   "${dir_nvim}/lib"
+    mv "${unzip_path}/nvim-linux64/share" "${dir_nvim}/share"
+ 
+    rm -rf ${dir_temp}
+    ${dir_nvim}/bin/nvim --version
+}
+
+function install_neovim_macos() {
+  brew install neovim
+  nvim --version
+}
+
+##############################################
+#               entrypoint
+##############################################
+
+check_nvim_config
+source "${cur_dir}/detect_os.sh"
+
+[[ -d "${dir_temp}" ]] && rm -rf "${dir_temp}"
+[[ -d "${dir_nvim}" ]] && rm -rf "${dir_nvim}"
+mkdir -p "${dir_temp}"
+mkdir -p "${dir_nvim}"
+
+if [[ "${OS}" == "Ubuntu" ]]; then
+  install_neovim_ubuntu
+elif [[ "${OS}" == "MacOS" ]]; then
+  install_neovim_macos
+else
+  exit 1
+fi
+
+rm -rf ${dir_temp}
+print_hint
