@@ -67,7 +67,7 @@ source $ZSH/oh-my-zsh.sh
 # MacOS
 local macos_nvim_dir="~/Tools/nvim-macos"
 export NEOVIM_BIN="${macos_nvim_dir}/bin/nvim" # For neovide
-export PATH="${macos_nvim_dir}/bin:/opt/local/bin:${PATH}"
+export PATH="${macos_nvim_dir}/bin:/opt/local/bin:${HOME}/.local/bin:${PATH}"
 
 # Must install chroma first
 # alias ccat=chroma
