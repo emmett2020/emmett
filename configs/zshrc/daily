@@ -64,13 +64,10 @@ source $ZSH/oh-my-zsh.sh
 # export MANPATH="/usr/local/man:$MANPATH"
 # export LANG=en_US.UTF-8
 
-# MacOS
-local macos_nvim_dir="~/Tools/nvim-macos"
-export NEOVIM_BIN="${macos_nvim_dir}/bin/nvim" # For neovide
-export PATH="${macos_nvim_dir}/bin:/opt/local/bin:${HOME}/.local/bin:${PATH}"
+export NEOVIM_BIN="/opt/homebrew/bin/nvim" # For neovide on MacOS
 
-# Must install chroma first
-# alias ccat=chroma
+export PATH="${HOME}/.neovim/bin:${PATH}"  # nvim
+export PATH="${HOME}/.local/bin:${PATH}"   # pip3
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
