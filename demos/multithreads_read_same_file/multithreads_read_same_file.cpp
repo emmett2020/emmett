@@ -1,63 +1,73 @@
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <mutex>
 #include <shared_mutex>
-#include <sstream>
+#include <stdexcept>
 #include <thread>
+#include <utility>
 #include <vector>
 
-// For multi-threaded read large file case.
-// Use `seekg` to locate the reading position, and each thread is located to
-//          [0, 1/3 * len(file), 2/3 * len(file]
-// Uses three threads, reading different parts of the same file at the same
-// time, and finally integrates
+// Assume sample.txt is a very large file, try to read it uses multiply threads.
+// Firstly,  Use `seekg` to locate the position to read, thus each thread is
+// located to [0, 1/3 * len(file), 2/3 * len(file]. Then print the result.
 
-class ThreadSafeRWSameFile {  // thread_rw_lock
- public:
-  explicit ThreadSafeRWSameFile(std::string& file_path)
-      : m_file_path(file_path), m_pos(0) {}
+// WARNING: DOING.
+
+// thread_rw_lock
+class ThreadSafeRWSameFile {
+public:
+  explicit ThreadSafeRWSameFile(std::string file_path)
+      : file_path_(std::move(file_path)) {}
 
   void readline() {
-    std::shared_lock<std::shared_mutex> lock(m_mutex);
-    std::fstream file(m_file_path.c_str(), std::ios::in);
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+    if (!std::filesystem::is_regular_file(file_path_)) {
+      throw std::runtime_error("file path error");
+    }
+
+    std::fstream file(file_path_, std::ios::in);
+    if (!file.is_open()) {
+      throw std::runtime_error("Open file error");
+    }
+
     unsigned int pos = 0;
+    std::string line;
     while (file.good()) {
-      std::string line;
       file.seekg(pos, std::ios::beg);
-      getline(file, line);
-      std::cout << std::this_thread::get_id() << line << std::endl;
-      // skip the '\n' at the end of the file, otherwise it will
-      // loop dead after reading the first line
+      std::getline(file, line);
+      std::cout << std::this_thread::get_id() << ": " << line << std::endl;
+      // skip the '\n' at the end of the file, otherwise it will loop forever
       pos += line.size() + 1;
     }
   }
 
-  void writeline(const std::string& line) {
-    std::unique_lock<std::shared_mutex> lock(m_mutex);
-    std::fstream file(m_file_path.c_str(), std::ios::app);
-    file << std::endl << line;
+  void writeline(const std::string &line) {
+    std::unique_lock<std::shared_mutex> lock(mutex_);
+    std::fstream file(file_path_, std::ios::app);
+    file << "\n" << line;
   }
 
- private:
-  mutable std::shared_mutex m_mutex;
-  std::string m_file_path;
-  unsigned int m_pos;
+private:
+  mutable std::shared_mutex mutex_;
+  std::string file_path_;
+  unsigned pos_{0};
 };
 
 int main() {
-  std::string filepath = "../sample.txt";
-  ThreadSafeRWSameFile sinker(filepath);
+  std::string file_path = "../sample.txt";
+  ThreadSafeRWSameFile sinker(file_path);
 
-  std::vector<std::thread> reader_vec;
+  std::vector<std::thread> readers;
+  readers.reserve(2);
   for (int i = 0; i < 2; ++i) {
-    reader_vec.push_back(
-        std::thread(&ThreadSafeRWSameFile::readline, std::ref(sinker)));
+    readers.emplace_back(&ThreadSafeRWSameFile::readline, std::ref(sinker));
   }
-  std::thread writer =
+  auto writer =
       std::thread(&ThreadSafeRWSameFile::writeline, std::ref(sinker), "hello");
-  for (auto& i : reader_vec)
-    i.join();
+  for (auto &reader : readers) {
+    reader.join();
+  }
   writer.join();
-  getchar();
   return 0;
 }

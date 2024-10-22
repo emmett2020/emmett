@@ -9,5 +9,8 @@ set(CMAKE_BUILD_TYPE Release)
 set(emmett_path ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 include(${emmett_path}/cmake/FetchBenchmark.cmake)
 
-add_executable(std_isxxx std_isxxx.cpp)
-target_link_libraries(std_isxxx benchmark::benchmark)
+add_executable(memory_allocation memory_allocation.cpp)
+target_link_libraries(memory_allocation benchmark::benchmark)
+
+add_executable(interaction_with_other_components interaction_with_other_components.cpp)
+target_link_libraries(interaction_with_other_components benchmark::benchmark)

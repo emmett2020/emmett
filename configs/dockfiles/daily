@@ -9,7 +9,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN echo "**************Core Frame******************" \
     && apt-get update              \
     && apt-get install -y          \
-               sudo                \
                build-essential     \
                cpplint             \
                curl                \
@@ -29,6 +28,7 @@ RUN echo "**************Core Frame******************" \
                nghttp2             \
                python3             \
                python3-pip         \
+               sudo                \
                strace              \
                tcpdump             \
                telnet              \

@@ -6,8 +6,8 @@ set(CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CMAKE_BUILD_TYPE Release)
 
-add_executable(main multithreads_read_same_file.cpp)
+add_executable(main boost_message_queue.cpp)
 
 # https://cmake.org/cmake/help/v3.29/module/FindBoost.html
-# find_package(Boost REQUIRED)
-# target_link_libraries(main ${Boost_LIBRARIES})
+find_package(Boost REQUIRED)
+target_link_libraries(main ${Boost_LIBRARIES})

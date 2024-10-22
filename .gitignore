@@ -1,19 +1,10 @@
 .idea
-**/.idea/
+.cache
 
 cmake-build-debug
-**/cmake-build-debug/
-
 cmake-build-release
-**/cmake-build-release
 
 log
-**/log
 logs
-**/logs
-
 build
-**/build
 
-.cache
-**/.cache

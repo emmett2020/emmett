@@ -1,14 +1,9 @@
 {
   "cSpell.words": [
-    "altera",
-    "ankerl",
     "cppcoreguidelines",
     "dockerfiles",
     "hicpp",
     "leetcode",
-    "multithreads",
-    "nanobench",
-    "NOLINTNEXTLINE",
     "sigbus",
     "thirdparties"
   ]

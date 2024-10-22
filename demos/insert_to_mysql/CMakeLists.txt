@@ -8,6 +8,4 @@ set(CMAKE_BUILD_TYPE Release)
 
 add_executable(main multithreads_read_same_file.cpp)
 
-# https://cmake.org/cmake/help/v3.29/module/FindBoost.html
-# find_package(Boost REQUIRED)
-# target_link_libraries(main ${Boost_LIBRARIES})
+# TODO: add fmt and mysql
