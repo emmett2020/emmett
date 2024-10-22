@@ -5,4 +5,5 @@
 | zshrc                    | Uses for zsh                                       |
 | nvim                     | Uses for neovim                                    |
 | neovide                  | Uses for neovide                                   |
+| vscode                   | Uses for vscode                                    |
 
