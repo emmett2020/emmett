@@ -19,6 +19,7 @@
 //  The slowest way is to use std::is_xxx. One shouldn't use it in a base
 //  library.
 
+// Debug mode:
 // Real output with gcc:
 /*
 ------------------------------------------------------------------------
@@ -38,6 +39,27 @@ UseIsToken                          3.92 ns         3.92 ns    175761045
 UseAlwaysInlineIsToken              3.08 ns         3.07 ns    227173892
 UseComplicatedOperator              3.07 ns         2.97 ns    231476889
 */
+
+// Release mode:
+
+/*
+------------------------------------------------------------------------
+Benchmark                              Time             CPU   Iterations
+------------------------------------------------------------------------
+UseStdIsDigit                      0.000 ns        0.000 ns   1000000000000
+UseIsDigit                         0.000 ns        0.000 ns   1000000000000
+UseAlwaysInlineIsDigit             0.000 ns        0.000 ns   1000000000000
+UseConstexprIsDigit                0.000 ns        0.000 ns   1000000000000
+UseSimpleOperator                  0.000 ns        0.000 ns   1000000000000
+UseStdIsAlpha                      0.000 ns        0.000 ns   1000000000000
+UseIsAlpha                         0.000 ns        0.000 ns   1000000000000
+UseAlwaysInlineIsAlpha             0.000 ns        0.000 ns   1000000000000
+UseConstexprIsAlpha                0.000 ns        0.000 ns   1000000000000
+UseSomehowComplicatedOperator      0.000 ns        0.000 ns   1000000000000
+UseIsToken                         0.000 ns        0.000 ns   1000000000000
+UseAlwaysInlineIsToken             0.000 ns        0.000 ns   1000000000000
+UseComplicatedOperator             0.000 ns        0.000 ns   1000000000000
+ */
 
 static constexpr std::array<uint8_t, 256> kDigitTable{
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //   0

@@ -1,3 +1,14 @@
 # https://clangd.llvm.org/config
 CompileFlags:
   Add: [-std=c++23]
+
+If:
+  PathMatch: ./bench/demo/
+  CompileFlags:
+    CompilationDatabase: ./bench/demo/build
+
+
+If:
+  PathMatch: ./bench/std_isdigit/
+  CompileFlags:
+    CompilationDatabase: ./bench/std_isdigit/build

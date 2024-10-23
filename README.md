@@ -30,6 +30,14 @@ cmake -GNinja ..
 ninja -j16
 ```
 
+## 3. The steps to add a new project
+1. Create project directory.
+2. Copy CMakeLists.txt to the new directory
+3. Refine this file.
+4. Add this directory to .clangd to enable LSP.
+5. Coding
+
+
 
 # TODO
 - [ ] Add pre-commit
