@@ -1,9 +1,9 @@
 # Content
 | Subfolder                | Description                                        |
 | :---                     | :----                                              |
-| dockerfiles              | Uses for build docker images.                      |
-| zshrc                    | Uses for zsh                                       |
-| nvim                     | Uses for neovim                                    |
-| neovide                  | Uses for neovide                                   |
-| vscode                   | Uses for vscode                                    |
+| dockerfiles              | Used for build docker images.                      |
+| zshrc                    | Used for zsh shell                                 |
+| nvim                     | Used for neovim                                    |
+| neovide                  | Used for neovide                                   |
+| vscode                   | Used for vscode                                    |
 
