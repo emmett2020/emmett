@@ -1,4 +1,0 @@
-boost==1.75.0_2
-spdlog==1.8.2
-nlohmann-json==3.9.1
-fmt==7.1.3
