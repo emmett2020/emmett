@@ -1,13 +1,6 @@
-# How to build
-## Platform
-It's a xcode project and only supported on MacOS.
+# Platforms
+- MacOS Sonoma
+- XCode
 
-## Build steps
-```bash
-1. 
-
-
-```
-
-
+# Build
 
