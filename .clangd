@@ -12,3 +12,8 @@ If:
   PathMatch: ./bench/std_isdigit/
   CompileFlags:
     CompilationDatabase: ./bench/std_isdigit/build
+
+If:
+  PathMatch: ./demos/multithreads_read_same_file/
+  CompileFlags:
+    CompilationDatabase: ./demos/multithreads_read_same_file/build
