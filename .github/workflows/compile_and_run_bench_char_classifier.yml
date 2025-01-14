@@ -1,0 +1,43 @@
+name: Bench Demo on Ubuntu 24.04
+on:
+  pull_request:
+    branches: [master]
+    paths: 'bench/char_classifier/**'
+
+jobs:
+  build-unit-tests:
+    name: "ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { compiler: "gcc",   version: "14.2.0" }
+          - { compiler: "clang", version: "18.1.3" }
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup C/C++ Environment
+        run: |
+          set -euo pipefail
+          major=$(echo ${{ matrix.version }} | cut -d'.' -f1)
+          if [[ "${{ matrix.compiler }}" == "clang" ]]; then
+            echo "CC=clang-${major}" >> ${GITHUB_ENV}
+            echo "CXX=clang++-${major}" >> ${GITHUB_ENV}
+          else
+            echo "CC=gcc-${major}" >> ${GITHUB_ENV}
+            echo "CXX=g++-${major}" >> ${GITHUB_ENV}
+          fi
+      - name: Compile
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y ninja-build
+          cd bench/char_classifier/
+          cmake -S . -B build -GNinja
+          cmake --build build -v -j`nproc`
+      - name: Run
+        run: ./bench/char_classifier/build/char_classifier
+

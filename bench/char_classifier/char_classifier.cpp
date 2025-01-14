@@ -1,26 +1,28 @@
+/*
+ * Copyright (c) 2024 Emmett Zhang
+ *
+ * Licensed under the Apache License Version 2.0 with LLVM Exceptions
+ * (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *   https://llvm.org/LICENSE.txt
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #include <array>
 #include <cstdint>
 #include <cstring>
 
 #include <benchmark/benchmark.h>
 
-// Provide a way to tell if a character is
-//  a digit
-//  or a alpha
-//  or in a collection of digit, alpha and other special characters.
-
-// Result:
-// The fastest way is to use operator directly. But it make the code not easy to
-// read. Especially when the expression becomes complicated.
-
-// The awesome way is to lookup the table and elide the function call use always
-// inline attribute.
-
-//  The slowest way is to use std::is_xxx. One shouldn't use it in a base
-//  library.
+// Provide a way to tell if a character is a digit or a alpha or other special
+// characters.
 
 // Debug mode:
-// Real output with gcc:
 /*
 ------------------------------------------------------------------------
 Benchmark                              Time             CPU   Iterations
@@ -119,30 +121,30 @@ constexpr std::array<uint8_t, 256> kTokenTable = {
 };
 
 constexpr bool IsAlpha(uint8_t input) noexcept {
-  return static_cast<bool>(kAlphaTable[input]); // NOLINT
+  return static_cast<bool>(kAlphaTable[input]);
 }
 
 constexpr bool IsDigit(uint8_t input) noexcept {
-  return static_cast<bool>(kDigitTable[input]); // NOLINT
+  return static_cast<bool>(kDigitTable[input]);
 }
 
 constexpr bool IsToken(uint8_t input) noexcept {
-  return static_cast<bool>(kTokenTable[input]); // NOLINT
+  return static_cast<bool>(kTokenTable[input]);
 }
 
 __attribute__((always_inline)) constexpr bool
 AlwaysInlineIsAlpha(uint8_t input) noexcept {
-  return static_cast<bool>(kAlphaTable[input]); // NOLINT
+  return static_cast<bool>(kAlphaTable[input]);
 }
 
 __attribute__((always_inline)) constexpr bool
 AlwaysInlineIsDigit(uint8_t input) noexcept {
-  return static_cast<bool>(kDigitTable[input]); // NOLINT
+  return static_cast<bool>(kDigitTable[input]);
 }
 
 __attribute__((always_inline)) constexpr bool
 ALwaysInlineIsToken(uint8_t input) noexcept {
-  return static_cast<bool>(kTokenTable[input]); // NOLINT
+  return static_cast<bool>(kTokenTable[input]);
 }
 
 static void UseStdIsDigit(benchmark::State &state) {
@@ -153,7 +155,7 @@ static void UseStdIsDigit(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseStdIsDigit); // NOLINT
+BENCHMARK(UseStdIsDigit);
 
 static void UseIsDigit(benchmark::State &state) {
   char c = '8';
@@ -163,7 +165,7 @@ static void UseIsDigit(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseIsDigit); // NOLINT
+BENCHMARK(UseIsDigit);
 
 static void UseAlwaysInlineIsDigit(benchmark::State &state) {
   char c = '8';
@@ -173,7 +175,7 @@ static void UseAlwaysInlineIsDigit(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseAlwaysInlineIsDigit); // NOLINT
+BENCHMARK(UseAlwaysInlineIsDigit);
 
 static void UseConstexprIsDigit(benchmark::State &state) {
   for (auto _ : state) {
@@ -182,7 +184,7 @@ static void UseConstexprIsDigit(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseConstexprIsDigit); // NOLINT
+BENCHMARK(UseConstexprIsDigit);
 
 static void UseSimpleOperator(benchmark::State &state) {
   char c = '8';
@@ -192,7 +194,7 @@ static void UseSimpleOperator(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseSimpleOperator); // NOLINT
+BENCHMARK(UseSimpleOperator);
 
 static void UseStdIsAlpha(benchmark::State &state) {
   char c = 'd';
@@ -202,7 +204,7 @@ static void UseStdIsAlpha(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseStdIsAlpha); // NOLINT
+BENCHMARK(UseStdIsAlpha);
 
 static void UseIsAlpha(benchmark::State &state) {
   char c = 'd';
@@ -212,7 +214,7 @@ static void UseIsAlpha(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseIsAlpha); // NOLINT
+BENCHMARK(UseIsAlpha);
 
 static void UseAlwaysInlineIsAlpha(benchmark::State &state) {
   char c = 'd';
@@ -222,7 +224,7 @@ static void UseAlwaysInlineIsAlpha(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseAlwaysInlineIsAlpha); // NOLINT
+BENCHMARK(UseAlwaysInlineIsAlpha);
 
 static void UseConstexprIsAlpha(benchmark::State &state) {
   for (auto _ : state) {
@@ -231,7 +233,7 @@ static void UseConstexprIsAlpha(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseConstexprIsAlpha); // NOLINT
+BENCHMARK(UseConstexprIsAlpha);
 
 static void UseSomehowComplicatedOperator(benchmark::State &state) {
   char c = 'd';
@@ -241,7 +243,7 @@ static void UseSomehowComplicatedOperator(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseSomehowComplicatedOperator); // NOLINT
+BENCHMARK(UseSomehowComplicatedOperator);
 
 static void UseIsToken(benchmark::State &state) {
   char c = 'd';
@@ -251,7 +253,7 @@ static void UseIsToken(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseIsToken); // NOLINT
+BENCHMARK(UseIsToken);
 
 static void UseAlwaysInlineIsToken(benchmark::State &state) {
   char c = 'd';
@@ -261,7 +263,7 @@ static void UseAlwaysInlineIsToken(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseAlwaysInlineIsToken); // NOLINT
+BENCHMARK(UseAlwaysInlineIsToken);
 
 static void UseComplicatedOperator(benchmark::State &state) {
   char c = 'd';
@@ -272,6 +274,6 @@ static void UseComplicatedOperator(benchmark::State &state) {
   }
 }
 
-BENCHMARK(UseComplicatedOperator); // NOLINT
+BENCHMARK(UseComplicatedOperator);
 
-BENCHMARK_MAIN(); // NOLINT
+BENCHMARK_MAIN();

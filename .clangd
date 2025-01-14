@@ -3,19 +3,19 @@ CompileFlags:
   Add: [-std=c++23]
 
 If:
-  PathMatch: ./bench/demo/
+  PathMatch: ./bench/example/
   CompileFlags:
-    CompilationDatabase: ./bench/demo/build
+    CompilationDatabase: ./bench/example/build
 
 If:
-  PathMatch: ./bench/std_isdigit/
+  PathMatch: ./bench/char_classifier/
   CompileFlags:
-    CompilationDatabase: ./bench/std_isdigit/build
+    CompilationDatabase: ./bench/char_classifier/build
 
 If:
-  PathMatch: ./bench/string_view_or_string/
+  PathMatch: ./bench/string_view_vs_string/
   CompileFlags:
-    CompilationDatabase: ./bench/string_view_or_string/build
+    CompilationDatabase: ./bench/string_view_vs_string/build
 
 If:
   PathMatch: ./demos/multithreads_read_same_file/
