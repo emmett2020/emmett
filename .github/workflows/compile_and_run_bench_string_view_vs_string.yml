@@ -1,4 +1,4 @@
-name: Bench Demo on Ubuntu 24.04
+name: Bench String View VS String on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
