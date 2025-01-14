@@ -1,7 +1,8 @@
-name: Compiling and Run Unit Tests on Ubuntu 24.04
+name: Bench Demo on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
+    paths: 'bench/example/**'
 
 jobs:
   build-unit-tests:
@@ -22,7 +23,6 @@ jobs:
       - name: Setup C/C++ Environment
         run: |
           set -euo pipefail
-          sudo apt-get install -y ninja-build ccache
           major=$(echo ${{ matrix.version }} | cut -d'.' -f1)
           if [[ "${{ matrix.compiler }}" == "clang" ]]; then
             echo "CC=clang-${major}" >> ${GITHUB_ENV}
@@ -31,42 +31,14 @@ jobs:
             echo "CC=gcc-${major}" >> ${GITHUB_ENV}
             echo "CXX=g++-${major}" >> ${GITHUB_ENV}
           fi
-      - uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            bench: 'bench/**'
-            bench_demo: 'bench/demo/**'
-            bench_std_isdigit: 'bench/std_isdigit/**'
-            bench_string_view_or_string: 'bench/string_view_or_string/**'
-
-      - name: Compile bench/demo
-        if: steps.changes.outputs.bench_demo == 'true'
+      - name: Compile
         run: |
           set -euo pipefail
-          cd bench/demo/
+          sudo apt-get install -y ninja-build
+          cd bench/example/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
-
-      - name: Compile bench/std_isdigit
-        if: steps.changes.outputs.bench_std_isdigit == 'true'
+      - name: Run
         run: |
-          set -euo pipefail
-          cd bench/std_isdigit/
-          cmake -S . -B build -GNinja
-          cmake --build build -v -j`nproc`
-      - name: Compile bench/string_view_or_string
-        if: steps.changes.outputs.bench_string_view_or_string == 'true'
-        run: |
-          set -euo pipefail
-          cd bench/string_view_or_string/
-          cmake -S . -B build -GNinja
-          cmake --build build -v -j`nproc`
-
-
-
-
-
-
-
+          ./build/example
 
