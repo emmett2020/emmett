@@ -9,5 +9,5 @@ set(CMAKE_BUILD_TYPE Release)
 set(emmett_path ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 include(${emmett_path}/cmake/FetchBenchmark.cmake)
 
-add_executable(demo demo.cpp)
-target_link_libraries(demo benchmark::benchmark)
+add_executable(example example.cpp)
+target_link_libraries(example benchmark::benchmark)
