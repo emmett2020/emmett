@@ -39,6 +39,7 @@ jobs:
             bench-demo: 'bench/demo/**'
 
       - name: Compile
+        if: steps.changes.outputs.bench-demo == 'true'
         run: |
           set -euo pipefail
           cmake -S . -B build -GNinja -DCMAKE_BUILD_TYPE=Release
