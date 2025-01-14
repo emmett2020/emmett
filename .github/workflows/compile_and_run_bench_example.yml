@@ -39,6 +39,5 @@ jobs:
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
       - name: Run
-        run: |
-          ./build/example
+        run: ./bench/example/build/example
 
