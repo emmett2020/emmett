@@ -1,4 +1,4 @@
-name: Compiling and Run Unit Tests on Ubuntu 24.04
+name: Bench Demo on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get install -y ninja-build
-          cd bench/demo/
+          cd bench/example/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
       - name: Run
