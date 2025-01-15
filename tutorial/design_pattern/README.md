@@ -5,7 +5,7 @@
 ```bash
 mkdir build && cd build
 cmake -GNinja ..
-ninja -j16 -v
+ninja -j`nproc`
 
 ```
 
