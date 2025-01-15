@@ -34,7 +34,8 @@
 class thread_safe_read_write_file {
 public:
   explicit thread_safe_read_write_file(std::string file_path)
-      : file_path_(std::move(file_path)) {}
+    : file_path_(std::move(file_path)) {
+  }
 
   void readline() {
     auto lock = std::shared_lock<std::shared_mutex>(mutex_);
@@ -48,7 +49,7 @@ public:
       throw std::runtime_error("Open file error");
     }
 
-    auto pos = uint32_t{0};
+    auto pos  = uint32_t{0};
     auto line = std::string{};
     while (file.good()) {
       file.seekg(pos, std::ios::beg);
@@ -73,17 +74,15 @@ private:
 
 int main() {
   auto file_path = std::string{"./sample.txt"};
-  auto sinker = thread_safe_read_write_file{file_path};
+  auto sinker    = thread_safe_read_write_file{file_path};
 
   auto readers = std::vector<std::thread>{};
   readers.reserve(2);
   for (int i = 0; i < 2; ++i) {
-    readers.emplace_back(&thread_safe_read_write_file::readline,
-                         std::ref(sinker));
+    readers.emplace_back(&thread_safe_read_write_file::readline, std::ref(sinker));
   }
-  auto writer = std::thread(&thread_safe_read_write_file::writeline,
-                            std::ref(sinker), "hello");
-  for (auto &reader : readers) {
+  auto writer = std::thread(&thread_safe_read_write_file::writeline, std::ref(sinker), "hello");
+  for (auto &reader: readers) {
     reader.join();
   }
   writer.join();

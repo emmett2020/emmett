@@ -19,7 +19,7 @@
 
 static void Func1(benchmark::State &state) {
   char c = '8';
-  for (auto _ : state) {
+  for (auto _: state) {
     c += 1;
   }
 }
@@ -28,7 +28,7 @@ BENCHMARK(Func1);
 
 static void Func2(benchmark::State &state) {
   char c = '8';
-  for (auto _ : state) {
+  for (auto _: state) {
     c -= 1;
   }
 }

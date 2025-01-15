@@ -4,6 +4,8 @@ Checks: '
   -fuchsia*,
   -altera*,
   -hicpp*,
+  -abseil*,
+  -cert*,
 
   -modernize-use-trailing-return-type,
 
@@ -18,6 +20,11 @@ Checks: '
   -readability-identifier-naming,
 
   -google-readability-todo,
+
   -misc-non-private-member-variables-in-classes,
+
+  -bugprone-easily-swappable-parameters,
+  -bugprone-suspicious-stringview-data-usage,
 '
 WarningsAsErrors: '*'
+

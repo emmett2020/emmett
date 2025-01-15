@@ -29,10 +29,11 @@ UseCStyleString          0.000 ns        0.000 ns   1000000000000
 UseLongCStyleString      0.000 ns        0.000 ns   1000000000000
 */
 
-void Func(std::string_view str) {}
+void Func(std::string_view str) {
+}
 
 static void UseStringView(benchmark::State &state) {
-  for (auto _ : state) {
+  for (auto _: state) {
     // Use string_view: no need to allocate memory buffer
     Func("Hello world");
   }
@@ -41,7 +42,7 @@ static void UseStringView(benchmark::State &state) {
 BENCHMARK(UseStringView);
 
 static void UseLongStringView(benchmark::State &state) {
-  for (auto _ : state) {
+  for (auto _: state) {
     // Use string_view: no need to allocate memory buffer
     Func("Hello world Hello world Hello world Hello world Hello world ");
   }
@@ -49,9 +50,11 @@ static void UseLongStringView(benchmark::State &state) {
 
 BENCHMARK(UseLongStringView);
 
-void Func2(const std::string &str) {}
+void Func2(const std::string &str) {
+}
+
 static void UseString(benchmark::State &state) {
-  for (auto _ : state) {
+  for (auto _: state) {
     // Use string: we must allocate memory to save string.
     // If the string is very long, this may be a huge time consuming
     Func2("Hello world");
@@ -61,7 +64,7 @@ static void UseString(benchmark::State &state) {
 BENCHMARK(UseString);
 
 static void UseLongString(benchmark::State &state) {
-  for (auto _ : state) {
+  for (auto _: state) {
     // Use string: we must allocate memory to save string.
     // If the string is very long, this may be a huge time consuming
     Func2("Hello world Hello world Hello world Hello world Hello world ");
@@ -70,10 +73,11 @@ static void UseLongString(benchmark::State &state) {
 
 BENCHMARK(UseLongString);
 
-void Func3(const char *str) {}
+void Func3(const char *str) {
+}
 
 static void UseCStyleString(benchmark::State &state) {
-  for (auto _ : state) {
+  for (auto _: state) {
     Func3("Hello world");
   }
 }
@@ -81,7 +85,7 @@ static void UseCStyleString(benchmark::State &state) {
 BENCHMARK(UseCStyleString);
 
 static void UseLongCStyleString(benchmark::State &state) {
-  for (auto _ : state) {
+  for (auto _: state) {
     Func3("Hello world Hello world Hello world Hello world Hello world ");
   }
 }

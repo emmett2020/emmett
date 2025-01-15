@@ -64,60 +64,60 @@ UseComplicatedOperator             0.000 ns        0.000 ns   1000000000000
  */
 
 static constexpr std::array<uint8_t, 256> kDigitTable{
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //   0
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  16
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  32
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, //  48
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  64
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  80
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  96
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  112
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  128
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  144
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  160
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  176
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  192
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  208
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  224
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  //  240
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //   0
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  16
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  32
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, //  48
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  64
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  80
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  96
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  112
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  128
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  144
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  160
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  176
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  192
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  208
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  224
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  //  240
 };
 
 static constexpr std::array<uint8_t, 256> kAlphaTable{
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //   0
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  16
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  32
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  48
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, //  64
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, //  80
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, //  96
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, //  112
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  128
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  144
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  160
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  176
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  192
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  208
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  224
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  //  240
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //   0
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  16
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  32
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  48
+  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, //  64
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, //  80
+  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, //  96
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, //  112
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  128
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  144
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  160
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  176
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  192
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  208
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, //  224
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0  //  240
 };
 
 constexpr std::array<uint8_t, 256> kTokenTable = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16
-    0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, // 32
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, // 48
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 64
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, // 80
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 96
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, // 112
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 128
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 144
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 160
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 176
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 192
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 208
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 224
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 240-255
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16
+  0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, // 32
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, // 48
+  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 64
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, // 80
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 96
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, // 112
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 128
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 144
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 160
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 176
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 192
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 208
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 224
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 240-255
 };
 
 constexpr bool IsAlpha(uint8_t input) noexcept {
@@ -132,24 +132,21 @@ constexpr bool IsToken(uint8_t input) noexcept {
   return static_cast<bool>(kTokenTable[input]);
 }
 
-__attribute__((always_inline)) constexpr bool
-AlwaysInlineIsAlpha(uint8_t input) noexcept {
+__attribute__((always_inline)) constexpr bool AlwaysInlineIsAlpha(uint8_t input) noexcept {
   return static_cast<bool>(kAlphaTable[input]);
 }
 
-__attribute__((always_inline)) constexpr bool
-AlwaysInlineIsDigit(uint8_t input) noexcept {
+__attribute__((always_inline)) constexpr bool AlwaysInlineIsDigit(uint8_t input) noexcept {
   return static_cast<bool>(kDigitTable[input]);
 }
 
-__attribute__((always_inline)) constexpr bool
-ALwaysInlineIsToken(uint8_t input) noexcept {
+__attribute__((always_inline)) constexpr bool ALwaysInlineIsToken(uint8_t input) noexcept {
   return static_cast<bool>(kTokenTable[input]);
 }
 
 static void UseStdIsDigit(benchmark::State &state) {
   char c = '8';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (std::isdigit(c) == 0) {
     }
   }
@@ -159,7 +156,7 @@ BENCHMARK(UseStdIsDigit);
 
 static void UseIsDigit(benchmark::State &state) {
   char c = '8';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (IsDigit(c)) {
     }
   }
@@ -169,7 +166,7 @@ BENCHMARK(UseIsDigit);
 
 static void UseAlwaysInlineIsDigit(benchmark::State &state) {
   char c = '8';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (AlwaysInlineIsDigit(c)) {
     }
   }
@@ -178,7 +175,7 @@ static void UseAlwaysInlineIsDigit(benchmark::State &state) {
 BENCHMARK(UseAlwaysInlineIsDigit);
 
 static void UseConstexprIsDigit(benchmark::State &state) {
-  for (auto _ : state) {
+  for (auto _: state) {
     if (IsDigit('8')) {
     }
   }
@@ -188,7 +185,7 @@ BENCHMARK(UseConstexprIsDigit);
 
 static void UseSimpleOperator(benchmark::State &state) {
   char c = '8';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (c >= '0' && c <= '9') {
     }
   }
@@ -198,7 +195,7 @@ BENCHMARK(UseSimpleOperator);
 
 static void UseStdIsAlpha(benchmark::State &state) {
   char c = 'd';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (std::isalpha(c) == 0) {
     }
   }
@@ -208,7 +205,7 @@ BENCHMARK(UseStdIsAlpha);
 
 static void UseIsAlpha(benchmark::State &state) {
   char c = 'd';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (IsAlpha(c)) {
     }
   }
@@ -218,7 +215,7 @@ BENCHMARK(UseIsAlpha);
 
 static void UseAlwaysInlineIsAlpha(benchmark::State &state) {
   char c = 'd';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (AlwaysInlineIsAlpha(c)) {
     }
   }
@@ -227,7 +224,7 @@ static void UseAlwaysInlineIsAlpha(benchmark::State &state) {
 BENCHMARK(UseAlwaysInlineIsAlpha);
 
 static void UseConstexprIsAlpha(benchmark::State &state) {
-  for (auto _ : state) {
+  for (auto _: state) {
     if (IsAlpha('d')) {
     }
   }
@@ -237,7 +234,7 @@ BENCHMARK(UseConstexprIsAlpha);
 
 static void UseSomehowComplicatedOperator(benchmark::State &state) {
   char c = 'd';
-  for (auto _ : state) {
+  for (auto _: state) {
     if ((c | 0x20) >= 'a' && (c | 0x20) <= 'z') {
     }
   }
@@ -247,7 +244,7 @@ BENCHMARK(UseSomehowComplicatedOperator);
 
 static void UseIsToken(benchmark::State &state) {
   char c = 'd';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (IsToken(c)) {
     }
   }
@@ -257,7 +254,7 @@ BENCHMARK(UseIsToken);
 
 static void UseAlwaysInlineIsToken(benchmark::State &state) {
   char c = 'd';
-  for (auto _ : state) {
+  for (auto _: state) {
     if (ALwaysInlineIsToken(c)) {
     }
   }
@@ -267,9 +264,12 @@ BENCHMARK(UseAlwaysInlineIsToken);
 
 static void UseComplicatedOperator(benchmark::State &state) {
   char c = 'd';
-  for (auto _ : state) {
-    if (((c | 0x20) >= 'a' && (c | 0x20) <= 'z') || c == 33 ||
-        (c >= 35 && c <= 39) || (c >= 42 && c <= 46 && c != 44)) {
+  for (auto _: state) {
+    if (((c | 0x20) >= 'a' && (c | 0x20) <= 'z')
+        || c
+        == 33
+        || (c >= 35 && c <= 39)
+        || (c >= 42 && c <= 46 && c != 44)) {
     }
   }
 }
