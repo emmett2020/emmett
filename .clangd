@@ -23,19 +23,12 @@ If:
     CompilationDatabase: ./demos/multithreads_read_same_file/build
 
 If:
-  PathMatch: ./demos/insert_to_mysql/
-  CompileFlags:
-    CompilationDatabase: ./demos/insert_to_mysql/build
-
-
-If:
   PathMatch: ./pieces/boost_message_queue/
   CompileFlags:
     CompilationDatabase: ./pieces/boost_message_queue/build
 
-
 If:
-  PathMatch: ./pieces/coroutine/
+  PathMatch: ./pieces/coroutine_demo/
   CompileFlags:
     CompilationDatabase: ./pieces/coroutine/build
 
