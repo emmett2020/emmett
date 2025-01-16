@@ -13,71 +13,78 @@ set -euo pipefail
 temp_dir=$(mktemp -d)
 trap "rm -rf ${temp_dir}" EXIT
 
-link_oh_my_zsh=https://install.ohmyz.sh/
-link_zsh_syntax_highlighting=https://github.com/zsh-users/zsh-syntax-highlighting
-link_zsh_auto_suggestions=https://github.com/zsh-users/zsh-autosuggestions
-link_powerlevel10k=https://gitee.com/romkatv/powerlevel10k.git
-link_eza="https://github.com/eza-community/eza/releases/download/v0.19.4/eza_x86_64-unknown-linux-gnu.tar.gz"
-link_chroma="https://github.com/alecthomas/chroma/releases/download/v2.14.0/chroma-2.14.0-linux-amd64.tar.gz"
-
-cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
-omz_custom="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}"
-
-dir_oh_my_zsh="${HOME}/.oh-my-zsh"
-dir_zsh_syntax_highlighting="${omz_custom}/plugins/zsh-syntax-highlighting"
-dir_zsh_auto_suggesstions="${omz_custom}/plugins/zsh-autosuggestions"
-dir_powerlevel10k="${omz_custom}/themes/powerlevel10k"
-
-emmett_path="${cur_dir}/.."
-zshrc_path="${emmett_path}/configs/zshrc/daily"
-
-[[ ! -f ${zshrc_path} ]]  && "Can't find 'daily' in emmett2020/emmett" && exit 1
-[[ -f "${HOME}/.zshrc" ]] && "Remove ${HOME}/.zshrc first" && exit 1
-
-function install_omz() {
-	local tmp="${HOME}/.tmp_install"
-  [[ -d "${tmp}" ]] && rm -r "${tmp}"
-  mkdir -p "${tmp}"
-
-  [[ -d "${dir_oh_my_zsh}" ]]               && rm -r "${dir_oh_my_zsh}"
-  [[ -d "${dir_powerlevel10k}" ]]           && rm -r "${dir_powerlevel10k}"
-  [[ -d "${dir_zsh_auto_suggesstions}" ]]   && rm -r "${dir_zsh_auto_suggesstions}"
-  [[ -d "${dir_zsh_syntax_highlighting}" ]] && rm -r "${dir_zsh_syntax_highlighting}"
-
-  source "${cur_dir}/detect_os.sh"
-  if [[ "${OS}" == "MacOS" ]]; then
-    brew install zsh chroma eva
-  elif [[ "${OS}" == "Ubuntu" ]]; then
-    sudo apt install -y zsh
-
-    wget "${link_eza}" -O "${tmp}/eva.tar.gz"
-    tar -xzf "${tmp}/eva.tar.gz" -C "${tmp}"
-    mv "${tmp}/eza" "/usr/local/bin"
-
-    wget "${link_chroma}" -O "${tmp}/chroma.tar.gz"
-    tar -xzf "${tmp}/chroma.tar.gz" -C "${tmp}"
-    mv "${tmp}/chroma" "/usr/local/bin"
-  else
-    exit 1
-  fi
-
-  # 2. Install oh my zsh
-  wget "${link_oh_my_zsh}" -O "${tmp}/oh_my_zsh.sh"
-  bash "${tmp}/oh_my_zsh.sh" --unattended
-
-  # 3. Install plugins and themes
-  git clone "${link_zsh_syntax_highlighting}" "${dir_zsh_syntax_highlighting}"
-  git clone "${link_zsh_auto_suggestions}"    "${dir_zsh_auto_suggesstions}"
-  git clone --depth=1 "${link_powerlevel10k}" "${dir_powerlevel10k}"
-
-  # 6. Copy zshrc from emmett repo
-  cp "${zshrc_path}" ~/.zshrc
-
-  rm -rf ${tmp}
+function install_zsh() {
+  sudo apt install -y zsh
 }
 
-check_zshrc
-install_omz
+function install_oh_my_zsh() {
+  [[ -d "${HOME}/.oh-my-zsh" ]] && rm -rf "${HOME}/.oh-my-zsh"
+  wget "https://install.ohmyz.sh/" -O "${temp_dir}/oh_my_zsh.sh"
+  sudo bash "${temp_dir}/oh_my_zsh.sh" --unattended
+}
 
-echo "Successfully installed zsh, omz, themes, config and plugins."
+omz_custom_dir="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}"
+
+function install_zsh_syntax_highlighting() {
+  local install_dir="${omz_custom_dir}/plugins/zsh-syntax-highlighting"
+  [[ -d "${install_dir}" ]] && rm -rf "${install_dir}"
+  git clone https://github.com/zsh-users/zsh-syntax-highlighting "${install_dir}"
+}
+
+function install_zsh_auto_suggesstions() {
+  local install_dir="${omz_custom_dir}/plugins/zsh-autosuggestions"
+  [[ -d "${install_dir}" ]] && rm -r "${install_dir}"
+  git clone https://github.com/zsh-users/zsh-autosuggestions "${install_dir}"
+}
+
+function install_powerlevel_10k() {
+  local install_dir="${omz_custom_dir}/themes/powerlevel10k"
+  [[ -d "${install_dir}" ]] && rm -r "${install_dir}"
+  git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git "${install_dir}"
+}
+
+function install_eza() {
+  local arch=$(uname -m)
+  local version=0.20.17
+  local link="https://github.com/eza-community/eza/releases/download/v${version}/eza_${arch}-unknown-linux-gnu.tar.gz"
+
+  wget "${link}" -O "${temp_dir}/eva.tar.gz"
+  tar -xzf "${temp_dir}/eva.tar.gz" -C "${temp_dir}"
+  sudo mv "${temp_dir}/eza" "/usr/local/bin"
+}
+
+function install_chroma() {
+  local arch=$(uname -m)
+  [[ "${arch}" == "aarch64" ]] && arch="arm64"
+  [[ "${arch}" == "x86_64" ]] && arch="amd64"
+
+  local version=2.15.0
+  local link="https://github.com/alecthomas/chroma/releases/download/v${version}/chroma-${version}-linux-${arch}.tar.gz"
+
+  wget "${link}" -O "${temp_dir}/chroma.tar.gz"
+  tar -xzf "${temp_dir}/chroma.tar.gz" -C "${temp_dir}"
+  sudo mv "${temp_dir}/chroma" "/usr/local/bin"
+}
+
+function copy_zshrc() {
+  cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
+  emmett_root_path="${cur_dir}/../../.."
+  zshrc_path="${emmett_root_path}/configs/zshrc/daily"
+  [[ ! -f ${zshrc_path} ]]  && echo "Can't find 'daily' in emmett2020/emmett" && exit 1
+  if [[ -f "${HOME}/.zshrc" ]]; then
+    echo "Remove ${HOME}/.zshrc first" && exit 1
+  fi
+  cp "${zshrc_path}" "${HOME}/.zshrc"
+}
+
+install_zsh
+install_oh_my_zsh
+install_zsh_syntax_highlighting
+install_zsh_auto_suggesstions
+install_powerlevel_10k
+install_eza
+install_chroma
+copy_zshrc
+
+echo "Successfully installed zsh, omz, config, themes and plugins."
 echo "Please use: source ~/.zshrc to apply newest config."

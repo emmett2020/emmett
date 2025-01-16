@@ -6,18 +6,18 @@ set -e
 
 link_oh_my_zsh=https://install.ohmyz.sh/
 link_zsh_syntax_highlighting=https://github.com/zsh-users/zsh-syntax-highlighting
-link_zsh_auto_suggestions=https://github.com/zsh-users/zsh-autosuggestions
+auto_suggestions_link=https://github.com/zsh-users/zsh-autosuggestions
 link_powerlevel10k=https://gitee.com/romkatv/powerlevel10k.git
 link_eza="https://github.com/eza-community/eza/releases/download/v0.19.4/eza_x86_64-unknown-linux-gnu.tar.gz"
-link_chroma="https://github.com/alecthomas/chroma/releases/download/v2.14.0/chroma-2.14.0-linux-amd64.tar.gz"
+chroma_link="https://github.com/alecthomas/chroma/releases/download/v2.14.0/chroma-2.14.0-linux-amd64.tar.gz"
 
 cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
-omz_custom="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}"
+omz_custom_dir="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}"
 
 dir_oh_my_zsh="${HOME}/.oh-my-zsh"
-dir_zsh_syntax_highlighting="${omz_custom}/plugins/zsh-syntax-highlighting"
-dir_zsh_auto_suggesstions="${omz_custom}/plugins/zsh-autosuggestions"
-dir_powerlevel10k="${omz_custom}/themes/powerlevel10k"
+install_dir="${omz_custom_dir}/plugins/zsh-syntax-highlighting"
+dir_zsh_auto_suggesstions="${omz_custom_dir}/plugins/zsh-autosuggestions"
+powerlevel10k_install_dir="${omz_custom_dir}/themes/powerlevel10k"
 
 emmett_path="${cur_dir}/.."
 zshrc_path="${emmett_path}/configs/zshrc/daily"
@@ -48,13 +48,13 @@ function print_hint() {
   echo "  oh-my-zsh download  link: ${link_oh_my_zsh}"
   echo "  oh-my-zsh installed path: ${dir_oh_my_zsh}"
   echo "  zsh-syntax-highlighting download  link: ${link_zsh_syntax_highlighting}"
-  echo "  zsh-syntax-highlighting installed path: ${dir_zsh_syntax_highlighting}"
-  echo "  zsh-autosuggestions download  link: ${link_zsh_auto_suggestions}"
+  echo "  zsh-syntax-highlighting installed path: ${install_dir}"
+  echo "  zsh-autosuggestions download  link: ${auto_suggestions_link}"
   echo "  zsh-autosuggestions installed path: ${dir_zsh_auto_suggesstions}"
   echo "  powerlevel10k download  link: ${link_powerlevel10k}"
-  echo "  powerlevel10k installed path: ${dir_powerlevel10k}"
+  echo "  powerlevel10k installed path: ${powerlevel10k_install_dir}"
   echo "  eza download link: ${link_eza}"
-  echo "  chroma download link: ${link_chroma}"
+  echo "  chroma download link: ${chroma_link}"
   echo "  Successfully installed zsh, omz, themes, config and plugins."
   echo "  Please use: source ~/.zshrc to apply newest config."
 }
@@ -65,9 +65,9 @@ function install_omz() {
   mkdir -p "${tmp}"
 
   [[ -d "${dir_oh_my_zsh}" ]]               && rm -r "${dir_oh_my_zsh}"
-  [[ -d "${dir_powerlevel10k}" ]]           && rm -r "${dir_powerlevel10k}"
+  [[ -d "${powerlevel10k_install_dir}" ]]           && rm -r "${powerlevel10k_install_dir}"
   [[ -d "${dir_zsh_auto_suggesstions}" ]]   && rm -r "${dir_zsh_auto_suggesstions}"
-  [[ -d "${dir_zsh_syntax_highlighting}" ]] && rm -r "${dir_zsh_syntax_highlighting}"
+  [[ -d "${install_dir}" ]] && rm -r "${install_dir}"
 
   source "${cur_dir}/detect_os.sh"
   if [[ "${OS}" == "MacOS" ]]; then
@@ -79,7 +79,7 @@ function install_omz() {
     tar -xzf "${tmp}/eva.tar.gz" -C "${tmp}"
     mv "${tmp}/eza" "/usr/local/bin"
 
-    wget "${link_chroma}" -O "${tmp}/chroma.tar.gz"
+    wget "${chroma_link}" -O "${tmp}/chroma.tar.gz"
     tar -xzf "${tmp}/chroma.tar.gz" -C "${tmp}"
     mv "${tmp}/chroma" "/usr/local/bin"
   else
@@ -91,9 +91,9 @@ function install_omz() {
   bash "${tmp}/oh_my_zsh.sh" --unattended
 
   # 3. Install plugins and themes
-  git clone "${link_zsh_syntax_highlighting}" "${dir_zsh_syntax_highlighting}"
-  git clone "${link_zsh_auto_suggestions}"    "${dir_zsh_auto_suggesstions}"
-  git clone --depth=1 "${link_powerlevel10k}" "${dir_powerlevel10k}"
+  git clone "${link_zsh_syntax_highlighting}" "${install_dir}"
+  git clone "${auto_suggestions_link}"    "${dir_zsh_auto_suggesstions}"
+  git clone --depth=1 "${link_powerlevel10k}" "${powerlevel10k_install_dir}"
 
   # 6. Copy zshrc from emmett repo
   cp "${zshrc_path}" ~/.zshrc
