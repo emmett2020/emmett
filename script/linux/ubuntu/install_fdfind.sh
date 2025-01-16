@@ -14,7 +14,7 @@ arch=$(uname -m)
 [[ "${arch}" == "x86_64" ]]  && arch="amd64"
 [[ "${arch}" == "aarch64" ]] && arch="arm64"
 
-fdfind_version="10.1.0"
+fdfind_version="10.2.0"
 fdfind_link="https://github.com/sharkdp/fd/releases/download/v${fdfind_version}/fd_${fdfind_version}_${arch}.deb"
 
 temp_dir=$(mktemp -d)
