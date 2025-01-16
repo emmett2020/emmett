@@ -1,4 +1,15 @@
 #!/bin/bash
+: << 'COMMENT'
+|------------------------------|------------------------------|
+|         🎃 item              |        👇 explanation        |
+|------------------------------|------------------------------|
+|    needs root permission?    |              No              |
+|------------------------------|------------------------------|
+|          dependencies        |              No              |
+|------------------------------|------------------------------|
+|          fellows             |                              |
+|------------------------------|------------------------------|
+COMMENT
 
 OS=$(uname | tr '[:upper:]' '[:lower:]')
 KERNEL=$(uname -r)
@@ -28,7 +39,7 @@ detect_os() {
         OS="Unknown"
     fi
 
-    echo "Current Operating System: ${OS}"
+    echo "Current operating system: ${OS}"
 }
 
 detect_os
