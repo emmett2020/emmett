@@ -13,8 +13,8 @@ set -euo pipefail
 arch=$(uname -m)
 [[ "${arch}" == "aarch64" ]] && arch="arm64"
 
-lazygit_version="0.45.0"
-lazygit_link="https://github.com/jesseduffield/lazygit/releases/download/v${lazygit_version}/lazygit_${lazygit_version}_Linux_${arch}.tar.gz"
+version="0.45.0"
+lazygit_link="https://github.com/jesseduffield/lazygit/releases/download/v${version}/lazygit_${version}_Linux_${arch}.tar.gz"
 lazygit_dir="/usr/local/bin"
 
 temp_dir=$(mktemp -d)
