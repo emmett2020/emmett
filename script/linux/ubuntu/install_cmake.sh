@@ -10,9 +10,10 @@
 COMMENT
 
 set -euo pipefail
+arch=$(uname -m)
 
 cmake_version=3.29.2
-cmake_link="https://github.com/Kitware/CMake/releases/download/v${cmake_version}/cmake-${cmake_version}-linux-x86_64.sh"
+cmake_link="https://github.com/Kitware/CMake/releases/download/v${cmake_version}/cmake-${cmake_version}-linux-${arch}.sh"
 cmake_dir="/usr/local"
 
 temp_dir=$(mktemp -d)
