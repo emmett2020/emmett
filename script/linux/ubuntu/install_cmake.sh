@@ -8,8 +8,8 @@
 |          dependencies        |              No              |
 |------------------------------|------------------------------|
 COMMENT
-
 set -euo pipefail
+
 arch=$(uname -m)
 
 cmake_version=3.29.2
