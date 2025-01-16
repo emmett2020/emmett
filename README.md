@@ -1,14 +1,10 @@
 # Introduction
-This project mainly uses `C++`, but it will also use other languages and even include some `frontend` and `client` content.
-Mainly contains:
-- 😉 Some messy code `pieces`.
+This project mainly uses `C++`, and contains:
 - 😃 Some fancy `demos`.
-- 🤔 Some useful `scripts`. `shell`, `python`, `lua` or other utility scripts are placed here.
-- 🤩 Some structured and meaningful codes for `tutorial`. It is associated with the blog I wrote. It can be used directly anywhere.
+- 🤔 Some useful `scripts`.
+- 🤩 Some structured and meaningful codes for `tutorial`. It is associated with the blog I wrote.
 - 😏 Some codes are stored in `bench` for performance measurement.
 - 😛 Some universal `config` files. Includes `yaml`, `.zshrc` and other configuration files.
-- ✨ Some really nice code, we put it in `thirdparties`.
-
 
 # Usage
 This repository contains several projects on independent directory. If you want to build one of them, just follow the tutorial below. If you want to use some projects on your own project, it is recommended to just copy files rather than reference this whole project.

@@ -18,21 +18,12 @@ If:
     CompilationDatabase: ./bench/string_view_vs_string/build
 
 If:
-  PathMatch: ./demos/multithreads_read_same_file/
+  PathMatch: ./demo/multithreads_read_same_file/
   CompileFlags:
-    CompilationDatabase: ./demos/multithreads_read_same_file/build
+    CompilationDatabase: ./demo/multithreads_read_same_file/build
 
 If:
-  PathMatch: ./pieces/boost_message_queue/
+  PathMatch: ./tutorial/design_pattern/
   CompileFlags:
-    CompilationDatabase: ./pieces/boost_message_queue/build
+    CompilationDatabase: ./tutorial/design_pattern/build
 
-If:
-  PathMatch: ./pieces/coroutine_demo/
-  CompileFlags:
-    CompilationDatabase: ./pieces/coroutine/build
-
-If:
-  PathMatch: ./pieces/sigbug/
-  CompileFlags:
-    CompilationDatabase: ./pieces/sigbus/build

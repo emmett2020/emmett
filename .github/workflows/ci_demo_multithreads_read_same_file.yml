@@ -1,8 +1,8 @@
-name: Pieces Coroutine Demo on Ubuntu 24.04
+name: Demo Multithreads Read Same File on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
-    paths: 'pieces/coroutine_demo/**'
+    paths: 'demo/multithreads_read_same_file/**'
 
 jobs:
   build-unit-tests:
@@ -35,10 +35,11 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get install -y ninja-build libboost-all-dev
-          cd pieces/coroutine_demo/
+          cd demo/multithreads_read_same_file/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
       - name: Run
         run: |
-          cd pieces/coroutine_demo/
+          cd ./demo/multithreads_read_same_file/
+          ./build/main
 
