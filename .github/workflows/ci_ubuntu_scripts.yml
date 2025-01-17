@@ -44,7 +44,9 @@ jobs:
       - name: Run Changed Files
         run: |
           for file in ${ALL_CHANGED_FILES}; do
+            echo "::group:: bash ${file}"
             bash "${file}"
+            echo "::endgroup::"
           done
 
 

@@ -39,6 +39,7 @@ function install_neovim_x86_64() {
 function install_neovim_arm64() {
   # TODO: Get it from github release or built it from source.
   #       I prefer former.
+  echo "TODO"
 }
 
 function copy_nvim_config() {
