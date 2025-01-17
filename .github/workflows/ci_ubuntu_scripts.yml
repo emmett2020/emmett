@@ -4,8 +4,8 @@ on:
     branches: [master]
     paths:
       - 'script/linux/**.sh'
-      - 'script/ubuntu/**.sh'
-      - 'script/ubuntu/x64/*.sh'
+      - 'script/linux/ubuntu/**.sh'
+      - 'script/linux/ubuntu/x64/*.sh'
 
 jobs:
   build-unit-tests:
@@ -29,8 +29,8 @@ jobs:
         with:
           files: |
             script/linux/**.sh
-            script/ubuntu/**.sh
-            script/ubuntu/x64/*.sh
+            script/linux/ubuntu/**.sh
+            script/linux/ubuntu/x64/*.sh
 
       - name: List all changed files
         env:
