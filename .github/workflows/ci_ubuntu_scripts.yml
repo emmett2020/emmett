@@ -26,9 +26,9 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           files:
-            - 'script/linux/**.sh'
-            - 'script/ubuntu/**.sh'
-            - 'script/ubuntu/x64/*.sh'
+            script/linux/**.sh
+            script/ubuntu/**.sh
+            script/ubuntu/x64/*.sh
 
       - name: List all changed files
         env:
