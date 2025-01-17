@@ -39,7 +39,7 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
-          echo "all_changed_files=${ALL_CHANGED_FILES}" >> ${GITHUB_ENV}
+          echo "ALL_CHANGED_FILES=${ALL_CHANGED_FILES}" >> ${GITHUB_ENV}
 
       - name: Run Changed Files
         run: |
