@@ -3,9 +3,9 @@
 |------------------------------|-------------------------------|
 |         🎃 item              |        👇 explanation         |
 |------------------------------|-------------------------------|
-|    needs root permission?    |              Yes              |
+|    needs root permission?    |              No               |
 |------------------------------|-------------------------------|
-|          dependencies        |  ${emmett}/config/zshrc/daily |
+|          dependencies        |  ${emmett}/config/nvim/       |
 |------------------------------|-------------------------------|
 COMMENT
 set -euo pipefail
@@ -13,79 +13,55 @@ set -euo pipefail
 temp_dir=$(mktemp -d)
 trap "rm -rf ${temp_dir}" EXIT
 
-version="0.10.3"
-nvim_link="https://github.com/neovim/neovim/releases/download/v${version}/nvim-linux64.tar.gz"
-dir_nvim="${HOME}/.neovim/"
-dir_nvim_config="${HOME}/.config/nvim"
+function install_neovim_x86_64() {
+    # Download nvim pre-built binary tarball to local
+    local version="0.10.3"
+    local nvim_link="https://github.com/neovim/neovim/releases/download/v${version}/nvim-linux64.tar.gz"
+    wget ${nvim_link} -O "${temp_dir}/nvim.tar.gz"
 
-cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
-dir_emmett="${cur_dir}/.."
-dir_emmett_nvim_config="${dir_emmett}/configs/nvim"
-dir_temp="${HOME}/.tmp_install"
-
-function check_nvim_config() {
-    if [[ ! -d "${dir_emmett_nvim_config}" ]]; then
-      echo "  Cann't find nvim/ in emmett repo. Search path: ${dir_emmett_nvim_config}"
-      exit 1
-    fi
-    if [[ -d "${dir_nvim_config}" ]]; then
-      echo "  Remove or save ${dir_nvim_config} first."
-      exit 1
-    fi
-
-    mkdir -p "${dir_nvim_config}"
-    cp -r "${dir_emmett_nvim_config}/"* "${dir_nvim_config}/"
-}
-
-
-function print_hint() {
-    echo "  Neovim installed path: ${dir_nvim}"
-    echo "  Neovim configs   path: ${dir_nvim_config}"
-    echo "  Neovim ${version} installed successfully."
-
-    echo '  You should add '${HOME}/.neovim/bin' into $PATH in your .zshrc and enable it.'
-}
-
-
-function install_neovim_ubuntu() {
-    wget ${nvim_link} -O "${dir_temp}/nvim.tar.gz"
-
-    local unzip_path="${dir_temp}/neovim"
+    # Unzip the tarbal
+    local unzip_path="${temp_dir}/neovim"
     mkdir -p "${unzip_path}"
-    tar -xzf "${dir_temp}/nvim.tar.gz" -C ${unzip_path}
+    tar -xzf "${temp_dir}/nvim.tar.gz" -C ${unzip_path}
 
-    mv "${unzip_path}/nvim-linux64/bin"   "${dir_nvim}/bin"
-    mv "${unzip_path}/nvim-linux64/lib"   "${dir_nvim}/lib"
-    mv "${unzip_path}/nvim-linux64/share" "${dir_nvim}/share"
+    # Install binaries and libraries to specified directory.
+    local nvim_install_dir="${HOME}/.neovim/"
+    [[ -d "${nvim_install_dir}" ]] && rm -rf "${nvim_install_dir}"
+    mkdir -p "${nvim_install_dir}"
+    mv "${unzip_path}/nvim-linux64/bin"   "${nvim_install_dir}/bin"
+    mv "${unzip_path}/nvim-linux64/lib"   "${nvim_install_dir}/lib"
+    mv "${unzip_path}/nvim-linux64/share" "${nvim_install_dir}/share"
  
-    rm -rf ${dir_temp}
-    ${dir_nvim}/bin/nvim --version
+    echo "The neovim is installed into ${nvim_install_dir}"
+    ${nvim_install_dir}/bin/nvim --version
 }
 
-function install_neovim_macos() {
-  brew install neovim
-  nvim --version
+function install_neovim_arm64() {
+  # TODO: Get it from github release or built it from source.
+  #       I prefer former.
 }
+
+function copy_nvim_config() {
+    local cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
+    local emmett_root_path="${cur_dir}/../../.."
+
+    local nvim_config_dir="${emmett_root_path}/config/nvim"
+    [[ ! -f ${nvim_config_dir} ]]  && echo "Can't find 'nvim' in emmett2020/emmett" && exit 1
+
+    local nvim_config_install_dir="${HOME}/.config/nvim"
+    if [[ -d "${nvim_config_install_dir}" ]]; then
+      echo "Remove ${nvim_config_install_dir} first." && exit 1
+    fi
+
+    mkdir -p "${nvim_config_install_dir}"
+    cp -r "${nvim_config_dir}/"* "${nvim_config_install_dir}/"
+}
+
 
 ##############################################
 #               entrypoint
 ##############################################
-
-check_nvim_config
-source "${cur_dir}/detect_os.sh"
-
-[[ -d "${dir_temp}" ]] && rm -rf "${dir_temp}"
-[[ -d "${dir_nvim}" ]] && rm -rf "${dir_nvim}"
-mkdir -p "${dir_temp}"
-mkdir -p "${dir_nvim}"
-
-if [[ "${OS}" == "Ubuntu" ]]; then
-  install_neovim_ubuntu
-elif [[ "${OS}" == "MacOS" ]]; then
-  install_neovim_macos
-else
-  exit 1
-fi
-
-rm -rf ${dir_temp}
-print_hint
+arch=$(uname -m)
+[[ "${arch}" == "x86_64"  ]] && install_neovim_x86_64
+[[ "${arch}" == "aarch64" ]] && install_neovim_arm64
+copy_nvim_config

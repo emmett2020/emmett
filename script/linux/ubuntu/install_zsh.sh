@@ -67,9 +67,9 @@ function install_chroma() {
 }
 
 function copy_zshrc() {
-  cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
-  emmett_root_path="${cur_dir}/../../.."
-  zshrc_path="${emmett_root_path}/configs/zshrc/daily"
+  local cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
+  local emmett_root_path="${cur_dir}/../../.."
+  local zshrc_path="${emmett_root_path}/config/zshrc/daily"
   [[ ! -f ${zshrc_path} ]]  && echo "Can't find 'daily' in emmett2020/emmett" && exit 1
   if [[ -f "${HOME}/.zshrc" ]]; then
     echo "Remove ${HOME}/.zshrc first" && exit 1
@@ -77,6 +77,9 @@ function copy_zshrc() {
   cp "${zshrc_path}" "${HOME}/.zshrc"
 }
 
+##############################################
+#               entrypoint
+##############################################
 install_zsh
 install_oh_my_zsh
 install_zsh_syntax_highlighting
