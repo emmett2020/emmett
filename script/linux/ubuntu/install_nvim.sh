@@ -47,7 +47,7 @@ function copy_nvim_config() {
     local emmett_root_path="${cur_dir}/../../.."
 
     local nvim_config_dir="${emmett_root_path}/config/nvim"
-    [[ ! -f ${nvim_config_dir} ]]  && echo "Can't find 'nvim' in emmett2020/emmett" && exit 1
+    [[ ! -d ${nvim_config_dir} ]]  && echo "Can't find 'nvim' in emmett2020/emmett" && exit 1
 
     local nvim_config_install_dir="${HOME}/.config/nvim"
     if [[ -d "${nvim_config_install_dir}" ]]; then
