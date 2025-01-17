@@ -3,7 +3,7 @@ LABEL maintainer="emmett"
 
 # 1. Make the entire build process non-interactive
 ARG DEBIAN_FRONTEND=noninteractive
-ARG GIT_BRANCH=main
+ARG GIT_BRANCH=master
 
 # 2.Build a separate layer of basic tools.
 #   Tools are arranged alphabetically for easy maintenance.
@@ -43,8 +43,8 @@ RUN echo "************** Next Frame ******************"   \
     && git config --global http.sslVerify  false          \
     && git config --global http.postBuffer 1048576000     \
 # [emmett git repo]
-    && git clone https://github.com/emmett2020/emmett.git \
-    && git checkout ${GIT_BRANCH}                         \
+    && git clone -b ${GIT_BRANCH}                         \
+           https://github.com/emmett2020/emmett.git       \
 # [daily]
     && bash emmett/script/linux/ubuntu/install_daily.sh   \
 # [clear]
