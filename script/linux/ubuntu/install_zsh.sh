@@ -30,7 +30,8 @@ function install_oh_my_zsh() {
   [[ -d "${HOME}/.oh-my-zsh" ]] &&  sudo mv ${HOME}/.oh-my-zsh ${HOME}.oh-my-zsh.backup
 
   echo "LS_________________________________________"
-  ls -lrthR ${HOME}
+  ls -lrthR ${HOME}/.oh-my-zsh
+  echo "TEST AGAIN  _______________________________"
   echo "$ZSH"
   echo "LS_________________________________________"
 
