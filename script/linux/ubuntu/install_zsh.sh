@@ -18,7 +18,7 @@ function copy_zshrc() {
   local emmett_root_path="${cur_dir}/../../.."
   local zshrc_path="${emmett_root_path}/config/zshrc/daily"
   [[ ! -f ${zshrc_path} ]]  && echo "Can't find 'daily' in emmett2020/emmett" && exit 1
-  [[ -f "${HOME}/.zshrc" ]] && rm -rf "${HOME}/.zshrc"
+  [[ -f "${HOME}/.zshrc" ]] && cp "${HOME}/.zshrc" "${HOME}/.zshrc.backup"
   cp "${zshrc_path}" "${HOME}/.zshrc"
 }
 
@@ -29,6 +29,7 @@ function install_zsh() {
 function install_oh_my_zsh() {
   [[ -d "${HOME}/.oh-my-zsh" ]] && rm -rf "${HOME}/.oh-my-zsh"
   wget "https://install.ohmyz.sh/" -O "${temp_dir}/oh_my_zsh.sh"
+  mv ${ZSH} ${ZSH}.backup
   sudo bash "${temp_dir}/oh_my_zsh.sh" --unattended
 }
 
