@@ -31,11 +31,11 @@ function install_oh_my_zsh() {
   wget "https://install.ohmyz.sh/" -O "${temp_dir}/oh_my_zsh.sh"
   sudo bash "${temp_dir}/oh_my_zsh.sh" --unattended
 
-  echo "LS_________________________________________"
-  echo "$ZSH"
-  echo "LS_________________________________________"
+  echo "LS1_________________________________________"
+  # echo "$ZSH"
+  echo "LS2_________________________________________"
   ls -lrthR /root/.oh-my-zsh
-  echo "LS_________________________________________"
+  echo "LS3_________________________________________"
   ls -lrthR ${HOME}/.oh-my-zsh
   echo "TEST AGAIN  _______________________________"
 
