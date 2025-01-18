@@ -1,4 +1,4 @@
-name: Demo CI on Ubuntu 24.04
+name: CI Demo on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]

@@ -1,4 +1,4 @@
-name: Bench CI on Ubuntu 24.04
+name: CI Bench on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
