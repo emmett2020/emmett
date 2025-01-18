@@ -32,10 +32,12 @@ function install_oh_my_zsh() {
   sudo bash "${temp_dir}/oh_my_zsh.sh" --unattended
 
   echo "LS_________________________________________"
-  ls -lrthR ${HOME}/.oh-my-zsh
-  echo "TEST AGAIN  _______________________________"
   echo "$ZSH"
   echo "LS_________________________________________"
+  ls -lrthR /root/.oh-my-zsh
+  echo "LS_________________________________________"
+  ls -lrthR ${HOME}/.oh-my-zsh
+  echo "TEST AGAIN  _______________________________"
 
 
 }
