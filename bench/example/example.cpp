@@ -13,5 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cstring>
 
+#include <benchmark/benchmark.h>
 
+static void Func1(benchmark::State &state) {
+  char c = '8';
+  for (auto _: state) {
+    c += 1;
+  }
+}
+
+BENCHMARK(Func1);
+
+static void Func2(benchmark::State &state) {
+  char c = '8';
+  for (auto _: state) {
+    c -= 1;
+  }
+}
+
+BENCHMARK(Func2);
+
+BENCHMARK_MAIN();

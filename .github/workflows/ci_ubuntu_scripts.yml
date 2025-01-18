@@ -1,0 +1,51 @@
+name: Test Ubuntu Scripts on Ubuntu X86-64
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'script/linux/**.sh'
+      - 'script/linux/ubuntu/**.sh'
+      - 'script/linux/ubuntu/x64/*.sh'
+
+jobs:
+  test:
+    name: "Test Ubuntu Scripts on ${{ matrix.version }}"
+    runs-on: ${{ matrix.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { version: "ubuntu-24.04" }
+          - { version: "ubuntu-22.04" }
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            script/linux/**.sh
+            script/linux/ubuntu/**.sh
+            script/linux/ubuntu/x64/*.sh
+
+      - name: List All Changed Files
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
+          echo "ALL_CHANGED_FILES=${ALL_CHANGED_FILES}" >> ${GITHUB_ENV}
+
+      - name: Run Changed Files
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "::group:: bash ${file}"
+            bash "${file}"
+            echo "::endgroup::"
+          done
+

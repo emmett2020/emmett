@@ -1,0 +1,36 @@
+name: Test Build Docker Images on Ubuntu
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'config/dockerfile/daily/**'
+
+jobs:
+  build-docker:
+    name: "Test Build Docker Images on Ubuntu-24.04"
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: "linux/amd64" }
+          - { arch: "linux/arm64" }
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          context: config/dockerfile/daily/
+          build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
+          platforms: ${{ matrix.arch }}
+
+

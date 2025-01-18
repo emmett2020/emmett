@@ -4,27 +4,27 @@ Checks: '
   -fuchsia*,
   -altera*,
   -hicpp*,
-  -abseil*,
   -cert*,
 
   -modernize-use-trailing-return-type,
+  -modernize-avoid-c-arrays,
 
   -cppcoreguidelines-avoid-magic-numbers,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-pro-type-reinterpret-cast,
   -cppcoreguidelines-special-member-functions,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
 
   -readability-magic-numbers,
   -readability-identifier-length,
   -readability-identifier-naming,
-
   -google-readability-todo,
-
   -misc-non-private-member-variables-in-classes,
-
-  -bugprone-easily-swappable-parameters,
-  -bugprone-suspicious-stringview-data-usage,
+  -misc-use-anonymous-namespace,
+  -misc-use-internal-linkage,
 '
 WarningsAsErrors: '*'
-

@@ -1,0 +1,8 @@
+I am a sample txt.
+And I'm using for multi-threading read.
+I could read same file in thread-safe mode.
+Let we have a try.
+hello
+hello
+hello
+hello

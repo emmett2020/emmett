@@ -3,43 +3,27 @@ CompileFlags:
   Add: [-std=c++23]
 
 If:
-  PathMatch: ./bench/demo/
+  PathMatch: ./bench/example/
   CompileFlags:
-    CompilationDatabase: ./bench/demo/build
+    CompilationDatabase: ./bench/example/build
 
 If:
-  PathMatch: ./bench/std_isdigit/
+  PathMatch: ./bench/char_classifier/
   CompileFlags:
-    CompilationDatabase: ./bench/std_isdigit/build
+    CompilationDatabase: ./bench/char_classifier/build
 
 If:
-  PathMatch: ./bench/string_view_or_string/
+  PathMatch: ./bench/string_view_vs_string/
   CompileFlags:
-    CompilationDatabase: ./bench/string_view_or_string/build
+    CompilationDatabase: ./bench/string_view_vs_string/build
 
 If:
-  PathMatch: ./demos/multithreads_read_same_file/
+  PathMatch: ./demo/multithreads_read_same_file/
   CompileFlags:
-    CompilationDatabase: ./demos/multithreads_read_same_file/build
+    CompilationDatabase: ./demo/multithreads_read_same_file/build
 
 If:
-  PathMatch: ./demos/insert_to_mysql/
+  PathMatch: ./tutorial/design_pattern/
   CompileFlags:
-    CompilationDatabase: ./demos/insert_to_mysql/build
+    CompilationDatabase: ./tutorial/design_pattern/build
 
-
-If:
-  PathMatch: ./pieces/boost_message_queue/
-  CompileFlags:
-    CompilationDatabase: ./pieces/boost_message_queue/build
-
-
-If:
-  PathMatch: ./pieces/coroutine/
-  CompileFlags:
-    CompilationDatabase: ./pieces/coroutine/build
-
-If:
-  PathMatch: ./pieces/sigbug/
-  CompileFlags:
-    CompilationDatabase: ./pieces/sigbus/build

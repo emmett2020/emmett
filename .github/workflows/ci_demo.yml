@@ -1,0 +1,53 @@
+name: CI Demo on Ubuntu 24.04
+on:
+  pull_request:
+    branches: [master]
+    paths: 'demo/**'
+
+jobs:
+  build-tests:
+    name: "demo-ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { compiler: "gcc",   version: "14.2.0" }
+          - { compiler: "clang", version: "18.1.3" }
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup C/C++ Environment
+        run: |
+          set -euo pipefail
+          major=$(echo ${{ matrix.version }} | cut -d'.' -f1)
+          if [[ "${{ matrix.compiler }}" == "clang" ]]; then
+            echo "CC=clang-${major}" >> ${GITHUB_ENV}
+            echo "CXX=clang++-${major}" >> ${GITHUB_ENV}
+          else
+            echo "CC=gcc-${major}" >> ${GITHUB_ENV}
+            echo "CXX=g++-${major}" >> ${GITHUB_ENV}
+          fi
+      - name: Install Common Dependency
+        run: |
+          sudo apt-get install -y ninja-build
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            multithreads_read_same_file:
+              - 'demo/multithreads_read_same_file/**'
+
+      - name: Compile And Run multithreads_read_same_file
+        if: steps.filter.outputs.multithreads_read_same_file == 'true'
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y libboost-all-dev
+          cd demo/multithreads_read_same_file/
+          cmake -S . -B build -GNinja
+          cmake --build build -v -j`nproc`
+          ./build/main
+
