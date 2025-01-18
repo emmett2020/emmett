@@ -28,6 +28,8 @@ function install_zsh() {
 
 function install_oh_my_zsh() {
   [[ -d "${HOME}/.oh-my-zsh" ]] &&  sudo mv ${HOME}/.oh-my-zsh ${HOME}.oh-my-zsh.backup
+  wget "https://install.ohmyz.sh/" -O "${temp_dir}/oh_my_zsh.sh"
+  sudo bash "${temp_dir}/oh_my_zsh.sh" --unattended
 
   echo "LS_________________________________________"
   ls -lrthR ${HOME}/.oh-my-zsh
@@ -35,8 +37,7 @@ function install_oh_my_zsh() {
   echo "$ZSH"
   echo "LS_________________________________________"
 
-  wget "https://install.ohmyz.sh/" -O "${temp_dir}/oh_my_zsh.sh"
-  sudo bash "${temp_dir}/oh_my_zsh.sh" --unattended
+
 }
 
 omz_custom_dir="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}"
