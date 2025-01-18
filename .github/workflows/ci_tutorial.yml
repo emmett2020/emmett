@@ -1,12 +1,12 @@
-name: Bench Example on Ubuntu 24.04
+name: Tutorial on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
-    paths: 'bench/example/**'
+    paths: 'tutorial/**'
 
 jobs:
   build-unit-tests:
-    name: "ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
+    name: "tutorial-ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -31,13 +31,19 @@ jobs:
             echo "CC=gcc-${major}" >> ${GITHUB_ENV}
             echo "CXX=g++-${major}" >> ${GITHUB_ENV}
           fi
-      - name: Compile
+      - name: Install Common Dependency
+        run: |
+          sudo apt-get install -y ninja-build
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            design_pattern:
+              - 'tutorial/design_pattern/**'
+      - name: Compile And Run design_pattern
         run: |
           set -euo pipefail
-          sudo apt-get install -y ninja-build
-          cd bench/example/
+          cd tutorial/design_pattern/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
-      - name: Run
-        run: ./bench/example/build/example
 

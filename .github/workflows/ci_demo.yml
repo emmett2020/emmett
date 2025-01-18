@@ -1,12 +1,12 @@
-name: Demo Multithreads Read Same File on Ubuntu 24.04
+name: Demo on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
-    paths: 'demo/multithreads_read_same_file/**'
+    paths: 'demo/**'
 
 jobs:
   build-unit-tests:
-    name: "ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
+    name: "demo-ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -31,15 +31,23 @@ jobs:
             echo "CC=gcc-${major}" >> ${GITHUB_ENV}
             echo "CXX=g++-${major}" >> ${GITHUB_ENV}
           fi
-      - name: Compile
+      - name: Install Common Dependency
+        run: |
+          sudo apt-get install -y ninja-build
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            multithreads_read_same_file:
+              - 'demo/multithreads_read_same_file/**'
+
+      - name: Compile And Run multithreads_read_same_file
+        if: steps.filter.outputs.multithreads_read_same_file == 'true'
         run: |
           set -euo pipefail
-          sudo apt-get install -y ninja-build libboost-all-dev
+          sudo apt-get install -y libboost-all-dev
           cd demo/multithreads_read_same_file/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
-      - name: Run
-        run: |
-          cd ./demo/multithreads_read_same_file/
           ./build/main
 
