@@ -5,7 +5,7 @@ on:
     paths: 'bench/**'
 
 jobs:
-  build-unit-tests:
+  build-tests:
     name: "bench-ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
     runs-on: ubuntu-24.04
     strategy:

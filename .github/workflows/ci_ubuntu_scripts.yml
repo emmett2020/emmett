@@ -8,7 +8,7 @@ on:
       - 'script/linux/ubuntu/x64/*.sh'
 
 jobs:
-  build-unit-tests:
+  test:
     name: "Test Ubuntu Scripts on ${{ matrix.version }}"
     runs-on: ${{ matrix.version }}
     strategy:
@@ -48,7 +48,4 @@ jobs:
             bash "${file}"
             echo "::endgroup::"
           done
-
-
-
 

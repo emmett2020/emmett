@@ -50,10 +50,7 @@ function copy_nvim_config() {
     [[ ! -d ${nvim_config_dir} ]]  && echo "Can't find 'nvim' in emmett2020/emmett" && exit 1
 
     local nvim_config_install_dir="${HOME}/.config/nvim"
-    if [[ -d "${nvim_config_install_dir}" ]]; then
-      echo "Remove ${nvim_config_install_dir} first." && exit 1
-    fi
-
+    [[ -d "${nvim_config_install_dir}" ]] && rm -rf ${nvim_config_install_dir}
     mkdir -p "${nvim_config_install_dir}"
     cp -r "${nvim_config_dir}/"* "${nvim_config_install_dir}/"
 }

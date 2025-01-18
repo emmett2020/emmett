@@ -1,11 +1,11 @@
-name: Demo on Ubuntu 24.04
+name: Demo CI on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
     paths: 'demo/**'
 
 jobs:
-  build-unit-tests:
+  build-tests:
     name: "demo-ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
     runs-on: ubuntu-24.04
     strategy:

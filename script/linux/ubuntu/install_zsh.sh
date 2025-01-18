@@ -18,9 +18,7 @@ function copy_zshrc() {
   local emmett_root_path="${cur_dir}/../../.."
   local zshrc_path="${emmett_root_path}/config/zshrc/daily"
   [[ ! -f ${zshrc_path} ]]  && echo "Can't find 'daily' in emmett2020/emmett" && exit 1
-  if [[ -f "${HOME}/.zshrc" ]]; then
-    echo "Remove ${HOME}/.zshrc first" && exit 1
-  fi
+  [[ -f "${HOME}/.zshrc" ]] && rm -rf "${HOME}/.zshrc"
   cp "${zshrc_path}" "${HOME}/.zshrc"
 }
 
