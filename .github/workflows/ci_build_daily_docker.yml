@@ -9,11 +9,12 @@ jobs:
   build-docker:
     name: "Test Build Docker Images on Ubuntu-24.04"
     runs-on: ubuntu-24.04
-    # strategy:
-    #   fail-fast: false
-    #   matrix:
-    #     include:
-    #       - { version: "ubuntu-24.04" }
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: "linux/amd64" }
+          - { arch: "linux/arm64" }
 
     steps:
       - name: Checkout Repository
@@ -36,5 +37,6 @@ jobs:
           tags: user/app:latest
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
+          platforms: ${{ matrix.arch }}
 
 
