@@ -29,15 +29,15 @@ function install_zsh() {
 function install_oh_my_zsh() {
   [[ -d "${HOME}/.oh-my-zsh" ]] &&  sudo mv ${HOME}/.oh-my-zsh ${HOME}.oh-my-zsh.backup
   wget "https://install.ohmyz.sh/" -O "${temp_dir}/oh_my_zsh.sh"
-  sudo bash "${temp_dir}/oh_my_zsh.sh" --unattended
+  sudo -E bash "${temp_dir}/oh_my_zsh.sh" --unattended
 
-  echo "LS1_________________________________________"
-  # echo "$ZSH"
-  echo "LS2_________________________________________"
-  ls -lrthR /root/.oh-my-zsh
-  echo "LS3_________________________________________"
-  ls -lrthR ${HOME}/.oh-my-zsh
-  echo "TEST AGAIN  _______________________________"
+  # echo "LS1_________________________________________"
+  # # echo "$ZSH"
+  # echo "LS2_________________________________________"
+  # ls -lrthR /root/.oh-my-zsh
+  # echo "LS3_________________________________________"
+  # ls -lrthR ${HOME}/.oh-my-zsh
+  # echo "TEST AGAIN  _______________________________"
 
 
 }
