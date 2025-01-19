@@ -34,12 +34,12 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          push: true
-          tags: emmettzhang/daily:test
+          push: false
+          tags: emmettzhang/daily:test1
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: ${{ matrix.arch }}
-          cache-from: type=registry,ref=emmettzhang/daily:buildcache
-          cache-to: type=registry,ref=emmettzhang/daily:buildcache,mode=max
+          cache-from: type=registry,ref=emmettzhang/github-build-cache:daily-buildcache
+          cache-to: type=registry,ref=emmettzhang/github-build-cache:daily-buildcache,mode=max
 
 
