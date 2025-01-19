@@ -5,6 +5,10 @@ on:
     paths:
       - 'config/dockerfile/daily/**'
 
+env:
+  USER_NAME: emmettzhang
+  REPO: emmettzhang/github-build-cache
+
 jobs:
   build-docker:
     name: "Test Build Docker Images on Ubuntu-24.04"
@@ -21,30 +25,29 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      # INFO: Should already set DOCKERHUB_TOKEN
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${USER_NAME}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Create Tag Name
         id: tag
         run: |
           arch=$(echo "${{ matrix.arch }}" | awk -F'/' '{print $2}')
           tag="pull-request-${arch}-build-cache"
           echo "tag=${tag}" >> ${GITHUB_OUTPUT}
- 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: emmettzhang
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           push: false
-          # tags: emmettzhang/github-build-cache:test
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: ${{ matrix.arch }}
-          cache-from: type=registry,ref=emmettzhang/github-build-cache:${{steps.tag.outputs.tag}}
-          cache-to: type=registry,ref=emmettzhang/github-build-cache:${{steps.tag.outputs.tag}},mode=max
+          cache-from: type=registry,ref=${REPO}:${{steps.tag.outputs.tag}}
+          cache-to: type=registry,ref=${REPO}:${{steps.tag.outputs.tag}},mode=max
 
