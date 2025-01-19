@@ -30,7 +30,6 @@ function validate_daily() {
   ${HOME}/.neovim/bin/nvim --headless -c "TSUpdate query" -c "checkhealth" -c "w!health.log" -c"qa"
   cat health.log
   grep "\- ERROR" health.log | while IFS= read -r line; do
-    # 判断是否包含 "command failed: infocmp -L"
     if echo "$line" | grep -q "command failed: infocmp"; then
       continue
     else
