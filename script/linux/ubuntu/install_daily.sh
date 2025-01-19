@@ -21,29 +21,28 @@ bash "${CUR_SCRIPT_DIR}"/install_ripgrep.sh
 bash "${CUR_SCRIPT_DIR}"/install_nvim.sh
 bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
-function validate_daily() {
-  POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true exec zsh
-  # source "${HOME}/.zshrc"
-  ls -lthR ~/.neovim/
+POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true exec zsh -c '
+  function validate_daily() {
+    # source "${HOME}/.zshrc"
+    ls -lthR ~/.neovim/
 
-  cmake --version
-  fd --version
-  lazygit --version
-  rg --version
+    cmake --version
+    fd --version
+    lazygit --version
+    rg --version
 
-  # Validate nvim
-  echo "::group:: validate nvim"
-  # ${HOME}/.neovim/bin/nvim --version
-  # ${HOME}/.neovim/bin/nvim --headless -c "checkhealth" -c "w\!health.log" -c"qa"
-  nvim --version
-  nvim --headless -c "checkhealth" -c "w\!health.log" -c"qa"
-  cat health.log
-  if grep -q "- ERROR" health.log; then
-    exit 1
-  fi
-  echo "::endgroup::"
+    # Validate nvim
+    echo "::group:: validate nvim"
+    nvim --version
+    nvim --headless -c "checkhealth" -c "w\!health.log" -c"qa"
+    cat health.log
+    if grep -q "- ERROR" health.log; then
+      exit 1
+    fi
+    echo "::endgroup::"
 
-  # Validate zsh
-}
+    # Validate zsh
+  }
 
-validate_daily
+  validate_daily
+'
