@@ -1,4 +1,4 @@
-name: Test Build Docker Images on Ubuntu
+name: Test Build Daily Docker Image on Ubuntu
 on:
   pull_request:
     branches: [master]
@@ -18,7 +18,7 @@ jobs:
       matrix:
         include:
           - { arch: "linux/amd64" }
-          # - { arch: "linux/arm64" }
+          - { arch: "linux/arm64" }
 
     steps:
       - name: Checkout Repository
