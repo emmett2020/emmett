@@ -29,11 +29,11 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tag: emmettzhang/daily:test
+          tags: emmettzhang/daily:test
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: ${{ matrix.arch }}
-          catch-from: type=registry,ref=emmettzhang/daily:${{ matrix.arch }}-buildcache
-          catch-to: type=registry,ref=emmettzhang/daily:${{ matrix.arch }}-buildcache,mode=max
+          cache-from: type=registry,ref=emmettzhang/daily:${{ matrix.arch }}-buildcache
+          cache-to: type=registry,ref=emmettzhang/daily:${{ matrix.arch }}-buildcache,mode=max
 
 
