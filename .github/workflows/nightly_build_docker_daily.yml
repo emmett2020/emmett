@@ -1,4 +1,4 @@
-name: Manual or Schedule Build Daily Docker Images on Ubuntu
+name: Nightly Build Docker Images Daily on Ubuntu
 
 on:
   schedule:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   build-docker:
-    name: "manual-or-schedule-build-docker-images-on-ubuntu-24.04"
+    name: "nightly-build-docker-images-daily-on-ubuntu-24.04"
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
