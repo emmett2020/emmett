@@ -29,7 +29,7 @@ function validate_daily() {
   ${HOME}/.neovim/bin/nvim --version
   ${HOME}/.neovim/bin/nvim --headless -c "checkhealth" -c "w!health.log" -c"qa"
   cat health.log
-  if grep -q "- ERROR" health.log; then
+  if grep -q "\- ERROR" health.log; then
     exit 1
   fi
   echo "::endgroup::"

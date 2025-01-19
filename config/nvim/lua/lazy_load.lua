@@ -127,6 +127,11 @@ require("lazy").setup({
       },
     },
   },
+  -- We havn't supported 'luarocks' yet since it can't be easily used on arm64
+  -- architecture.
+  rocks = {
+    enabled = false,
+  },
 })
 
 
