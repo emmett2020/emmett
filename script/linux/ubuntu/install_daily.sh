@@ -22,8 +22,8 @@ bash "${CUR_SCRIPT_DIR}"/install_nvim.sh
 bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
 function validate_daily() {
-  POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true zsh
-  source "${HOME}/.zshrc"
+  POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true exec zsh
+  # source "${HOME}/.zshrc"
   ls -lthR ~/.neovim/
 
   cmake --version
@@ -33,6 +33,8 @@ function validate_daily() {
 
   # Validate nvim
   echo "::group:: validate nvim"
+  # ${HOME}/.neovim/bin/nvim --version
+  # ${HOME}/.neovim/bin/nvim --headless -c "checkhealth" -c "w\!health.log" -c"qa"
   nvim --version
   nvim --headless -c "checkhealth" -c "w\!health.log" -c"qa"
   cat health.log
@@ -42,8 +44,6 @@ function validate_daily() {
   echo "::endgroup::"
 
   # Validate zsh
-  # validate eza
-  ls
 }
 
 validate_daily
