@@ -3,7 +3,9 @@ on:
   pull_request:
     branches: [master]
     paths:
+      - 'config/**'
       - 'config/dockerfile/daily/**'
+      - 'script/**.sh'
 
 jobs:
   build-docker:
@@ -46,4 +48,5 @@ jobs:
           platforms: ${{ matrix.arch }}
           cache-from: type=registry,ref=emmettzhang/github-build-cache:${{ steps.tag.outputs.tag }}
           cache-to: type=registry,ref=emmettzhang/github-build-cache:${{ steps.tag.outputs.tag }},mode=max
+      # TODO: check docker image could be used
 
