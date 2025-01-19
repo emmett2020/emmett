@@ -22,6 +22,8 @@ bash "${CUR_SCRIPT_DIR}"/install_nvim.sh
 bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
 function validate_daily() {
+  POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true zsh
+
   cmake --version
   fd --version
   lazygit --version
