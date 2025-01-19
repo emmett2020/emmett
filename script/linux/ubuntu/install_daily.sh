@@ -22,8 +22,9 @@ bash "${CUR_SCRIPT_DIR}"/install_nvim.sh
 bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
 POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true exec zsh -c '
+  set -euo pipefail
+
   function validate_daily() {
-    # source "${HOME}/.zshrc"
     ls -lthR ~/.neovim/
 
     cmake --version
@@ -44,5 +45,6 @@ POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true exec zsh -c '
     # Validate zsh
   }
 
+  source "${HOME}/.zshrc"
   validate_daily
 '
