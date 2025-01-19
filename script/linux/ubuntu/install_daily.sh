@@ -23,7 +23,7 @@ bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
 function validate_daily() {
   POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true zsh
-  # source "${HOME}/.zshrc"
+  source "${HOME}/.zshrc"
   ls -lthR ~/.neovim/
 
   cmake --version
