@@ -41,6 +41,7 @@ function install_neovim_x86_64() {
 }
 
 function install_neovim_arm64() {
+  sudo apt-get install ninja-build gettext cmake curl build-essential
   local arm_dir="${emmett_root_path}/script/linux/ubuntu/arm"
   bash "${arm_dir}"/build_nvim.sh "${HOME}/.neovim/"
 }
