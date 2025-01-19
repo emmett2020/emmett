@@ -52,3 +52,4 @@ RUN echo "************** Next Frame ******************"   \
     && apt-get autoclean
 
 CMD ["/bin/zsh"]
+
