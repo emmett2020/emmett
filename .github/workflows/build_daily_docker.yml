@@ -49,7 +49,7 @@ jobs:
 
           arch=$(echo "${{ matrix.arch }}" | awk -F'/' '{print $2}')
           cache_tag="main-${arch}-build-cache"
-          echo "cache-tag=${cache_tag}" >> ${GITHUB_OUTPUT}
+          echo "cache_tag=${cache_tag}" >> ${GITHUB_OUTPUT}
 
       - name: Build and Push
         uses: docker/build-push-action@v6
