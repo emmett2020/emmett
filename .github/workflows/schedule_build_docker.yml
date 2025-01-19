@@ -39,18 +39,18 @@ jobs:
         id: tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            tag="${{ inputs.tag }}"
-            echo "tag=${tag}" >> ${GITHUB_OUTPUT}
+            tag="emmettzhang/daily:${{ inputs.tag }}"
           else
             timestamp=$(date +"%Y-%m-%d %H:%M:%S")
             echo "timestamp: ${timestamp}"
-            echo "tag=${timestamp}" >> ${GITHUB_OUTPUT}
+            tag="emmettzhang/nightly:${timestamp}"
           fi
+          echo "tag=${tag}" >> ${GITHUB_OUTPUT}
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: emmettzhang/daily:${{ steps.tag.outputs.tag }}
+          tags: ${{ steps.tag.outputs.tag }}
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=main
           platforms: ${{ matrix.arch }}
