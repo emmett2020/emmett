@@ -33,7 +33,7 @@ jobs:
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: ${{ matrix.arch }}
-          cache-from: type=registry,ref=emmettzhang/daily:${{ matrix.arch }}-buildcache
-          cache-to: type=registry,ref=emmettzhang/daily:${{ matrix.arch }}-buildcache,mode=max
+          cache-from: type=registry,ref=emmettzhang/daily:buildcache
+          cache-to: type=registry,ref=emmettzhang/daily:buildcache,mode=max
 
 
