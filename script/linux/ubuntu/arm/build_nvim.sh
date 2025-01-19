@@ -26,8 +26,10 @@ cd neovim
 version="0.10.3"
 git checkout "v${version}"
 
+echo "::group:: build nvim"
 make -j`nproc` CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_PREFIX="$@"
 make -j`nproc` install
+3cho "::endgroup::"
 
 popd &> /dev/null
 
