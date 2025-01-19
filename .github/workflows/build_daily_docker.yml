@@ -57,7 +57,7 @@ jobs:
           push: true
           tags: ${{ steps.tag.outputs.tag }}
           context: config/dockerfile/daily/
-          build-args: GIT_BRANCH=main
+          build-args: GIT_BRANCH=master
           platforms: ${{ matrix.arch }}
           cache-from: type=registry,ref=emmettzhang/github-build-cache:${{ steps.tag.outputs.cache_tag }}
           cache-to: type=registry,ref=emmettzhang/github-build-cache:${{ steps.tag.outputs.cache_tag }},mode=max
