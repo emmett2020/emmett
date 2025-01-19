@@ -21,3 +21,23 @@ bash "${CUR_SCRIPT_DIR}"/install_ripgrep.sh
 bash "${CUR_SCRIPT_DIR}"/install_nvim.sh
 bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
+function validate_daily() {
+  cmake --version
+  fd --version
+  lazygit --version
+  rg --version
+
+  # Validate nvim
+  echo "::group:: validate nvim"
+  nvim --version
+  nvim --headless -c "checkhealth" -c "w\!health.log" -c"qa"
+  cat health.log
+  if grep -q "- ERROR" health.log; then
+    exit 1
+  fi
+  echo "::endgroup::"
+
+  # Validate zsh
+}
+
+validate_daily
