@@ -44,6 +44,6 @@ jobs:
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: ${{ matrix.arch }}
-          cache-from: type=registry,ref=emmettzhang/github-build-cache:${{steps.tag.outputs.tag}}
-          cache-to: type=registry,ref=emmettzhang/github-build-cache:${{steps.tag.outputs.tag}},mode=max
+          cache-from: type=registry,ref=emmettzhang/github-build-cache:${{ steps.tag.outputs.tag }}
+          cache-to: type=registry,ref=emmettzhang/github-build-cache:${{ steps.tag.outputs.tag }},mode=max
 
