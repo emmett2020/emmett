@@ -27,11 +27,13 @@ function validate_daily() {
   # Validate nvim
   echo "::group:: validate nvim"
   ${HOME}/.neovim/bin/nvim --version
-  ${HOME}/.neovim/bin/nvim --headless -c "checkhealth" -c "w!health.log" -c"qa"
+  ${HOME}/.neovim/bin/nvim --headless -c "TSUpdate query" -c "checkhealth" -c "w!health.log" -c"qa"
   cat health.log
   if grep -q "\- ERROR" health.log; then
+    echo "Health check of neovim failed"
     exit 1
   fi
+  rm health.log
   echo "::endgroup::"
 }
 
