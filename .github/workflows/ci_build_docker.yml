@@ -14,7 +14,7 @@ jobs:
       matrix:
         include:
           - { arch: "linux/amd64" }
-          - { arch: "linux/arm64" }
+          # - { arch: "linux/arm64" }
 
     steps:
       - name: Checkout Repository
@@ -28,9 +28,11 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          push: false
+          push: true
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: ${{ matrix.arch }}
+          catch-from: type=registry,ref=emmettzhang/daily:${{ matrix.arch }}-buildcache
+          catch-to: type=registry,ref=emmettzhang/daily:${{ matrix.arch }}-buildcache,mode=max
 
 

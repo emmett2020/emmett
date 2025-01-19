@@ -60,7 +60,7 @@ jobs:
           push: true
           tags: emmettzhang/daily:${{ steps.tag.outputs.tag }}
           context: config/dockerfile/daily/
-          build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
+          build-args: GIT_BRANCH=main
           platforms: ${{ matrix.arch }}
 
 
