@@ -16,12 +16,18 @@ jobs:
           - { arch: "linux/amd64" }
           # - { arch: "linux/arm64" }
 
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Create Tag Name
+        id: tag
+        run: |
+          arch=$(echo "${{ matrix.arch }}" | awk -F'/' '{print $2}')
+          tag="pull-request-${arch}-build-cache"
+          echo "tag=${tag}" >> ${GITHUB_OUTPUT}
+ 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -35,11 +41,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: false
-          tags: emmettzhang/daily:test1
+          # tags: emmettzhang/github-build-cache:test
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: ${{ matrix.arch }}
-          cache-from: type=registry,ref=emmettzhang/github-build-cache:daily-buildcache
-          cache-to: type=registry,ref=emmettzhang/github-build-cache:daily-buildcache,mode=max
-
+          cache-from: type=registry,ref=emmettzhang/github-build-cache:${{steps.tag.outputs.tag}}
+          cache-to: type=registry,ref=emmettzhang/github-build-cache:${{steps.tag.outputs.tag}},mode=max
 
