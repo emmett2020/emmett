@@ -42,7 +42,7 @@ function install_neovim_x86_64() {
 
 function install_neovim_arm64() {
   local arm_dir="${emmett_root_path}/script/linux/ubuntu/arm"
-  bash "${arm_dir}"/install_nvim.sh "${HOME}/.neovim/"
+  bash "${arm_dir}"/build_nvim.sh "${HOME}/.neovim/"
 }
 
 function copy_nvim_config() {
