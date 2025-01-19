@@ -38,10 +38,10 @@ jobs:
         id: tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            local tag="${{ inputs.tag }}"
+            tag="${{ inputs.tag }}"
             echo "tag=${tag}" >> ${GITHUB_OUTPUT}
           else
-            local tag="${{ steps.time.outputs.timestamp }}"
+            tag="${{ steps.time.outputs.timestamp }}"
             echo "tag=${tag}" >> ${GITHUB_OUTPUT}
           fi
  
