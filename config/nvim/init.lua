@@ -5,6 +5,9 @@ require("config.options")
 --    Load all plugins which placed in lua/plugin by lazy.nvim just installed.
 require("lazy_load")
 
+-- When using treesitter, prefer git to download plugins.
+require("nvim-treesitter.install").prefer_git = true
+
 -- 3. neovide config
 if vim.g.neovide then
   require("neovide_config")
@@ -15,3 +18,4 @@ local Config = require("config")
 Config.colorscheme = "pastelnight"
 -- Config.colorscheme = "edge"
 Config.setup()
+
