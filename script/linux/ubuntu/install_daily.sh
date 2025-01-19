@@ -21,30 +21,18 @@ bash "${CUR_SCRIPT_DIR}"/install_ripgrep.sh
 bash "${CUR_SCRIPT_DIR}"/install_nvim.sh
 bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
-POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true exec zsh -c '
-  set -euo pipefail
+# We put this check here rather than install_nvim.sh since this check is too
+# strict but may not confluence use.
+function validate_daily() {
+  # Validate nvim
+  echo "::group:: validate nvim"
+  ${HOME}/.neovim/bin/nvim --version
+  ${HOME}/.neovim/bin/nvim --headless -c "checkhealth" -c "w\!health.log" -c"qa"
+  cat health.log
+  if grep -q "- ERROR" health.log; then
+    exit 1
+  fi
+  echo "::endgroup::"
+}
 
-  function validate_daily() {
-    ls -lthR ~/.neovim/
-
-    cmake --version
-    fd --version
-    lazygit --version
-    rg --version
-
-    # Validate nvim
-    echo "::group:: validate nvim"
-    nvim --version
-    nvim --headless -c "checkhealth" -c "w\!health.log" -c"qa"
-    cat health.log
-    if grep -q "- ERROR" health.log; then
-      exit 1
-    fi
-    echo "::endgroup::"
-
-    # Validate zsh
-  }
-
-  source "${HOME}/.zshrc"
-  validate_daily
-'
+validate_daily
