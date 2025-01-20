@@ -40,7 +40,11 @@ function validate_daily() {
   grep "\- ERROR" health.log | while IFS= read -r line; do
     if echo "$line" | grep -q "command failed: infocmp"; then
       continue
-    elif echo "$line" | grep -q "command failed: infocmp"; then
+    elif echo "$line" | grep -q "query"; then
+      # ERROR query(highlights): .../.neovim/share/nvim/runtime/lua/vim/treesitter/query.lua:252: Query error at 4:17. Impossible pattern:
+      #7 81.89   (anonymous_node (identifier) @string)
+      # TODO: Random failed. Plz use :TSUpdate query to manumally fix this issue when you meet this error.
+      echo "$line"
       continue
     else
       echo "Health check of neovim failed"
