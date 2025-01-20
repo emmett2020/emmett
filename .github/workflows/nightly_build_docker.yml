@@ -35,7 +35,7 @@ jobs:
         id: tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            tag="emmettzhang/daily:amd-${{ inputs.daily-tag }}"
+            tag="emmettzhang/daily:amd-${{ inputs.daily-amd-tag }}"
           else
             timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
             echo "timestamp: ${timestamp}"
@@ -67,7 +67,7 @@ jobs:
         id: tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            tag="emmettzhang/daily:arm-${{ inputs.daily-tag }}"
+            tag="emmettzhang/daily:arm-${{ inputs.daily-arm-tag }}"
           else
             timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
             echo "timestamp: ${timestamp}"
