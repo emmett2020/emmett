@@ -78,8 +78,13 @@ jobs:
         run: |
           for file in ${ALL_CHANGED_FILES}; do
             echo "::group:: bash ${file}"
-            bash "${file}"
-            echo "::endgroup::"
+            if [[ ${file} == *"build_nvim"* ]]; then
+              temp_dir=$(mktemp -d)
+              bash build_nvim.sh ${temp_dir}
+            else
+              bash "${file}"
+            fi
+             echo "::endgroup::"
           done
 
 
