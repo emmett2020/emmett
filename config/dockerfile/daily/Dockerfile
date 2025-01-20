@@ -1,9 +1,9 @@
 FROM ubuntu
 LABEL maintainer="emmett"
 
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
 
 # 1. Make the entire build process non-interactive
 ARG DEBIAN_FRONTEND=noninteractive

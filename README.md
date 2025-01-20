@@ -3,9 +3,9 @@
 
 | CI                         |
 | -------------------        |
-| ![nightly build docker daily](https://github.com/emmett2020/emmett/actions/workflows/nightly_build_docker_daily.yml/badge.svg) |
+| ![nightly build docker](https://github.com/emmett2020/emmett/actions/workflows/nightly_build_docker.yml/badge.svg)       |
 | ![build ubuntu script](https://github.com/emmett2020/emmett/actions/workflows/ci_ubuntu_scripts.yml/badge.svg)        |
-| ![build daily docker](https://github.com/emmett2020/emmett/actions/workflows/ci_build_daily_docker.yml/badge.svg)         |
+| ![build docker daily](https://github.com/emmett2020/emmett/actions/workflows/ci_build_docker_daily.yml/badge.svg)         |
 | ![bench](https://github.com/emmett2020/emmett/actions/workflows/ci_bench.yml/badge.svg)                      |
 | ![demo](https://github.com/emmett2020/emmett/actions/workflows/ci_demo.yml/badge.svg)                       |
 | ![tutorial](https://github.com/emmett2020/emmett/actions/workflows/ci_tutorial.yml/badge.svg)                   |
