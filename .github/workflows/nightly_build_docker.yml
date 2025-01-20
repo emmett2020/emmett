@@ -6,12 +6,12 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
-      daily-tag:
+      daily-amd-tag:
         description: 'docker image daily amd tag'
         required: true
         default: '0.0.0'
         type: string
-      daily-tag:
+      daily-arm-tag:
         description: 'docker image daily arm tag'
         required: true
         default: '0.0.0'
