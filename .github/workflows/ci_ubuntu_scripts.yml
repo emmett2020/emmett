@@ -7,7 +7,7 @@ on:
       - 'script/linux/ubuntu/**.sh'
 
 jobs:
-  test-script:
+  test-script-on-amd:
     name: "test-ubuntu-scripts-on-${{ matrix.version }}-amd64"
     runs-on: ${{ matrix.version }}
     strategy:
@@ -48,7 +48,7 @@ jobs:
             echo "::endgroup::"
           done
 
-  test-script:
+  test-script-on-arm:
     name: "test-ubuntu-scripts-on-ubuntu-2404-arm"
     runs-on: ubuntu-24.04-arm
     steps:
