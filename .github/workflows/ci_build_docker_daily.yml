@@ -6,7 +6,13 @@ on:
       - 'config/dockerfile/daily/**'
       - 'config/nvim/**'
       - 'config/zshrc/**'
-      - 'script/linux/**.sh'
+      - 'script/linux/ubuntu/install_daily.sh'
+      - 'script/linux/ubuntu/install_cmake.sh'
+      - 'script/linux/ubuntu/install_fdfind.sh'
+      - 'script/linux/ubuntu/install_lazygit.sh'
+      - 'script/linux/ubuntu/install_nvim.sh'
+      - 'script/linux/ubuntu/install_ripgrep.sh'
+      - 'script/linux/ubuntu/install_zsh.sh'
 
 jobs:
   build-amd64-docker:
