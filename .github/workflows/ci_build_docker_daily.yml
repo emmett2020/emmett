@@ -13,6 +13,8 @@ on:
       - 'script/linux/ubuntu/install_nvim.sh'
       - 'script/linux/ubuntu/install_ripgrep.sh'
       - 'script/linux/ubuntu/install_zsh.sh'
+      - 'script/linux/ubuntu/build_nvim.sh'
+      - 'script/linux/ubuntu/build_clangd.sh'
 
 jobs:
   build-amd64-docker:
