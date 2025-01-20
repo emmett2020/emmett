@@ -28,6 +28,8 @@ function validate_daily() {
   echo "::group:: validate nvim"
   ${HOME}/.neovim/bin/nvim --version
   ${HOME}/.neovim/bin/nvim --headless -c "TSUpdate query" -c "checkhealth" -c "w!health.log" -c"qa"
+  echo "::endgroup::"
+  echo "::group:: health log"
   cat health.log
   grep "\- ERROR" health.log | while IFS= read -r line; do
     if echo "$line" | grep -q "command failed: infocmp"; then
