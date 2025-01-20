@@ -29,7 +29,11 @@ function validate_daily() {
   # Validate nvim
   echo "::group:: validate nvim"
   ${HOME}/.neovim/bin/nvim --version
-  ${HOME}/.neovim/bin/nvim --headless -c "TSUpdate query" -c "checkhealth" -c "w!health.log" -c"qa"
+  ${HOME}/.neovim/bin/nvim --headless -c "TSUpdate query"    \
+                                      -c "checkhealth"       \
+                                      -c "w!health.log"      \
+                                      -c "qa"                \
+                                      &> /dev/null
   echo "::endgroup::"
   echo "::group:: health log"
   cat health.log
