@@ -40,6 +40,8 @@ function validate_daily() {
   grep "\- ERROR" health.log | while IFS= read -r line; do
     if echo "$line" | grep -q "command failed: infocmp"; then
       continue
+    elif echo "$line" | grep -q "command failed: infocmp"; then
+      continue
     else
       echo "Health check of neovim failed"
       exit 1
