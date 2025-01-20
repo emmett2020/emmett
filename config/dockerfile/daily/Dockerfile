@@ -51,6 +51,7 @@ RUN echo "************** Next Frame ******************"   \
 # [emmett git repo]
     && git clone -b ${GIT_BRANCH}                         \
            https://github.com/emmett2020/emmett.git       \
+
 # [daily]
     && bash emmett/script/linux/ubuntu/install_daily.sh   \
 # [clear]
