@@ -24,10 +24,18 @@ bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 # We put this check here rather than install_nvim.sh since this check is too
 # strict but may not confluence use.
 function validate_daily() {
+  set -euo pipefail
+
   # Validate nvim
   echo "::group:: validate nvim"
   ${HOME}/.neovim/bin/nvim --version
-  ${HOME}/.neovim/bin/nvim --headless -c "TSUpdate query" -c "checkhealth" -c "w!health.log" -c"qa"
+  ${HOME}/.neovim/bin/nvim --headless -c "TSUpdate query"    \
+                                      -c "checkhealth"       \
+                                      -c "w!health.log"      \
+                                      -c "qa"                \
+                                      &> /dev/null
+  echo "::endgroup::"
+  echo "::group:: health log"
   cat health.log
   grep "\- ERROR" health.log | while IFS= read -r line; do
     if echo "$line" | grep -q "command failed: infocmp"; then
@@ -38,8 +46,9 @@ function validate_daily() {
     fi
   done
   rm health.log
+  echo "Health check of neovim passed"
   echo "::endgroup::"
 }
 
 # TODO: It's error on arm platform. Need fix.
-# validate_daily
+validate_daily

@@ -1,4 +1,4 @@
-name: Nightly Build Docker Images Daily on Ubuntu
+name: Nightly Build Docker Images on Ubuntu
 
 on:
   schedule:
