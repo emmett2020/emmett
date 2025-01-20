@@ -6,23 +6,16 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'docker container tag'
+      daily-tag:
+        description: 'docker image tag1'
         required: true
         default: '0.0.0'
         type: string
 
 jobs:
-  build-docker:
-    name: "nightly-build-docker-images-daily-on-ubuntu-24.04"
+  build-docker-daily-amd64:
+    name: "nightly-build-docker-images-daily-amd64-on-ubuntu-24.04"
     runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { arch: "linux/amd64" }
-          - { arch: "linux/arm64" }
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -31,26 +24,19 @@ jobs:
         with:
           username: emmettzhang
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Get Tag Name
         id: tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            tag="emmettzhang/daily:${{ inputs.tag }}"
+            tag="emmettzhang/daily:${{ inputs.daily-tag }}"
           else
             timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
             echo "timestamp: ${timestamp}"
             tag="emmettzhang/nightly:${timestamp}"
           fi
           echo "tag=${tag}" >> ${GITHUB_OUTPUT}
-
-          arch=$(echo "${{ matrix.arch }}" | awk -F'/' '{print $2}')
-          cache_tag="main-${arch}-build-cache"
-          echo "cache_tag=${cache_tag}" >> ${GITHUB_OUTPUT}
-
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
@@ -58,6 +44,36 @@ jobs:
           tags: ${{ steps.tag.outputs.tag }}
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=master
-          platforms: ${{ matrix.arch }}
-          cache-from: type=registry,ref=emmettzhang/github-build-cache:${{ steps.tag.outputs.cache_tag }}
-          cache-to: type=registry,ref=emmettzhang/github-build-cache:${{ steps.tag.outputs.cache_tag }},mode=max
+          platforms: linux/amd64
+  build-docker-daily-arm64:
+    name: "nightly-build-docker-images-daily-arm64-on-ubuntu-24.04"
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: emmettzhang
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Get Tag Name
+        id: tag
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            tag="emmettzhang/daily:${{ inputs.daily-tag }}"
+          else
+            timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
+            echo "timestamp: ${timestamp}"
+            tag="emmettzhang/nightly:${timestamp}"
+          fi
+          echo "tag=${tag}" >> ${GITHUB_OUTPUT}
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ steps.tag.outputs.tag }}
+          context: config/dockerfile/daily/
+          build-args: GIT_BRANCH=master
+          platforms: linux/arm64
