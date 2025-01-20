@@ -78,7 +78,6 @@ function install_chroma() {
 ##############################################
 #               entrypoint
 ##############################################
-copy_zshrc
 install_zsh
 install_oh_my_zsh
 install_zsh_syntax_highlighting
@@ -86,6 +85,7 @@ install_zsh_auto_suggesstions
 install_powerlevel_10k
 install_eza
 install_chroma
+copy_zshrc
 
 echo "Successfully installed zsh, omz, config, themes and plugins."
 echo "Please use: source ~/.zshrc to apply newest config."

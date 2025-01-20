@@ -48,6 +48,7 @@ jobs:
             echo "::endgroup::"
           done
 
+  test-script:
     name: "test-ubuntu-scripts-on-ubuntu-2404-arm"
     runs-on: ubuntu-24.04-arm
     steps:
