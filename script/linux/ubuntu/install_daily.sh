@@ -42,4 +42,4 @@ function validate_daily() {
 }
 
 # TODO: It's error on arm platform. Need fix.
-# validate_daily
+validate_daily
