@@ -7,7 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       daily-tag:
-        description: 'docker image tag1'
+        description: 'docker image daily amd tag'
+        required: true
+        default: '0.0.0'
+        type: string
+      daily-tag:
+        description: 'docker image daily arm tag'
         required: true
         default: '0.0.0'
         type: string
@@ -30,11 +35,11 @@ jobs:
         id: tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            tag="emmettzhang/daily:${{ inputs.daily-tag }}"
+            tag="emmettzhang/daily:amd-${{ inputs.daily-tag }}"
           else
             timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
             echo "timestamp: ${timestamp}"
-            tag="emmettzhang/nightly:${timestamp}"
+            tag="emmettzhang/nightly:amd-${timestamp}"
           fi
           echo "tag=${tag}" >> ${GITHUB_OUTPUT}
       - name: Build and Push
@@ -62,11 +67,11 @@ jobs:
         id: tag
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            tag="emmettzhang/daily:${{ inputs.daily-tag }}"
+            tag="emmettzhang/daily:arm-${{ inputs.daily-tag }}"
           else
             timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
             echo "timestamp: ${timestamp}"
-            tag="emmettzhang/nightly:${timestamp}"
+            tag="emmettzhang/nightly:arm-${timestamp}"
           fi
           echo "tag=${tag}" >> ${GITHUB_OUTPUT}
       - name: Build and Push
