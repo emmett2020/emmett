@@ -41,7 +41,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             tag="emmettzhang/daily:${{ inputs.tag }}"
           else
-            timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+            timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
             echo "timestamp: ${timestamp}"
             tag="emmettzhang/nightly:${timestamp}"
           fi
