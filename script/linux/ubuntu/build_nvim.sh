@@ -1,6 +1,6 @@
 #!/bin/bash
 : << 'COMMENT'
-[DOING] Build neovim from source
+Build neovim from source
 
 |------------------------------|-------------------------------|
 |         🎃 item              |        👇 explanation         |
