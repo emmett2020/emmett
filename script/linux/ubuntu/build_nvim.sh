@@ -1,11 +1,11 @@
 #!/bin/bash
 : << 'COMMENT'
-[DOING] Build neovim from source
+Build neovim from source
 
 |------------------------------|-------------------------------|
 |         🎃 item              |        👇 explanation         |
 |------------------------------|-------------------------------|
-|    needs root permission?    |            Not Sure           |
+|    needs root permission?    |            Yes                |
 |------------------------------|-------------------------------|
 |          dependencies        |              No               |
 |------------------------------|-------------------------------|
@@ -20,6 +20,7 @@ temp_dir=$(mktemp -d)
 trap "rm -rf ${temp_dir}" EXIT
 pushd ${temp_dir} &> /dev/null
 
+sudo apt install -y ninja-build gettext cmake curl build-essential
 git clone --recursive https://github.com/neovim/neovim.git
 cd neovim
 
@@ -32,4 +33,5 @@ make -j`nproc` install
 echo "::endgroup::"
 
 popd &> /dev/null
+
 
