@@ -80,7 +80,7 @@ jobs:
             echo "::group:: bash ${file}"
             if [[ ${file} == *"build_nvim"* ]]; then
               temp_dir=$(mktemp -d)
-              bash build_nvim.sh ${temp_dir}
+              bash ${file} ${temp_dir}
             else
               bash "${file}"
             fi
