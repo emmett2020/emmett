@@ -32,8 +32,8 @@ jobs:
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: linux/amd64
-          cache-from: type=registry,ref=emmettzhang/github-build-cache:pull-request-amd64-build-cache
-          cache-to: type=registry,ref=emmettzhang/github-build-cache:pull-request-amd64-build-cache,mode=max
+          # cache-from: type=registry,ref=emmettzhang/github-build-cache:pull-request-amd64-build-cache
+          # cache-to: type=registry,ref=emmettzhang/github-build-cache:pull-request-amd64-build-cache,mode=max
 
   build-arm64-docker:
     name: "Test Build Docker Images on Ubuntu-24.04 Arm"
@@ -57,6 +57,6 @@ jobs:
           context: config/dockerfile/daily/
           build-args: GIT_BRANCH=${{ github.event.pull_request.head.ref }}
           platforms: linux/arm64
-          cache-from: type=registry,ref=emmettzhang/github-build-cache:pull-request-arm64-build-cache
-          cache-to: type=registry,ref=emmettzhang/github-build-cache:pull-request-arm64-build-cache,mode=max
+          # cache-from: type=registry,ref=emmettzhang/github-build-cache:pull-request-arm64-build-cache
+          # cache-to: type=registry,ref=emmettzhang/github-build-cache:pull-request-arm64-build-cache,mode=max
 

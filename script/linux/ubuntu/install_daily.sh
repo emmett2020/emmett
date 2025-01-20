@@ -24,6 +24,8 @@ bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 # We put this check here rather than install_nvim.sh since this check is too
 # strict but may not confluence use.
 function validate_daily() {
+  set -euo pipefail
+
   # Validate nvim
   echo "::group:: validate nvim"
   ${HOME}/.neovim/bin/nvim --version
@@ -40,6 +42,7 @@ function validate_daily() {
     fi
   done
   rm health.log
+  echo "Health check of neovim passed"
   echo "::endgroup::"
 }
 
