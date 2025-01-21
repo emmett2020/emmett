@@ -18,8 +18,11 @@ bash "${CUR_SCRIPT_DIR}"/install_cmake.sh
 bash "${CUR_SCRIPT_DIR}"/install_fdfind.sh
 bash "${CUR_SCRIPT_DIR}"/install_lazygit.sh
 bash "${CUR_SCRIPT_DIR}"/install_ripgrep.sh
+bash "${CUR_SCRIPT_DIR}"/install_clangd.sh
 bash "${CUR_SCRIPT_DIR}"/install_nvim.sh
 bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
+
+sudo echo "127.0.0.1 emmett" >> /etc/hosts
 
 # We put this check here rather than install_nvim.sh since this check is too
 # strict but may not confluence use.
