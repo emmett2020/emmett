@@ -59,6 +59,8 @@ jobs:
         uses: emmett2020/cpp-lint-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          clang-tidy-database: bench/example/build
 
       - name: Compile And Run string_view_vs_string
         if: steps.filter.outputs.string_view_vs_string == 'true'
