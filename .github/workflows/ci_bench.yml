@@ -37,8 +37,8 @@ jobs:
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          clang-tidy: 19
-          clang-format: 19
+          clang-tidy: 20
+          clang-format: 20
 
       - uses: dorny/paths-filter@v3
         id: filter
@@ -67,8 +67,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           clang-tidy-database: bench/example/build
-          clang-tidy-version: 19
-          clang-format-version: 19
+          clang-tidy-version: 20
+          clang-format-version: 20
 
       - name: Compile And Run string_view_vs_string
         if: steps.filter.outputs.string_view_vs_string == 'true'
