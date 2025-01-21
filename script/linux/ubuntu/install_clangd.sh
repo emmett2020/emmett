@@ -1,6 +1,6 @@
 #!/bin/bash
 : << 'COMMENT'
-Build clangd;clang from source
+Install pre-built clangd
 |------------------------------|------------------------------|
 |         🎃 item              |        👇 explanation        |
 |------------------------------|------------------------------|
