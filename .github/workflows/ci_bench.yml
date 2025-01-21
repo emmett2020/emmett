@@ -69,6 +69,7 @@ jobs:
           clang-tidy-database: bench/example/build
           clang-tidy-version: 20
           clang-format-version: 20
+          clang-tidy-config-file: bench/.clang-tidy
 
       - name: Compile And Run string_view_vs_string
         if: steps.filter.outputs.string_view_vs_string == 'true'
