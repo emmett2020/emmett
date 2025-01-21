@@ -10,8 +10,12 @@
 COMMENT
 set -euo pipefail
 
+[[ "$@" == "" ]] && echo "Must provide clangd installation dirctory" && exit 1
+install_prefix="$@"
+
 temp_dir=$(mktemp -d)
-# trap "rm -rf ${temp_dir}" EXIT
+echo ${temp_dir}
+trap "rm -rf ${temp_dir}" EXIT
 
 clangd_version=llvmorg-19.1.7
 clangd_link="https://github.com/llvm/llvm-project.git"
@@ -20,14 +24,12 @@ clangd_dir="/usr/local"
 pushd ${temp_dir} &> /dev/null
 sudo apt install ninja-build
 
-git clone https://github.com/llvm/llvm-project.git
+git clone --depth=1 --branch ${clangd_version} https://github.com/llvm/llvm-project.git
 cd llvm-project
-git checkout "${clangd_version}"
-git submodule update --init --recursive
 mkdir build && cd build
-cmake ../llvm/ -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" -GNinja
-cmake --build . --target clangd -j`nproc`
+cmake ../llvm/ -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" -GNinja  -DCMAKE_INSTALL_PREFIX="${install_prefix}"
+ninja -j`nproc` install
 
 popd &> /dev/null
 
-clangd --version
+"${install_prefix}"/bin/clangd --version
