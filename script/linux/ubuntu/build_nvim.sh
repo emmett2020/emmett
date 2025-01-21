@@ -18,7 +18,7 @@ set -euo pipefail
 
 temp_dir=$(mktemp -d)
 trap "rm -rf ${temp_dir}" EXIT
-pushd ${temp_dir} &> /dev/null
+pushd ${temp_dir}
 
 sudo apt install -y ninja-build gettext cmake curl build-essential
 git clone --recursive https://github.com/neovim/neovim.git

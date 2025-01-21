@@ -44,7 +44,7 @@ jobs:
         run: |
           for file in ${ALL_CHANGED_FILES}; do
             echo "::group:: bash ${file}"
-            if [[ ${file} == *"build_nvim"* ]]; then
+            if [[ ${file} == *"build_"* ]]; then
               temp_dir=$(mktemp -d)
               bash ${file} ${temp_dir}
             else
@@ -83,7 +83,7 @@ jobs:
         run: |
           for file in ${ALL_CHANGED_FILES}; do
             echo "::group:: bash ${file}"
-            if [[ ${file} == *"build_nvim"* ]]; then
+            if [[ ${file} == *"build_"* ]]; then
               temp_dir=$(mktemp -d)
               bash ${file} ${temp_dir}
             else
