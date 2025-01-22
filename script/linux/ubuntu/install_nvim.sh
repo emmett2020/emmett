@@ -26,7 +26,7 @@ function install_neovim_x86_64() {
     local nvim_link="https://github.com/neovim/neovim/releases/download/v${version}/nvim-linux64.tar.gz"
     wget ${nvim_link} -O "${temp_dir}/nvim.tar.gz"
 
-    # Unzip the tarbal
+    # Unzip the tarball
     local unzip_path="${temp_dir}/neovim"
     mkdir -p "${unzip_path}"
     tar -xzf "${temp_dir}/nvim.tar.gz" -C ${unzip_path}

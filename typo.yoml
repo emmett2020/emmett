@@ -1,0 +1,2 @@
+[files]
+extend-exclude = ["config/nvim/lazy-lock.json"]

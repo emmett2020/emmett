@@ -14,7 +14,7 @@ Build neovim from source
 COMMENT
 set -euo pipefail
 
-[[ "$@" == "" ]] && echo "Must provide neovim installation dirctory" && exit 1
+[[ "$@" == "" ]] && echo "Must provide neovim installation directory" && exit 1
 
 temp_dir=$(mktemp -d)
 trap "rm -rf ${temp_dir}" EXIT

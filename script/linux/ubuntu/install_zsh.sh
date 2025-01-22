@@ -40,7 +40,7 @@ function install_zsh_syntax_highlighting() {
   git clone https://github.com/zsh-users/zsh-syntax-highlighting "${install_dir}"
 }
 
-function install_zsh_auto_suggesstions() {
+function install_zsh_auto_suggestions() {
   local install_dir="${omz_custom_dir}/plugins/zsh-autosuggestions"
   [[ -d "${install_dir}" ]] && rm -r "${install_dir}"
   git clone https://github.com/zsh-users/zsh-autosuggestions "${install_dir}"
@@ -81,7 +81,7 @@ function install_chroma() {
 install_zsh
 install_oh_my_zsh
 install_zsh_syntax_highlighting
-install_zsh_auto_suggesstions
+install_zsh_auto_suggestions
 install_powerlevel_10k
 install_eza
 install_chroma

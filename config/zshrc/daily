@@ -46,7 +46,7 @@ plugins=( git z extract command-not-found
 zstyle ':omz:plugins:eza' 'dirs-first' yes
 
 #
-# Some other offical configs may be used.
+# Some other official configs may be used.
 #
 # CASE_SENSITIVE="true"
 # DISABLE_MAGIC_FUNCTIONS="true"
