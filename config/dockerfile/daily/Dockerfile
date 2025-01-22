@@ -54,8 +54,6 @@ RUN echo "************** Next Frame ******************"   \
            https://github.com/emmett2020/emmett.git       \
 # [daily]
     && bash emmett/script/linux/ubuntu/install_daily.sh   \
-# [other]
-    sudo echo "127.0.0.1 emmett" >> /etc/hosts            \
 # [clear]
     && rm -rf emmett                                      \
     && apt-get autoclean
