@@ -18,6 +18,7 @@ bash "${CUR_SCRIPT_DIR}"/install_cmake.sh
 bash "${CUR_SCRIPT_DIR}"/install_fdfind.sh
 bash "${CUR_SCRIPT_DIR}"/install_lazygit.sh
 bash "${CUR_SCRIPT_DIR}"/install_ripgrep.sh
+bash "${CUR_SCRIPT_DIR}"/install_clangd.sh
 bash "${CUR_SCRIPT_DIR}"/install_nvim.sh
 bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
