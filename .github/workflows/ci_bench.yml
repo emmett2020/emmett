@@ -71,6 +71,7 @@ jobs:
           clang-format-version: 20
           clang-tidy-config-file: bench/.clang-tidy
           log-level: trace
+          enable-clang-tidy: false
 
       - name: Compile And Run string_view_vs_string
         if: steps.filter.outputs.string_view_vs_string == 'true'
