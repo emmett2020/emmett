@@ -32,8 +32,11 @@ RUN echo "************* Core Frame *****************" \
                make                \
                net-tools           \
                nghttp2             \
+               npm                 \
                python3             \
                python3-pip         \
+               python3-venv        \
+               snapd               \
                sudo                \
                strace              \
                tcpdump             \
@@ -42,7 +45,8 @@ RUN echo "************* Core Frame *****************" \
                tzdata              \
                unzip               \
                vim                 \
-               wget
+               wget                \
+    && pip3 install virtualenv --break-system-packages
 
 RUN echo "************** Next Frame ******************"   \
 # [git]

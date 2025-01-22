@@ -2,10 +2,9 @@
 -- format, e.g. format.lua
 
 -- Installed or reused.
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 local lsp_server = {
   clangd = {
-    -- Set to false if you don't want this server to be installed by mason.
-    mason = true,
     name = "mason-clangd",
     cmd = {
       "clangd",
@@ -61,7 +60,22 @@ local lsp_server = {
     },
   },
 
+  bashls = {
+    cmd = { "bash-language-server", "start" },
+    filetypes = { "bash", "sh" },
+    single_file_support = true,
+  }
+
 }
+
+function command_exists(command)
+  -- Use `command --version` to check if the command exists
+  local check_cmd = command .. " --version"
+  local status = os.execute(check_cmd)
+
+  -- os.execute returns 0 if the command succeeds
+  return status == 0
+end
 
 return {
   -- https://github.com/neovim/nvim-lspconfig
@@ -182,6 +196,9 @@ return {
         require("lspconfig")[server].setup(server_opts)
       end
 
+      if command_exists("clangd") then
+        setup("clangd")
+      end
 
       -- The mason must be setup ahead of mason-lspconfig.
       -- The ensure installed server will be installed here.
@@ -189,7 +206,11 @@ return {
       -- Lazy-loading the plugin, or somehow deferring the setup, is not
       -- recommended.
       require("mason").setup()
-      require("mason-lspconfig").setup({ handlers = { setup } })
+      require("mason-lspconfig").setup({
+        handlers = { setup },
+        ensure_installed = { "lua_ls", "pylsp", "bashls" },
+        automatic_installation = true,
+      })
       require("nvim-lightbulb").setup({
         autocmd = { enabled = true },
         sign = { text = "" },
