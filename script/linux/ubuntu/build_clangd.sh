@@ -24,6 +24,7 @@ clangd_version=llvmorg-19.1.7
 clangd_link="https://github.com/llvm/llvm-project.git"
 clangd_dir="/usr/local"
 
+
 pushd ${temp_dir} &> /dev/null
 sudo apt install ninja-build
 
