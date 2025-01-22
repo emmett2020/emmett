@@ -29,7 +29,7 @@ return {
       -- Separator style.
       separator_style = "thin",
 
-      -- Allows highlight groups to be overriden.
+      -- Allows highlight groups to be overridden.
       themable = true,
 
       -- The number is displayed on the left side of the label, and the height

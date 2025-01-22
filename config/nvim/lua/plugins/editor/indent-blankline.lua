@@ -11,7 +11,7 @@ return {
       tab_char = "│",
     },
 
-    -- PERF: for perfomance reason we disable scope
+    -- PERF: for performance reason we disable scope
     -- Use mini.indentscope instead
     scope = { enabled = false },
 

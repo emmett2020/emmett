@@ -113,7 +113,7 @@ function M.set_keymap(_, buffer)
 end
 
 -- If next == true, then goto next diagnostic. Otherwise goto previous diagnostic.
--- The serverity identifies diagnostic level.
+-- The severity identifies diagnostic level.
 function M.diagnostic_goto(next, severity)
   local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
   severity = severity and vim.diagnostic.severity[severity] or nil
