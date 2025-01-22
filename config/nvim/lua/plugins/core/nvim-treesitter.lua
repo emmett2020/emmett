@@ -39,7 +39,7 @@ return {
 
     -- See nvim-treesitter-textobjects for more choices.
     textobjects = {
-      -- PERF: currently "select" has very slow startup perfomance.
+      -- PERF: currently "select" has very slow startup performance.
       -- move according to textobjects
       move = {
         enable = true,

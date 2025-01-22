@@ -1,2 +1,6 @@
 [files]
-extend-exclude = ["config/nvim/lazy-lock.json"]
+ignore-files = [
+  "config/vscode/settings.json",
+  "config/nvim/lazy-lock.json",
+  "config/nvim/lua/plugins/core/which-key.lua",
+]

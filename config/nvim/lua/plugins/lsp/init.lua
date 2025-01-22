@@ -243,7 +243,7 @@ return {
 
   -- https://github.com/kosayoda/nvim-lightbulb
   -- shows a lightbulb in the sign column whenever a textDocument/codeAction is available at the current cursor position.
-  -- We need this since since without this we cann't get a hint whehter current line has a code action.
+  -- We need this since since without this we can't get a hint whehter current line has a code action.
   {
     "kosayoda/nvim-lightbulb",
   },

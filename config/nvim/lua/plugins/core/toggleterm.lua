@@ -1,7 +1,7 @@
 -- https://github.com/akinsho/toggleterm.nvim
 -- Terminal support
 
--- The toggleterm uses index as arugment to create new terminal.
+-- The toggleterm uses index as argument to create new terminal.
 local term_idx = 0 -- more than 999 for special command, e.g. lazygit
 
 local function create_float_term()
@@ -53,7 +53,7 @@ local function Lazygit()
   end
 end
 
--- "clear" cann't clear scrollback, use this workaround.
+-- "clear" can't clear scrollback, use this workaround.
 local term_clear = function()
   vim.fn.feedkeys("^L", 'n')
   local sb = vim.bo.scrollback

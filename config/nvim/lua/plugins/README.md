@@ -1,6 +1,6 @@
 * directories  notes
 ----------------------------------------------------------------------
-* avaliable    not used plugins
+* available    not used plugins
 * daily        customized plugins by DailyVim
 * coding       some coding related plugins
 * editor       editor related plugins, e.g. gitsigns,indent,scope
