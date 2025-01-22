@@ -24,6 +24,7 @@ bash "${CUR_SCRIPT_DIR}"/install_zsh.sh
 
 sudo echo "127.0.0.1 emmett" >> /etc/hosts
 
+
 # We put this check here rather than install_nvim.sh since this check is too
 # strict but may not confluence use.
 function validate_daily() {
