@@ -1,7 +1,7 @@
 [files]
   extend-exclude = [
     "config/vscode/settings.json",
-    "config/nvim/lua/*/*.lua",
+    "config/nvim/lua/**/*.lua",
   ]
 
 [default.extend-words]
