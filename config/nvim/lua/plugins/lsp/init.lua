@@ -64,6 +64,11 @@ local lsp_server = {
     cmd = { "bash-language-server", "start" },
     filetypes = { "bash", "sh" },
     single_file_support = true,
+    settings = {
+      bashIde = {
+        globPattern = "*@(.sh|.inc|.bash|.command)"
+      }
+    }
   }
 
 }
@@ -199,6 +204,9 @@ return {
       if command_exists("clangd") then
         setup("clangd")
       end
+      if command_exists("bash-language-server") then
+        setup("bashls")
+      end
 
       -- The mason must be setup ahead of mason-lspconfig.
       -- The ensure installed server will be installed here.
@@ -208,7 +216,7 @@ return {
       require("mason").setup()
       require("mason-lspconfig").setup({
         handlers = { setup },
-        ensure_installed = { "lua_ls", "pylsp", "bashls" },
+        ensure_installed = { "lua_ls", "pylsp"},
         automatic_installation = true,
       })
       require("nvim-lightbulb").setup({
