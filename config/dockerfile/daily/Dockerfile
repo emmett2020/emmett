@@ -32,6 +32,7 @@ RUN echo "************* Core Frame *****************" \
                make                \
                net-tools           \
                nghttp2             \
+               npm                 \
                python3             \
                python3-pip         \
                python3-venv        \
