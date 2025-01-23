@@ -67,6 +67,6 @@ RUN echo "************** Next Frame ******************"   \
     && bash emmett/script/linux/ubuntu/install_daily.sh   \
 # [clear]
     && rm -rf emmett                                      \
-    && apt-get autoclean
+    && sudo apt-get autoclean
 
 CMD ["/bin/zsh"]
