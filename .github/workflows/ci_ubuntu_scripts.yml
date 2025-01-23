@@ -42,6 +42,7 @@ jobs:
 
       - name: Run Changed Files
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           for file in ${ALL_CHANGED_FILES}; do
             echo "::group:: bash ${file}"
             if [[ ${file} == *"build_"* ]]; then
@@ -81,6 +82,7 @@ jobs:
 
       - name: Run Changed Files
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           for file in ${ALL_CHANGED_FILES}; do
             echo "::group:: bash ${file}"
             if [[ ${file} == *"build_"* ]]; then
