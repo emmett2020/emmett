@@ -42,7 +42,6 @@ jobs:
 
       - name: Run Changed Files
         run: |
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           for file in ${ALL_CHANGED_FILES}; do
             echo "::group:: bash ${file}"
             if [[ ${file} == *"build_"* ]]; then
@@ -82,9 +81,6 @@ jobs:
 
       - name: Run Changed Files
         run: |
-          # INFO: Seems there no homebrew on arm version, we install it.
-          # eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          bash script/linux/ubuntu/install_homebrew.sh
           for file in ${ALL_CHANGED_FILES}; do
             echo "::group:: bash ${file}"
             if [[ ${file} == *"build_"* ]]; then

@@ -14,7 +14,6 @@ set -euo pipefail
 
 CUR_SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
 
-bash "${CUR_SCRIPT_DIR}"/install_homebrew.sh
 bash "${CUR_SCRIPT_DIR}"/install_cmake.sh
 bash "${CUR_SCRIPT_DIR}"/install_fdfind.sh
 bash "${CUR_SCRIPT_DIR}"/install_lazygit.sh

@@ -63,6 +63,9 @@ source $ZSH/oh-my-zsh.sh
 ###########################################
 # export MANPATH="/usr/local/man:$MANPATH"
 # export LANG=en_US.UTF-8
+if [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 export NEOVIM_BIN="/opt/homebrew/bin/nvim" # For neovide on MacOS
 
