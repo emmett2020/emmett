@@ -48,6 +48,13 @@ RUN echo "************* Core Frame *****************" \
                wget                \
     && pip3 install virtualenv --break-system-packages
 
+# 3. Create a new user with sudo permission
+RUN useradd -m emmett              \
+    && usermod -aG sudo emmett     \
+    && echo "emmett ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USER emmett
+WORKDIR /home/emmett
+
 RUN echo "************** Next Frame ******************"   \
 # [git]
     && git config --global http.sslVerify  false          \
@@ -60,6 +67,6 @@ RUN echo "************** Next Frame ******************"   \
     && bash emmett/script/linux/ubuntu/install_daily.sh   \
 # [clear]
     && rm -rf emmett                                      \
-    && apt-get autoclean
+    && sudo apt-get autoclean
 
 CMD ["/bin/zsh"]
