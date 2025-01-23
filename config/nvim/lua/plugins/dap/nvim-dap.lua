@@ -7,7 +7,7 @@
 --
 --[[
 -- The gdb is a debugger and cppdbg is a debug adapter.
-DAP-Client ----- Debug Adapter ------- Debugger ------ Debugee
+DAP-Client ----- Debug Adapter ------- Debugger ------ Debuggee
 (nvim-dap)  |   (per language)  |   (per language)    (your app)
             |                   |
             |        Implementation specific communication
@@ -88,7 +88,7 @@ return {
         type = "cppdbg",
 
         -- Either `attach` or `launch`. Indicates whether the
-        -- debug adapter should launch a debugee or attach to
+        -- debug adapter should launch a debuggee or attach to
         -- one that is already running.
         request = "launch",
 

@@ -34,6 +34,12 @@ jobs:
         run: |
           sudo apt-get install -y ninja-build
 
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          clang-tidy: 20
+          clang-format: 20
+
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -53,6 +59,19 @@ jobs:
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
           ./build/example
+
+      - name: Run cpp-lint-action on example
+        if: steps.filter.outputs.example == 'true' && ${{ matrix.compiler }} == 'gcc'
+        uses: emmett2020/cpp-lint-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          clang-tidy-database: bench/example/build
+          clang-tidy-version: 20
+          clang-format-version: 20
+          clang-tidy-config-file: bench/.clang-tidy
+          log-level: trace
+          enable-clang-tidy: false
 
       - name: Compile And Run string_view_vs_string
         if: steps.filter.outputs.string_view_vs_string == 'true'

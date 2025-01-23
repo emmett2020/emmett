@@ -1,6 +1,6 @@
 -- https://github.com/echasnovski/mini.ai
 -- Better text-objects
--- The `a` means arround.
+-- The `a` means around.
 -- The `i` means inside.
 
 return {

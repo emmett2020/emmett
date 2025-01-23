@@ -4,7 +4,7 @@
 # make SO cleaning. This function will generate two files, one is original SO
 # while the other is debug symbol file.
 
-# Paramters:
+# Parameters:
 # 1. target_to_build: This is the target name to build.
 # 2. target_lib_name: The full name of shared library whose .symtab will be stripped. e.g. libxxx.so.
 # 3. target_lib_dir:  The absolute directory of `${target_lib_name}`.

@@ -8,6 +8,7 @@
 | ![build docker daily](https://github.com/emmett2020/emmett/actions/workflows/ci_build_docker_daily.yml/badge.svg)         |
 | ![bench](https://github.com/emmett2020/emmett/actions/workflows/ci_bench.yml/badge.svg)                      |
 | ![demo](https://github.com/emmett2020/emmett/actions/workflows/ci_demo.yml/badge.svg)                       |
+| ![check typo](https://github.com/emmett2020/emmett/actions/workflows/ci_check_typo.yml/badge.svg)                 |
 | ![tutorial](https://github.com/emmett2020/emmett/actions/workflows/ci_tutorial.yml/badge.svg)                   |
 
 

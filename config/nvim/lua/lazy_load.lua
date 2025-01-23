@@ -113,7 +113,7 @@ require("lazy").setup({
     colorscheme = { "tokyonight", "habamax" },
   },
   -- Don't automatically check for plugin updates.
-  -- We manaully check updates per month.
+  -- We manually check updates per month.
   checker = { enabled = false },
   performance = {
     rtp = {
@@ -127,7 +127,7 @@ require("lazy").setup({
       },
     },
   },
-  -- We havn't supported 'luarocks' yet since it can't be easily used on arm64
+  -- We haven't supported 'luarocks' yet since it can't be easily used on arm64
   -- architecture.
   rocks = {
     enabled = false,

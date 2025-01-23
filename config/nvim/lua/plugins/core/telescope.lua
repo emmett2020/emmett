@@ -3,7 +3,7 @@
 --------------------------------------------------
 --- https://github.com/nvim-telescope/telescope.nvim
 --- NOTE: Telescope's extensions are not installed here. Extensions are
---- just configed here.
+--- just configured here.
 
 -- https://github.com/nvim-telescope/telescope-project.nvim
 -- Project manager.

@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------
----            Validate version and check envrionment             ---
+---            Validate version and check environment             ---
 ---------------------------------------------------------------------
 
 -- For log

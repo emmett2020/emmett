@@ -13,7 +13,7 @@ Build clangd;clang from source
 COMMENT
 set -euo pipefail
 
-[[ "$@" == "" ]] && echo "Must provide clangd installation dirctory" && exit 1
+[[ "$@" == "" ]] && echo "Must provide clangd installation directory" && exit 1
 install_prefix="$@"
 
 temp_dir=$(mktemp -d)

@@ -92,7 +92,7 @@ return {
         ["<CR>"] = cmp.mapping.confirm({ select = true }),
       }),
 
-      -- Refine the apperance of nvim-cmp.
+      -- Refine the appearance of nvim-cmp.
       formatting = {
         -- Icons
         format = function(_, item)
