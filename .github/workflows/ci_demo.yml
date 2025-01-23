@@ -57,7 +57,7 @@ jobs:
           ./build/main
 
       - name: Run cpp-lint-action on multithreads_read_same_file
-        if: steps.filter.outputs.multithreads_read_same_file == 'true' && ${{ matrix.compiler }} == 'gcc'
+        if: steps.filter.outputs.multithreads_read_same_file == 'true' &&  matrix.compiler == 'gcc'
         uses: emmett2020/cpp-lint-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
