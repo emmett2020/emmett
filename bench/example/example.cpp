@@ -36,4 +36,3 @@ static void Func2(benchmark::State &state) {
 BENCHMARK(Func2);
 
 BENCHMARK_MAIN();
-
