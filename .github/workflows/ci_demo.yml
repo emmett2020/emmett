@@ -62,8 +62,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          clang-tidy-database: demo/multithreads_read_same_file/build
-          clang-tidy-version: 20
           clang-format-version: 20
-          log-level: trace
 

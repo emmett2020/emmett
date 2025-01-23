@@ -58,8 +58,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          clang-tidy-database: tutorial/design_pattern/build
-          clang-tidy-version: 20
           clang-format-version: 20
-          log-level: trace
 

@@ -66,8 +66,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          clang-tidy-database: bench/example/build
-          clang-tidy-version: 20
           clang-format-version: 20
 
       - name: Compile And Run string_view_vs_string
@@ -85,10 +83,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          clang-tidy-database: bench/string_view_vs_string/build
-          clang-tidy-version: 20
           clang-format-version: 20
-          log-level: trace
 
       - name: Compile And Run char_classifier
         if: steps.filter.outputs.char_classifier == 'true'
@@ -105,8 +100,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          clang-tidy-database: bench/char_classifier/build
-          clang-tidy-version: 20
           clang-format-version: 20
-          log-level: trace
 
