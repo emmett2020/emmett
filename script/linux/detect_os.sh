@@ -10,8 +10,6 @@
 COMMENT
 
 OS=$(uname | tr '[:upper:]' '[:lower:]')
-KERNEL=$(uname -r)
-MACH=$(uname -m)
 
 detect_os() {
     if [ "${OS}" = "linux" ]; then

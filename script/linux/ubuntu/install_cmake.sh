@@ -17,8 +17,8 @@ cmake_link="https://github.com/Kitware/CMake/releases/download/v${cmake_version}
 cmake_dir="/usr/local"
 
 temp_dir=$(mktemp -d)
-trap "rm -rf ${temp_dir}" EXIT
+trap 'rm -rf ${temp_dir}' EXIT
 
-wget ${cmake_link} -O "${temp_dir}/cmake_install.sh"
+wget "${cmake_link}" -O "${temp_dir}/cmake_install.sh"
 sudo bash "${temp_dir}/cmake_install.sh" --skip-license --prefix="${cmake_dir}"
 cmake --version
