@@ -88,6 +88,7 @@ jobs:
           clang-tidy-database: bench/string_view_vs_string/build
           clang-tidy-version: 20
           clang-format-version: 20
+          log-level: trace
 
       - name: Compile And Run char_classifier
         if: steps.filter.outputs.char_classifier == 'true'
@@ -107,4 +108,5 @@ jobs:
           clang-tidy-database: bench/char_classifier/build
           clang-tidy-version: 20
           clang-format-version: 20
+          log-level: trace
 
