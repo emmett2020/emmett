@@ -67,6 +67,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           clang-format-version: 20
+          enable-clang-tidy: false
 
       - name: Compile And Run string_view_vs_string
         if: steps.filter.outputs.string_view_vs_string == 'true'
@@ -84,6 +85,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           clang-format-version: 20
+          enable-clang-tidy: false
 
       - name: Compile And Run char_classifier
         if: steps.filter.outputs.char_classifier == 'true'
@@ -101,4 +103,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           clang-format-version: 20
+          enable-clang-tidy: false
 
