@@ -69,7 +69,6 @@ jobs:
           clang-tidy-database: bench/example/build
           clang-tidy-version: 20
           clang-format-version: 20
-          # clang-tidy-config-file: bench/.clang-tidy
 
       - name: Compile And Run string_view_vs_string
         if: steps.filter.outputs.string_view_vs_string == 'true'
@@ -80,6 +79,16 @@ jobs:
           cmake --build build -v -j`nproc`
           ./build/memory_allocation
 
+      - name: Run cpp-lint-action on string_view_vs_string
+        if: steps.filter.outputs.example == 'true' && ${{ matrix.compiler }} == 'gcc'
+        uses: emmett2020/cpp-lint-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          clang-tidy-database: bench/string_view_vs_string/build
+          clang-tidy-version: 20
+          clang-format-version: 20
+
       - name: Compile And Run char_classifier
         if: steps.filter.outputs.char_classifier == 'true'
         run: |
@@ -89,4 +98,13 @@ jobs:
           cmake --build build -v -j`nproc`
           ./build/char_classifier
 
+      - name: Run cpp-lint-action on char_classifier
+        if: steps.filter.outputs.example == 'true' && ${{ matrix.compiler }} == 'gcc'
+        uses: emmett2020/cpp-lint-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          clang-tidy-database: bench/char_classifier/build
+          clang-tidy-version: 20
+          clang-format-version: 20
 

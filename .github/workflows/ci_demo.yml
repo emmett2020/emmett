@@ -51,3 +51,13 @@ jobs:
           cmake --build build -v -j`nproc`
           ./build/main
 
+      - name: Run cpp-lint-action on multithreads_read_same_file
+        if: steps.filter.outputs.example == 'true' && ${{ matrix.compiler }} == 'gcc'
+        uses: emmett2020/cpp-lint-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          clang-tidy-database: demo/multithreads_read_same_file/build
+          clang-tidy-version: 20
+          clang-format-version: 20
+

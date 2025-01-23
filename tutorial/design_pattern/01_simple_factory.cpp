@@ -59,3 +59,4 @@ auto main() -> int {
   product_b->use();
 }
 
+
