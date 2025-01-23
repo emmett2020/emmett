@@ -216,8 +216,6 @@ return {
       require("mason").setup()
       require("mason-lspconfig").setup({
         handlers = { setup },
-        ensure_installed = { "lua_ls", "pylsp"},
-        automatic_installation = true,
       })
       require("nvim-lightbulb").setup({
         autocmd = { enabled = true },
