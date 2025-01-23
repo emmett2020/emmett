@@ -16,7 +16,7 @@ function command_exists() {
 }
 
 if command_exists "npm"; then
-  npm i -g bash-language-server
+  sudo npm i -g bash-language-server
 elif command_exists "brew"; then
   brew install bash-language-server
 else
