@@ -5,6 +5,7 @@ Checks: '
   -altera*,
   -hicpp*,
   -cert*,
+  -clang-analyzer-deadcode.DeadStores,
 
   -modernize-use-trailing-return-type,
   -modernize-avoid-c-arrays,
