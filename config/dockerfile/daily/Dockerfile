@@ -32,7 +32,6 @@ RUN echo "************* Core Frame *****************" \
                make                \
                net-tools           \
                nghttp2             \
-               npm                 \
                python3             \
                python3-pip         \
                python3-venv        \
@@ -47,6 +46,13 @@ RUN echo "************* Core Frame *****************" \
                vim                 \
                wget                \
     && pip3 install virtualenv --break-system-packages
+
+# 3. Create a new user with sudo permission
+RUN useradd -m emmett              \
+    && usermod -aG sudo emmett     \
+    && echo "emmett ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USER emmett
+WORKDIR /home/emmett
 
 RUN echo "************** Next Frame ******************"   \
 # [git]
