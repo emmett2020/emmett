@@ -277,3 +277,4 @@ static void UseComplicatedOperator(benchmark::State &state) {
 BENCHMARK(UseComplicatedOperator);
 
 BENCHMARK_MAIN();
+

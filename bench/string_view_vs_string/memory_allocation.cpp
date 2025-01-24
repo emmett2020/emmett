@@ -93,3 +93,4 @@ static void UseLongCStyleString(benchmark::State &state) {
 BENCHMARK(UseLongCStyleString);
 
 BENCHMARK_MAIN();
+
