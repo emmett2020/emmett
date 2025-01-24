@@ -57,7 +57,7 @@ function install_powerlevel_10k() {
 }
 
 function install_eza() {
-  loca arch,version,link
+  local arch,version,link
   arch=$(uname -m)
   version=0.20.17
   link="https://github.com/eza-community/eza/releases/download/v${version}/eza_${arch}-unknown-linux-gnu.tar.gz"

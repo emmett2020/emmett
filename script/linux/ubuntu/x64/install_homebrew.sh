@@ -1,7 +1,7 @@
 #!/bin/bash
 cat << END
 Install homebrew use official scripts.
-NOTE: This script doesn't suport arm machine.
+NOTE: This script doesn't support arm machine.
 |------------------------------|------------------------------|
 |          item                |         explanation          |
 |------------------------------|------------------------------|
