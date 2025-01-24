@@ -37,4 +37,3 @@ BENCHMARK(Func2);
 
 BENCHMARK_MAIN();
 
-
