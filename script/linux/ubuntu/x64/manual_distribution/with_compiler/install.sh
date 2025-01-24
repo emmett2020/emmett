@@ -18,8 +18,8 @@ COMMENT
 set -euo pipefail
 
 CUR_SCRIPT_DIR=$(
-    cd "$(dirname "${BASH_SOURCE[0]}")"
-    pwd
+  cd "$(dirname "${BASH_SOURCE[0]}")"
+  pwd
 )
 
 # This file needs sudo permission.
@@ -30,12 +30,12 @@ BIN_INSTALL_PATH="/usr/local/bin/"
 
 # Refresh libraries
 if [[ -d "${LIB_INSTALL_PATH}" ]]; then
-    echo "Remove old ${BINARY_NAME} libraries"
-    sudo rm -rf ${LIB_INSTALL_PATH}
+  echo "Remove old ${BINARY_NAME} libraries"
+  sudo rm -rf ${LIB_INSTALL_PATH}
 fi
 if [[ -d "${BIN_INSTALL_PATH}" ]]; then
-    echo "Remove old ${BINARY_NAME} binaries"
-    sudo rm -rf ${BIN_INSTALL_PATH}
+  echo "Remove old ${BINARY_NAME} binaries"
+  sudo rm -rf ${BIN_INSTALL_PATH}
 fi
 sudo mkdir -p ${LIB_INSTALL_PATH}
 sudo mkdir -p ${BIN_INSTALL_PATH}

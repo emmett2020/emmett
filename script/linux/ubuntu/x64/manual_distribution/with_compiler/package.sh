@@ -22,8 +22,8 @@ COMMENT
 set -euo pipefail
 
 CUR_SCRIPT_DIR=$(
-    cd "$(dirname "${BASH_SOURCE[0]}")"
-    pwd
+  cd "$(dirname "${BASH_SOURCE[0]}")"
+  pwd
 )
 SCRIPTS_DIR="${CUR_SCRIPT_DIR}/../../../../.."
 
@@ -42,22 +42,22 @@ echo "Start to package ${BINARY_NAME}, distribution product name: ${PACKAGE_NAME
 
 echo "1. Start to collect all dependent shared libraries for ${BINARY_NAME}"
 lddtree "${BINARY_NAME}" \
-    --copy-to-tree "${PACKAGE_NAME}" \
-    --libdir "/lib/${BINARY_NAME}" \
-    --bindir "/bin"
+  --copy-to-tree "${PACKAGE_NAME}" \
+  --libdir "/lib/${BINARY_NAME}" \
+  --bindir "/bin"
 
 interpreter=$(ls ${PACKAGE_NAME}/lib/${BINARY_NAME} | grep "ld-linux")
 echo "2. Start to set new interpreter path: ${INTERPRETER_INSTALL_PATH}/${interpreter}"
 patchelf --set-interpreter \
-    "${INTERPRETER_INSTALL_PATH}/${interpreter}" \
-    ${PACKAGE_NAME}/bin/${BINARY_NAME}
+  "${INTERPRETER_INSTALL_PATH}/${interpreter}" \
+  ${PACKAGE_NAME}/bin/${BINARY_NAME}
 
 echo "3. Start to set rpath for: ${BINARY_NAME}"
 # ORIGIN shouldn't be translated while BINARY_NAME should be translated.
 patchelf --force-rpath \
-    --set-rpath \
-    '$ORIGIN/../lib/'${BINARY_NAME} \
-    "${PACKAGE_NAME}/bin/${BINARY_NAME}"
+  --set-rpath \
+  '$ORIGIN/../lib/'${BINARY_NAME} \
+  "${PACKAGE_NAME}/bin/${BINARY_NAME}"
 
 echo "4. Start to compress"
 # -- ${PACKAGE_NAME}

@@ -12,16 +12,16 @@ COMMENT
 set -euo pipefail
 
 function command_exists() {
-    which "$1" > /dev/null 2>&1
+  which "$1" > /dev/null 2>&1
 }
 
 if command_exists "npm"; then
-    sudo npm i -g bash-language-server
+  sudo npm i -g bash-language-server
 elif command_exists "brew"; then
-    brew install bash-language-server
+  brew install bash-language-server
 else
-    echo "Install brew or npm first to install bash-language-server"
-    exit 1
+  echo "Install brew or npm first to install bash-language-server"
+  exit 1
 fi
 
 sudo apt install shfmt
