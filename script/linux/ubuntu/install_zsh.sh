@@ -57,10 +57,10 @@ function install_powerlevel_10k() {
 }
 
 function install_eza() {
-  local arch,version,link
+  local arch
   arch=$(uname -m)
-  version=0.20.17
-  link="https://github.com/eza-community/eza/releases/download/v${version}/eza_${arch}-unknown-linux-gnu.tar.gz"
+  local version=0.20.17
+  local link="https://github.com/eza-community/eza/releases/download/v${version}/eza_${arch}-unknown-linux-gnu.tar.gz"
 
   wget "${link}" -O "${temp_dir}/eva.tar.gz"
   tar -xzf "${temp_dir}/eva.tar.gz" -C "${temp_dir}"
