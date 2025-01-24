@@ -1,18 +1,21 @@
 #!/bin/bash
-: << 'COMMENT'
+cat << END
 |------------------------------|-------------------------------|
-|         🎃 item              |        👇 explanation         |
+|            item              |           explanation         |
 |------------------------------|-------------------------------|
 |    needs root permission?    |              Yes              |
 |------------------------------|-------------------------------|
-|          dependencies        |           ${emmett}           |
+|          dependencies        |     emmett git reposirtory    |
 |------------------------------|-------------------------------|
 |          Architecture        |         x86-64 / arm64        |
 |------------------------------|-------------------------------|
-COMMENT
+END
 set -euo pipefail
 
-CUR_SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
+CUR_SCRIPT_DIR=$(
+  cd "$(dirname "${BASH_SOURCE[0]}")"
+  pwd
+)
 
 bash "${CUR_SCRIPT_DIR}"/install_cmake.sh
 bash "${CUR_SCRIPT_DIR}"/install_fdfind.sh
@@ -30,12 +33,13 @@ function validate_daily() {
 
   # Validate nvim
   echo "::group:: validate nvim"
-  ${HOME}/.neovim/bin/nvim --version
-  ${HOME}/.neovim/bin/nvim --headless -c "TSUpdate query"    \
-                                      -c "checkhealth"       \
-                                      -c "w!health.log"      \
-                                      -c "qa"                \
-                                      &> /dev/null
+  "${HOME}"/.neovim/bin/nvim --version
+  "${HOME}"/.neovim/bin/nvim --headless \
+    -c "TSUpdate query" \
+    -c "checkhealth" \
+    -c "w!health.log" \
+    -c "qa" \
+    &> /dev/null
   echo "::endgroup::"
   echo "::group:: health log"
   cat health.log

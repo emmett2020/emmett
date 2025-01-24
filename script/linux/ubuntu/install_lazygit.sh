@@ -1,13 +1,11 @@
 #!/bin/bash
-: << 'COMMENT'
+cat << END
 |------------------------------|------------------------------|
-|         🎃 item              |        👇 explanation        |
+|          item                |         explanation          |
 |------------------------------|------------------------------|
 |    needs root permission?    |              Yes             |
 |------------------------------|------------------------------|
-|          dependencies        |              No              |
-|------------------------------|------------------------------|
-COMMENT
+END
 set -euo pipefail
 
 arch=$(uname -m)
@@ -18,9 +16,9 @@ lazygit_link="https://github.com/jesseduffield/lazygit/releases/download/v${vers
 lazygit_dir="/usr/local/bin"
 
 temp_dir=$(mktemp -d)
-trap "rm -rf ${temp_dir}" EXIT
+trap 'rm -rf ${temp_dir}' EXIT
 
-pushd ${temp_dir} &> /dev/null
+pushd "${temp_dir}" &> /dev/null
 wget "${lazygit_link}" -O lazygit.tar.gz
 tar xf lazygit.tar.gz
 sudo install lazygit ${lazygit_dir}

@@ -1,7 +1,8 @@
 #!/bin/bash
-: << 'COMMENT'
+cat << END
+Uninstall binaries and libraries.
 |------------------------------|------------------------------|
-|         🎃 item              |        👇 explanation        |
+|          item                |         explanation          |
 |------------------------------|------------------------------|
 |    needs root permission?    |              No              |
 |------------------------------|------------------------------|
@@ -9,10 +10,7 @@
 |------------------------------|------------------------------|
 |          fellows             |           install.sh         |
 |------------------------------|------------------------------|
-
-Introduction of this script:
-Uninstall binaries and libraries.
-COMMENT
+END
 
 # Exit on error, treat unset variables as an error, and fail on pipeline errors
 set -euo pipefail
@@ -22,9 +20,9 @@ LIB_INSTALL_PATH="/usr/local/lib/${BINARY_NAME}/"
 BIN_INSTALL_PATH="/usr/local/bin/"
 
 # Refresh libraries
-if [[ -d "${LIB_INSTALL_PATH}" ]]; then
+if [[ -d ""${LIB_INSTALL_PATH}"" ]]; then
   echo "Remove old ${BINARY_NAME} libraries"
-  sudo rm -rf ${LIB_INSTALL_PATH}
+  sudo rm -rf "${LIB_INSTALL_PATH}"
 fi
 if [[ -d "${BIN_INSTALL_PATH}" ]]; then
   echo "Remove old ${BINARY_NAME} binaries"
@@ -32,6 +30,3 @@ if [[ -d "${BIN_INSTALL_PATH}" ]]; then
 fi
 
 echo "Successfully uninstalled ${BINARY_NAME}"
-
-
-
