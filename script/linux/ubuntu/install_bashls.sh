@@ -1,18 +1,16 @@
 #!/bin/bash
-: << 'COMMENT'
+cat << END
 https://github.com/bash-lsp/bash-language-server
 |------------------------------|------------------------------|
-|         🎃 item              |        👇 explanation        |
+|          item                |         explanation          |
 |------------------------------|------------------------------|
 |    needs root permission?    |              Yes             |
 |------------------------------|------------------------------|
-|          dependencies        |              No              |
-|------------------------------|------------------------------|
-COMMENT
+END
 set -euo pipefail
 
 function command_exists() {
-    which "$1" >/dev/null 2>&1
+  which "$1" > /dev/null 2>&1
 }
 
 if command_exists "npm"; then

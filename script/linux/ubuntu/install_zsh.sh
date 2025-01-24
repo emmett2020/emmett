@@ -1,23 +1,27 @@
 #!/bin/bash
-: << 'COMMENT'
+cat << END
 |------------------------------|-------------------------------|
-|         🎃 item              |        👇 explanation         |
+|            item              |           explanation         |
 |------------------------------|-------------------------------|
 |    needs root permission?    |              Yes              |
 |------------------------------|-------------------------------|
-|          dependencies        |  ${emmett}/config/zshrc/daily |
+|          dependencies        |     emmett/config/zshrc/daily |
 |------------------------------|-------------------------------|
-COMMENT
+END
 set -euo pipefail
 
 temp_dir=$(mktemp -d)
-trap "rm -rf ${temp_dir}" EXIT
+trap 'rm -rf ${temp_dir}' EXIT
 
 function copy_zshrc() {
-  local cur_dir=$(cd $(dirname ${BASH_SOURCE[0]}); pwd)
+  local cur_dir
+  cur_dir=$(
+    cd "$(dirname "${BASH_SOURCE[0]}")"
+    pwd
+  )
   local emmett_root_path="${cur_dir}/../../.."
   local zshrc_path="${emmett_root_path}/config/zshrc/daily"
-  [[ ! -f ${zshrc_path} ]]  && echo "Can't find 'daily' in emmett2020/emmett" && exit 1
+  [[ ! -f ${zshrc_path} ]] && echo "Can't find 'daily' in emmett2020/emmett" && exit 1
   [[ -f "${HOME}/.zshrc" ]] && cp "${HOME}/.zshrc" "${HOME}/.zshrc.backup"
   cp "${zshrc_path}" "${HOME}/.zshrc"
 }
@@ -27,7 +31,7 @@ function install_zsh() {
 }
 
 function install_oh_my_zsh() {
-  [[ -d "${HOME}/.oh-my-zsh" ]] &&  mv ${HOME}/.oh-my-zsh ${HOME}/.oh-my-zsh.backup
+  [[ -d "${HOME}/.oh-my-zsh" ]] && mv "${HOME}"/.oh-my-zsh "${HOME}"/.oh-my-zsh.backup
   wget "https://install.ohmyz.sh/" -O "${temp_dir}/oh_my_zsh.sh"
   bash "${temp_dir}/oh_my_zsh.sh" --unattended
 }
@@ -53,7 +57,8 @@ function install_powerlevel_10k() {
 }
 
 function install_eza() {
-  local arch=$(uname -m)
+  local arch
+  arch=$(uname -m)
   local version=0.20.17
   local link="https://github.com/eza-community/eza/releases/download/v${version}/eza_${arch}-unknown-linux-gnu.tar.gz"
 
@@ -63,7 +68,8 @@ function install_eza() {
 }
 
 function install_chroma() {
-  local arch=$(uname -m)
+  local arch
+  arch=$(uname -m)
   [[ "${arch}" == "aarch64" ]] && arch="arm64"
   [[ "${arch}" == "x86_64" ]] && arch="amd64"
 
