@@ -3,7 +3,7 @@ namespace {
     // NOLINTNEXTLINE
     auto *m = new int[2'048];
     // NOLINTNEXTLINE
-    delete (m);
+    delete[] m;
   }
 } // namespace
 
