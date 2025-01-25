@@ -59,7 +59,7 @@ jobs:
           cd demo/memory_leak_detector/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
-          if valgrind --error-exitcode=1 ./build/memory_leak; then;
+          if valgrind --error-exitcode=1 ./build/memory_leak; then
             echo "memory leak should be detected"
             exit 1
           fi
