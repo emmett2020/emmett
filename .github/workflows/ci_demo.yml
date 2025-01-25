@@ -44,7 +44,7 @@ jobs:
         with:
           filters: |
             multithreads_read_same_file: 'demo/multithreads_read_same_file/**'
-            memory_leak: 'demo/memory_leak/**'
+            memory_leak: 'demo/memory_leak_detector/**'
 
       - name: Compile And Run multithreads_read_same_file
         if: steps.filter.outputs.multithreads_read_same_file == 'true'
@@ -79,7 +79,7 @@ jobs:
           fi
           valgrind --error-exitcode=1 ./build/safely_allocate_memory
 
-      - name: Run cpp-lint-action on memory_leak 
+      - name: Run cpp-lint-action on memory_leak
         if: steps.filter.outputs.memory_leak == 'true' &&  matrix.compiler == 'gcc'
         uses: emmett2020/cpp-lint-action@v1
         env:
