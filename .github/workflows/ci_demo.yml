@@ -43,8 +43,8 @@ jobs:
         id: filter
         with:
           filters: |
-            multithreads_read_same_file:
-              - 'demo/multithreads_read_same_file/**'
+            multithreads_read_same_file: 'demo/multithreads_read_same_file/**'
+            memory_leak: 'demo/memory_leak/**'
 
       - name: Compile And Run multithreads_read_same_file
         if: steps.filter.outputs.multithreads_read_same_file == 'true'
@@ -65,3 +65,31 @@ jobs:
           clang-format-version: 20
           enable-clang-tidy: false
 
+      - name: Use valgrind to check memory_leak
+        if: steps.filter.outputs.memory_leak == 'true'
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y valgrind
+          cd demo/memory_leak/
+          cmake -S . -B build -GNinja
+          cmake --build build -v -j`nproc`
+          if valgrind --error-exitcode=1 ./build/memory_leak; then;
+            echo "memory leak should be detected"
+            exit 1
+          fi
+          valgrind --error-exitcode=1 ./build/safely_allocate_memory
+
+      - name: Run cpp-lint-action on memory_leak 
+        if: steps.filter.outputs.memory_leak == 'true' &&  matrix.compiler == 'gcc'
+        uses: emmett2020/cpp-lint-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          clang-format-version: 20
+          enable-clang-tidy: false
+
+      - name: Use ASan to check memory_leak
+        if: steps.filter.outputs.memory_leak == 'true'
+        run: |
+          set -euo pipefail
+          rm -rf build
