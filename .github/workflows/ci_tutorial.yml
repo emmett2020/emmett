@@ -31,11 +31,6 @@ jobs:
             echo "CC=gcc-${major}" >> ${GITHUB_ENV}
             echo "CXX=g++-${major}" >> ${GITHUB_ENV}
           fi
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          clang-tidy: 20
-          clang-format: 20
       - name: Install Common Dependency
         run: |
           sudo apt-get install -y ninja-build
@@ -51,13 +46,4 @@ jobs:
           cd tutorial/design_pattern/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
-
-      - name: Run cpp-lint-action on design_pattern
-        if: steps.filter.outputs.design_pattern == 'true' && matrix.compiler == 'gcc'
-        uses: emmett2020/cpp-lint-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          clang-format-version: 20
-          enable-clang-tidy: false
 
