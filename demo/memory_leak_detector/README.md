@@ -1,7 +1,7 @@
 # Memory Management in C++: Tools to Prevent Leaks
 Memory management in C++ is a critical yet challenging aspect of development, especially when manually allocating and deallocating memory. Relying solely on developers to avoid memory leaks is not a reliable approach. To address this, tools like **Valgrind** and **AddressSanitizer (ASan)** are invaluable for detecting and preventing memory-related issues.
 
-Below is a comparison of the key differences between Valgrind and ASan:
+Below is a comparison of the key differences between ![valgrind](./docs/valgrind_design.png) and ASan:
 
 | **Feature**         | **Valgrind**                             | **AddressSanitizer (ASan)**             |
 |-----------------|--------------------------------------|-------------------------------------|
