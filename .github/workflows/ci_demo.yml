@@ -59,7 +59,8 @@ jobs:
           cd demo/memory_leak_detector/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
-          if valgrind --error-exitcode=1 ./build/memory_leak; then
+          valgrind --leak-check=full --error-exitcode=1 ./build/memory_leak
+          if [ $? -eq 0 ]; then
             echo "memory leak should be detected"
             exit 1
           fi
@@ -70,3 +71,13 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf build
+          cd demo/memory_leak_detector/
+          cmake -S . -B build -GNinja -DENABLE_ASAN=on
+          cmake --build build -v -j`nproc`
+          if ./build/memory_leak; then
+            echo "memory leak should be detected"
+            exit 1
+          fi
+          ./build/safely_allocate_memory
+
+
