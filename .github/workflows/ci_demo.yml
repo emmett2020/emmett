@@ -54,16 +54,12 @@ jobs:
       - name: Use valgrind to check memory_leak
         if: steps.filter.outputs.memory_leak == 'true'
         run: |
-          set -euo pipefail
           sudo apt-get install -y valgrind
           cd demo/memory_leak_detector/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
           valgrind --leak-check=full --error-exitcode=1 ./build/memory_leak
-          if [ $? -eq 0 ]; then
-            echo "memory leak should be detected"
-            exit 1
-          fi
+          [[ $? -eq 0 ]] && echo "memory leak should be detected" && exit 1
           valgrind --error-exitcode=1 ./build/safely_allocate_memory
 
       - name: Use ASan to check memory_leak
