@@ -23,6 +23,11 @@ If:
     CompilationDatabase: ./demo/multithreads_read_same_file/build
 
 If:
+  PathMatch: ./demo/memory_leak_detector/
+  CompileFlags:
+    CompilationDatabase: ./demo/memory_leak_detector/build
+
+If:
   PathMatch: ./tutorial/design_pattern/
   CompileFlags:
     CompilationDatabase: ./tutorial/design_pattern/build
