@@ -73,8 +73,7 @@ jobs:
           cmake -S . -B build -GNinja -DENABLE_ASAN=on
           cmake --build build -v -j`nproc`
           if ./build/memory_leak; then
-            echo "memory leak should be detected"
-            exit 1
+            echo "memory leak should be detected" && exit 1
           fi
           ./build/safely_allocate_memory
 

@@ -3,7 +3,8 @@
 namespace {
   void malloc_without_free() {
     // NOLINTNEXTLINE
-    auto *m = ::malloc(2'048);
+    auto *m = static_cast<int *>(::malloc(2'048));
+    std::cout << *m << "\n";
   }
 } // namespace
 
