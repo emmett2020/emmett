@@ -1,0 +1,15 @@
+CompileFlags:
+    Remove:
+        - -rdc=true
+        - -ccbin=*
+        - -forward-unknown-to-host-compiler
+        - --generate-code=*
+        - --expt-extended-lambda
+        - --expt-relaxed-constexpr
+        - -arch=native
+        - --options-file
+        - -Xcompiler=-fPIC
+    Add:
+        - --cuda-path=/usr/local/cuda/
+        - -L/usr/local/cuda/lib64
+        - -I/usr/local/cuda/include
