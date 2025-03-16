@@ -24,7 +24,8 @@ link="https://github.com/emmett2020/llvm-prebuilt-binary/releases/download/v${ve
 wget "${link}" -O llvm.tar.gz
 tar xf llvm.tar.gz
 sudo mv llvm/bin/* /usr/local/bin/
-sudo mv llvm/lib/clang/* /usr/local/lib/clang/
+sudo mkdir -p /usr/local/lib/clang
+sudo mv llvm/lib/clang/19 /usr/local/lib/clang/
 popd
 
 clangd --version
