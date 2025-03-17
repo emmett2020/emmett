@@ -51,7 +51,7 @@ local lsp_server = {
           pylsp_mypy = { enabled = false },
 
           -- auto-completion options
-          jedi_completion = { fuzzy = false },
+          jedi_completion = { fuzzy = true },
 
           -- import sorting
           pyls_isort = { enabled = false },

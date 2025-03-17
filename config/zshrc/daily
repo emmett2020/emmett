@@ -67,6 +67,10 @@ if [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+# The python-lsp-server needs this additional path to customize specific python
+# and installed python modules.
+export PYTHONPATH=${PYTHONPATH}:~/venv/daily/lib/python3.10/site-packages
+
 export NEOVIM_BIN="/opt/homebrew/bin/nvim" # For neovide on MacOS
 
 export PATH="${HOME}/.neovim/bin:${PATH}"  # nvim
