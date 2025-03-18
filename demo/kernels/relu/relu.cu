@@ -1,8 +1,10 @@
+
 #include <array>
 #include <cstddef>
 #include <cstring>
-#include <experimental/scope>
 #include <iostream>
+
+#include "scope.h"
 
 namespace {
 __global__ void relu(const float *x_buf, int N, float *y_buf) {
@@ -31,11 +33,11 @@ int main() {
   float *y_cuda = nullptr;
   cudaMalloc(&x_cuda, N);
   cudaMalloc(&y_cuda, N);
-  auto guard = std::experimental::scope_exit{[&] {
-    std::cout << "Exited\n";
+
+  auto guard = scope_guard([&]() noexcept {
     cudaFree(x_cuda);
     cudaFree(y_cuda);
-  }};
+  });
 
   cudaMemcpy(x_cuda, x_host.data(), N, cudaMemcpyKind::cudaMemcpyHostToDevice);
   relu<<<1, 1>>>(x_cuda, N, y_cuda);
