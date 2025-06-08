@@ -14,7 +14,7 @@ trap 'rm -rf ${temp_dir}' EXIT
 
 pushd "${temp_dir}" &> /dev/null
 
-version="19.1.7"
+version="20.1.1"
 arch=$(uname -m)
 [[ "${arch}" == 'aarch64' ]] && arch=arm
 [[ "${arch}" == 'x86_64' ]] && arch=amd
@@ -25,7 +25,7 @@ wget "${link}" -O llvm.tar.gz
 tar xf llvm.tar.gz
 sudo mv llvm/bin/* /usr/local/bin/
 sudo mkdir -p /usr/local/lib/clang
-sudo mv llvm/lib/clang/19 /usr/local/lib/clang/
+sudo mv llvm/lib/clang/20 /usr/local/lib/clang/
 popd
 
 clangd --version

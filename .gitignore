@@ -8,3 +8,6 @@ log
 logs
 build
 
+*.log
+*ncu-rep
+
