@@ -1,0 +1,21 @@
+CompileFlags:
+    Remove:
+        - -rdc=true
+        - -ccbin=*
+        - -arch=native
+        - -forward-unknown-to-host-compiler
+        - -gencode
+        - --generate-code=*
+        - --expt-extended-lambda
+        - --expt-relaxed-constexpr
+        - --options-file
+        - -Xcompiler=-fPIC
+        - -Xcudafe
+        - --diag_suppress=*
+    Add:
+        - --cuda-path=/usr/local/cuda/
+        - -L/usr/local/cuda/lib64
+        - -I/usr/local/cuda/include
+
+Diagnostics:
+  Suppress: ref_bad_target
