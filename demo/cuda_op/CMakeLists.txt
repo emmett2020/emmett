@@ -15,7 +15,7 @@ file(GLOB_RECURSE cuda_op_files
                   "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cpp"
                   "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cu")
 pybind11_add_module(cuda_op ${cuda_op_files})
-install(TARGETS cuda_op DESTINATION ./build)
+# install(TARGETS cuda_op DESTINATION ./build)
 
 set_target_properties(cuda_op PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 target_include_directories(cuda_op PRIVATE
