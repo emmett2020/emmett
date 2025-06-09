@@ -9,7 +9,7 @@ nvcc >= 12.8
 ```bash
 conda create -n cuda_op python==3.11                                                                             ─
 conda activate cuda_op
-cd /path/to/cuda_op/
+cd /path/to/cuda_op/project/
 pip3 install .
 ```
 
