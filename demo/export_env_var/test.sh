@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+set -e
+echo "${TEST_ENV}"
