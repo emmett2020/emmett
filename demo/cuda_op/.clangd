@@ -12,6 +12,7 @@ CompileFlags:
         - -Xcompiler=-fPIC
         - -Xcudafe
         - --diag_suppress=*
+        - -Xcompiler=-fvisibility=hidden
     Add:
         - --cuda-path=/usr/local/cuda/
         - -L/usr/local/cuda/lib64

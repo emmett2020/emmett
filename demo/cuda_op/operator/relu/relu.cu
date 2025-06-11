@@ -19,11 +19,4 @@ namespace {
     const int num_blk         = 828;
     relu<<<num_blk, threads_per_blk>>>(x_cuda, N, y_cuda);
   }
-
-  // TODO: bind pybind11 type to launch_relu
 } // namespace
-
-PYBIND11_MODULE(cuda_op, m) {
-  m.doc() = "pybind11 example plugin"; // optional module docstring
-  m.def("relu", &launch_relu<float>, "relu_float");
-}
