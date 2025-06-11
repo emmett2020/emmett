@@ -19,7 +19,12 @@ target_include_directories(${SKBUILD_PROJECT_NAME}
                            ${CMAKE_CURRENT_SOURCE_DIR}/operator
                            ${TORCH_INCLUDE_DIRS}
                            ${pybind11_INCLUDE_DIRS})
+
+# INFO: for https://github.com/pytorch/pytorch/issues/108041
+find_library(TORCH_PYTHON_LIBRARY torch_python PATH "${TORCH_INSTALL_PREFIX}/lib")
+
 target_link_libraries(${SKBUILD_PROJECT_NAME} PRIVATE
+                                              ${TORCH_PYTHON_LIBRARY}
                                               ${TORCH_LIBRARIES})
 target_compile_options(${SKBUILD_PROJECT_NAME} PRIVATE
                                                -Wno-c++23-extensions)

@@ -17,7 +17,7 @@ pip3 install torch
 conda activate cuda_op
 export CUDA_PATH="/usr/local/cuda"
 cd /path/to/your/cuda_op/
-pip3 install .
+CMAKE_BUILD_PARALLEL_LEVEL=8 pip3 install .
 ```
 
 # 3. Run cases
