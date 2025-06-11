@@ -32,5 +32,5 @@ target_compile_options(${SKBUILD_PROJECT_NAME} PRIVATE
                                                -Wno-c++23-extensions)
 target_compile_features(${SKBUILD_PROJECT_NAME} PRIVATE
                                                 cxx_std_23)
-target_link_libraries(${SKBUILD_PROJECT_NAME} PRIVATE ${cuda_code})
+target_link_libraries(${SKBUILD_PROJECT_NAME} PRIVATE cuda_code)
 install(TARGETS ${SKBUILD_PROJECT_NAME} DESTINATION ${SKBUILD_PROJECT_NAME})
