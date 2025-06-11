@@ -1,10 +1,10 @@
 #include <pybind11/pybind11.h>
 
-int add(int i, int j) {
-  return i + j;
-}
+#include "add/add.h"
+
+namespace cuda_op { } // namespace cuda_op
 
 PYBIND11_MODULE(cuda_op, m) {
-  m.doc() = "pybind11 example plugin"; // optional module docstring
-  m.def("add", &add, "A function that adds two numbers");
+  m.doc() = "high performance cuda kernels";
+  cuda_op::add_op_add(m);
 }

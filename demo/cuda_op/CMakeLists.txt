@@ -22,13 +22,15 @@ target_compile_features(cuda_code PRIVATE cxx_std_23)
 install(TARGETS cuda_code DESTINATION ${SKBUILD_PROJECT_NAME})
 
 # Build CPP shared library
-# file(GLOB_RECURSE cpp_files "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cpp")
-# pybind11_add_module(${SKBUILD_PROJECT_NAME} ${cpp_files})
-# set_target_properties(${SKBUILD_PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-# target_include_directories(${SKBUILD_PROJECT_NAME} PRIVATE
-#                                                    ${CMAKE_CURRENT_SOURCE_DIR}/operator)
-# target_compile_options(${SKBUILD_PROJECT_NAME} PRIVATE
-#                                                -Wno-c++23-extensions)
-# target_compile_features(${SKBUILD_PROJECT_NAME} PRIVATE
-#                                                 cxx_std_23)
-# install(TARGETS ${SKBUILD_PROJECT_NAME} DESTINATION ${SKBUILD_PROJECT_NAME})
+file(GLOB_RECURSE cpp_files "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cpp")
+pybind11_add_module(${SKBUILD_PROJECT_NAME} ${cpp_files})
+target_include_directories(${SKBUILD_PROJECT_NAME}
+                           PRIVATE
+                           ${CMAKE_CURRENT_SOURCE_DIR}/operator
+                           ${pybind11_INCLUDE_DIRS})
+target_compile_options(${SKBUILD_PROJECT_NAME} PRIVATE
+                                               -Wno-c++23-extensions)
+target_compile_features(${SKBUILD_PROJECT_NAME} PRIVATE
+                                                cxx_std_23)
+target_link_libraries(${SKBUILD_PROJECT_NAME} PRIVATE ${cuda_code})
+install(TARGETS ${SKBUILD_PROJECT_NAME} DESTINATION ${SKBUILD_PROJECT_NAME})
