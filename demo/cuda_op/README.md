@@ -7,9 +7,11 @@ nvcc >= 12.8
 
 # 2. Build
 ```bash
-conda create -c conda-forge -n cuda_op python==3.11 gcc==14.2.0 gxx=14.2.0                                                                            ─
+conda create -c conda-forge -n cuda_op python=3.11 gcc=14.2.0 gxx=14.2.0 pybind11=2.13.6
+
 conda activate cuda_op
-cd /path/to/cuda_op/project/
+export CUDA_PATH="/usr/local/cuda"
+cd /path/to/your/cuda_op/
 pip3 install .
 ```
 
