@@ -8,6 +8,7 @@ set(CMAKE_CUDA_ARCHITECTURES 80 86 87 89 90)
 set(PYBIND11_FINDPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(CUDAToolkit REQUIRED)
+find_package(Torch REQUIRED)
 
 file(GLOB_RECURSE op_files
                   "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cpp"
@@ -16,7 +17,10 @@ pybind11_add_module(${SKBUILD_PROJECT_NAME} ${op_files})
 target_include_directories(${SKBUILD_PROJECT_NAME}
                            PRIVATE
                            ${CMAKE_CURRENT_SOURCE_DIR}/operator
+                           ${TORCH_INCLUDE_DIRS}
                            ${pybind11_INCLUDE_DIRS})
+target_link_libraries(${SKBUILD_PROJECT_NAME} PRIVATE
+                                              ${TORCH_LIBRARIES})
 target_compile_options(${SKBUILD_PROJECT_NAME} PRIVATE
                                                -Wno-c++23-extensions)
 target_compile_features(${SKBUILD_PROJECT_NAME} PRIVATE

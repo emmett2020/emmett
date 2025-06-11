@@ -4,6 +4,7 @@
 #include <cstring>
 
 #include <pybind11/pybind11.h>
+#include <torch/extension.h>
 
 namespace cuda_op {
   template <class DataType>
@@ -18,6 +19,40 @@ namespace cuda_op {
       DataType x2 = x2_buf[i];
       DataType y  = x1 + x2;
       y_buf[i]    = y;
+    }
+  }
+
+  void launch_add_kernel(torch::Tensor a, torch::Tensor b, torch::Tensor c) {
+    // 检查张量是否在 GPU 上
+    TORCH_CHECK(a.device().is_cuda(), "a must be a CUDA tensor");
+    TORCH_CHECK(b.device().is_cuda(), "b must be a CUDA tensor");
+    TORCH_CHECK(c.device().is_cuda(), "c must be a CUDA tensor");
+
+    // 检查张量数据类型
+    TORCH_CHECK(a.scalar_type() == torch::kFloat32, "a must be float32");
+    TORCH_CHECK(b.scalar_type() == torch::kFloat32, "b must be float32");
+    TORCH_CHECK(c.scalar_type() == torch::kFloat32, "c must be float32");
+
+    // 检查张量形状
+    int n = a.numel();
+    TORCH_CHECK(b.numel() == n, "a and b must have same number of elements");
+    TORCH_CHECK(c.numel() == n, "c must have same number of elements as a and b");
+
+    // 获取数据指针
+    const float* a_ptr = a.data_ptr<float>();
+    const float* b_ptr = b.data_ptr<float>();
+    float* c_ptr       = c.data_ptr<float>();
+
+    // 设置 CUDA 内核参数
+    int blockSize = 256;
+    int gridSize  = (n + blockSize - 1) / blockSize;
+
+    // 启动 CUDA 内核
+
+    // 检查内核执行是否成功
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+      TORCH_CHECK(false, "CUDA kernel launch failed: ", cudaGetErrorString(err));
     }
   }
 

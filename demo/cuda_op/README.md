@@ -1,9 +1,13 @@
 Provide high performance implementation of some cuda operators.
 
 # 1. Requirements
+```bash
 platform: ubuntu
 g++ >= 14.2.0
 nvcc >= 12.8
+pytorch
+pybind11
+```
 
 # 2. Build
 ```bash
@@ -18,6 +22,7 @@ pip3 install .
 
 # 3. Run cases
 ```bash
+# Now, must import torch firstly.
 ./build/test/test_op
 ```
 
