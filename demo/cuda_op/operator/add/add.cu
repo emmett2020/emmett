@@ -45,7 +45,8 @@ namespace cuda_op {
       const int n        = a.numel();
       cuda_check(launch_add<float>(a_ptr, b_ptr, n, c_ptr));
     } else {
-      TORCH_CHECK(false, "Unsupported data type ");
+      std::string type_str = torch::toString(a.scalar_type());
+      TORCH_CHECK(false, "Unsupported data type: ", type_str);
     }
 
     cuda_check(cudaDeviceSynchronize());
