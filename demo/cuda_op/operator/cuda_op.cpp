@@ -2,6 +2,7 @@
 
 #include "add/add.h"
 #include "sigmoid/sigmoid.h"
+#include "groupnorm/groupnorm.h"
 
 namespace cuda_op { } // namespace cuda_op
 
@@ -13,4 +14,5 @@ PYBIND11_MODULE(cuda_op, m) {
         pybind11::arg("a"),
         pybind11::arg("b"));
   m.def("sigmoid", &cuda_op::torch_sigmoid);
+  m.def("group_norm", &cuda_op::torch_group_norm);
 }
