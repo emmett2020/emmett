@@ -85,8 +85,33 @@ namespace {
 } // namespace
 
 template <class T>
-void launch_group_norm(const T* x_cuda, int N, T* y_cuda) {
-  const int threads_per_blk = 256;
-  const int num_blk         = 828;
-  group_norm<<<num_blk, threads_per_blk>>>(x_cuda, N, y_cuda);
+cudaError_t launch_group_norm(
+  const T* input,
+  const T* gamma,
+  const T* beta,
+  int N,
+  int C,
+  int H,
+  int W,
+  int num_groups,
+  float epsilon,
+  T* y_cuda) {
+  const int total_groups = N * num_groups;
+  dim3 grid(total_groups);
+  dim3 block(256);
+  const size_t shared_size = (2 * block.x + 2) * sizeof(float);
+
+  group_norm<<<grid, block, shared_size>>>(
+    input,
+    gamma,
+    beta,
+    N,
+    C,
+    H,
+    W,
+    num_groups,
+    epsilon,
+    y_cuda);
 }
+
+
