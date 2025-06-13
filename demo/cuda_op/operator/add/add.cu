@@ -30,7 +30,7 @@ namespace cuda_op {
     return cudaGetLastError();
   }
 
-  torch::Tensor add_wrap(const torch::Tensor& a, const torch::Tensor& b) {
+  torch::Tensor torch_add(const torch::Tensor& a, const torch::Tensor& b) {
     TORCH_CHECK(a.device().is_cuda() && b.device().is_cuda(),
                 "Both tensors must be on CUDA device");
     TORCH_CHECK(a.scalar_type() == b.scalar_type(), "Input tensors must have same scalar type");
@@ -51,14 +51,6 @@ namespace cuda_op {
 
     cuda_check(cudaDeviceSynchronize());
     return c;
-  }
-
-  void add_op_add(pybind11::module& m) {
-    m.def("add",
-          &add_wrap,
-          "A function that add two tensors",
-          pybind11::arg("a"),
-          pybind11::arg("b"));
   }
 } // namespace cuda_op
 
