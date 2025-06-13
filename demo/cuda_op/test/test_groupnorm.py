@@ -32,6 +32,4 @@ def test_basic():
     input_cuda = input_t.to("cuda")
     actual = cuda_op.group_norm(input_cuda, gamma.to("cuda"), beta.to("cuda"),
                                 num_groups, eps).to("cpu")
-    print(golden)
-    print(actual)
     torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1e-5)
