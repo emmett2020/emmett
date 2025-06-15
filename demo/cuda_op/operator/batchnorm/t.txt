@@ -1,0 +1,10 @@
+update_moving_average_kernel;
+update_moving_average_kernel;
+running_mean,
+running_var,
+d_batch_mean,
+d_batch_var,
+momentum,
+C
+int c = blockIdx.x * blockDIm.x + threadIdx.x;
+
