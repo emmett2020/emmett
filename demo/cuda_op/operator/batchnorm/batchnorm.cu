@@ -185,16 +185,23 @@ namespace cuda_op {
 
   torch::Tensor torch_batch_norm(
     const torch::Tensor& input,
-    const torch::Tensor& gamma,
-    const torch::Tensor& beta,
     torch::Tensor& running_mean,
     torch::Tensor& running_var,
+    const torch::Tensor& gamma,
+    const torch::Tensor& beta,
     float epsilon,
     float momentum,
     bool training) {
     auto output = torch::zero(input);
     auto shape  = input.sizes();
     TORCH_CHECK(shape.size() == 4, "shapes of input must be 4");
+    TORCH_CHECK(
+      input.is_cuda()
+        && running_mean.is_cuda()
+        && running_mean.is_cuda()
+        && gamma.is_cuda()
+        && beta.is_cuda(),
+      "Tensors must be on CUDA device");
 
     const float* input_ptr  = input.data_ptr<float>();
     const float* gamma_ptr  = gamma.data_ptr<float>();

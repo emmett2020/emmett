@@ -33,5 +33,6 @@ def test_basic():
                           eps=epsilon)
 
     actual = torch.empty_like(input_tensor, device="cuda")
-    cuda_op.batch_norm(pt_input, pt_gamma, pt_beta, epsilon)
+    cuda_op.batch_norm(pt_input, mean, var, pt_gamma, pt_beta, epsilon,
+                       momentum, True)
     torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1e-5)
