@@ -1,10 +1,20 @@
-update_moving_average_kernel;
-update_moving_average_kernel;
-running_mean,
-running_var,
-d_batch_mean,
-d_batch_var,
-momentum,
-C
-int c = blockIdx.x * blockDIm.x + threadIdx.x;
 
+compute_mean_kernels(
+  const float* input,
+  float* mean,
+  int N,
+  int C,
+  int H,
+  int W) {
+  const int idx = threadIdx.x;
+  const int c = blockIdx.x;
+  const int num_elemens = N * C * H * W;
+
+  for (int i = idx; i < num_elemens; i += blockDim.x) {
+    int n  = i / (H * W);
+    int hw = i % (H * W);
+    int h  = hw / (H * W);
+    int w  = hw % W;
+  }
+
+}
