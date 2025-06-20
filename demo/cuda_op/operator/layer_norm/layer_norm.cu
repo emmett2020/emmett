@@ -1,4 +1,4 @@
-#include "layernorm/layernorm.h"
+#include "layer_norm/layer_norm.h"
 
 #include <torch/extension.h>
 #include "common/utils.h"

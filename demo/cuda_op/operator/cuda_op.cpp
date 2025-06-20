@@ -2,9 +2,9 @@
 
 #include "add/add.h"
 #include "sigmoid/sigmoid.h"
-#include "layernorm/layernorm.h"
-#include "groupnorm/groupnorm.h"
-#include "batchnorm/batchnorm.h"
+#include "layer_norm/layer_norm.h"
+#include "group_norm/group_norm.h"
+#include "batch_norm/batch_norm.h"
 
 namespace cuda_op { } // namespace cuda_op
 

@@ -1,4 +1,4 @@
-#include "groupnorm/groupnorm.h"
+#include "group_norm/group_norm.h"
 
 #include <torch/extension.h>
 

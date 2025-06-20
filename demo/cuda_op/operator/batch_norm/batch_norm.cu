@@ -1,4 +1,4 @@
-#include "batchnorm/batchnorm.h"
+#include "batch_norm/batch_norm.h"
 
 #include <torch/extension.h>
 #include "common/utils.h"
