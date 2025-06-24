@@ -1,7 +1,7 @@
 #include "flash_attention/flash_attention.h"
 
 namespace cuda_op {
-  __inline__ __global__ void flash_attn(
+  __inline__ __global__ void flash_attn_fwd(
     const float* Q,
     const float* K,
     const float* V,
@@ -36,6 +36,53 @@ namespace cuda_op {
       for (int x = 0; x < d; x++) {
         Kj[tx * d + x] = K[qkv_offset + j * tile_size + tx * d + x];
         Vj[tx * d + x] = V[qkv_offset + j * tile_size + tx * d + x];
+      }
+      __syncthreads();
+
+      for (int i = 0; i < Tr; ++i) {
+        // Load Qi to SRAM, l and m to registers
+        for (int x = 0; x < d; ++x) {
+          Qi[tx * d + x] = Q[qkv_offset + tile_size * j + tx * d + x];
+        }
+
+        float row_m_prev = m[lm_offset + (i * Br) + tx];
+        float row_l_prev = l[lm_offset + (i * Br) + tx];
+
+        // S = QK^T, row_m = rowmax(S)
+        float row_m = -INFINITY;
+        for (int y = 0; y < Bc; ++y) {
+          float sum = 0;
+          for (int x = 0; x < d; ++x) {
+            sum += Qi[tx * d + x] * Kj[y * d + x];
+          }
+          sum            *= softmax_scale;
+          S[tx * Br + y]  = sum;
+          row_m           = std::max(row_m, sum);
+        }
+
+        // P = exp(S - row_m), row_l = rowsum(P)
+        float row_l = 0;
+        for (int y = 0; y < Bc; ++y) {
+          S[tx * Bc + y]  = __expf(S[tx * Bc + y] - row_m);
+          row_l          += S[tx * Bc + y];
+        }
+
+        // Compute new m and l
+        float row_m_new = max(row_m_prev, row_m);
+        float row_l_new = (__expf(row_m_prev - row_m_new) * row_l_prev)
+                        + (__expf(row_m - row_m_new) * row_l);
+
+        // Write O, l, m to HBM
+        for (int x = 0; x < d; ++x) {
+          float pv = 0; // Pij * Vj
+          for (int y = 0; y < Bc; ++y) {
+            pv += S[tx * Bc + y] * Vj[y * d + x];
+          }
+          // TODO: formula
+          O[qkv_offset + i * tile_size + tx * d + x] = (1 / row_l_new);
+        }
+        m[lm_offset + i * Br + tx] = row_m_new;
+        l[lm_offset + i * Br + tx] = row_l_new;
       }
       __syncthreads();
     }
