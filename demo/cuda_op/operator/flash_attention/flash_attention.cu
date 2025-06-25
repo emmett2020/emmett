@@ -5,6 +5,8 @@
 
 #include "common/utils.h"
 
+/// REFERENCE: https://github.com/tspeterkim/flash-attention-minimal
+
 namespace cuda_op {
   __inline__ __global__ void flash_attn_fwd(
     const float* Q,
@@ -25,7 +27,7 @@ namespace cuda_op {
     const int by = blockIdx.y;
 
     // Offset into Q,K,V,O,l,m - different for each batch and head.
-    int qkv_offset = (bx * gridDim.y * N * d) + (bx * N * d);
+    int qkv_offset = (bx * gridDim.y * N * d) + (by * N * d);
     int lm_offset  = (bx * gridDim.y * N) + (by * N);
 
     // Define SRAM for Q,K,V,S
