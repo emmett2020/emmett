@@ -5,6 +5,7 @@
 #include "layer_norm/layer_norm.h"
 #include "group_norm/group_norm.h"
 #include "batch_norm/batch_norm.h"
+#include "flash_attention/flash_attention.h"
 
 namespace cuda_op { } // namespace cuda_op
 
@@ -19,4 +20,5 @@ PYBIND11_MODULE(cuda_op, m) {
   m.def("group_norm", &cuda_op::torch_group_norm);
   m.def("batch_norm", &cuda_op::torch_batch_norm);
   m.def("layer_norm", &cuda_op::torch_layer_norm);
+  m.def("flash_attention", &cuda_op::torch_flash_attn);
 }

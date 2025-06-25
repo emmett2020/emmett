@@ -1,5 +1,10 @@
 #include "flash_attention/flash_attention.h"
 
+#include <cmath>
+#include <torch/extension.h>
+
+#include "common/utils.h"
+
 namespace cuda_op {
   __inline__ __global__ void flash_attn_fwd(
     const float* Q,
@@ -79,13 +84,63 @@ namespace cuda_op {
             pv += S[tx * Bc + y] * Vj[y * d + x];
           }
           // TODO: formula
-          O[qkv_offset + i * tile_size + tx * d + x] = (1 / row_l_new);
+          O[qkv_offset + (tile_size * i) + (tx * d) + x] =
+            (1 / row_l_new)
+            * ((row_l_prev
+                * __expf(row_m_prev - row_m_new)
+                * O[qkv_offset + (tile_size * i) + (tx * d) + x])
+               + (__expf(row_m - row_m_new) * pv));
         }
         m[lm_offset + i * Br + tx] = row_m_new;
         l[lm_offset + i * Br + tx] = row_l_new;
       }
       __syncthreads();
     }
+  }
+
+  torch::Tensor
+  torch_flash_attn(const torch::Tensor& Q, const torch::Tensor& K, const torch::Tensor& V) {
+    const int Bc = 32;
+    const int Br = 32;
+    const int B  = Q.size(0);
+    const int nh = Q.size(1);
+    const int N  = Q.size(2);
+    const int d  = Q.size(3);
+
+    const int Tc              = ceil(static_cast<float>(N) / Bc);
+    const int Tr              = ceil(static_cast<float>(N) / Br);
+    const float softmax_scale = 1.0 / sqrt(d);
+
+    auto O = torch::zeros_like(Q);
+    auto l = torch::zeros({B, nh, N});
+    auto m = torch::full({B, nh, N}, -INFINITY);
+
+    auto cuda = torch::Device(torch::kCUDA);
+    l         = l.to(cuda);
+    m         = m.to(cuda);
+
+    // Calculate SRAM size needed per block.
+    const int sram_size = (3 * Bc * d * sizeof(float)) + (Bc * Br * sizeof(float));
+
+    dim3 grid_dim(B, nh); // batch_size * num_headers
+    dim3 block_dim(Bc);   // Bc threads per block
+    flash_attn_fwd<<<grid_dim, block_dim, sram_size>>>(
+      Q.data_ptr<float>(),
+      K.data_ptr<float>(),
+      V.data_ptr<float>(),
+      N,
+      d,
+      Tc,
+      Tr,
+      Bc,
+      Br,
+      softmax_scale,
+      l.data_ptr<float>(),
+      m.data_ptr<float>(),
+      O.data_ptr<float>());
+    cuda_check(cudaGetLastError());
+    cuda_check(cudaDeviceSynchronize());
+    return O;
   }
 
 
