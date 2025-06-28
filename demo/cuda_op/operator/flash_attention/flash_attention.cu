@@ -26,6 +26,7 @@ namespace cuda_op {
     const int bx = blockIdx.x;
     const int by = blockIdx.y;
 
+
     // Offset into Q,K,V,O,l,m - different for each batch and head.
     int qkv_offset = (bx * gridDim.y * N * d) + (by * N * d);
     int lm_offset  = (bx * gridDim.y * N) + (by * N);
@@ -63,7 +64,7 @@ namespace cuda_op {
             sum += Qi[tx * d + x] * Kj[y * d + x];
           }
           sum            *= softmax_scale;
-          S[tx * Br + y]  = sum;
+          S[tx * Bc + y]  = sum;
           row_m           = std::max(row_m, sum);
         }
 
