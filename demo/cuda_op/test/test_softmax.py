@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from py_impl.softmax import base_softmax, safe_softmax
+from py_impl.softmax import base_softmax, safe_softmax, online_softmax
 import cuda_op
 
 
@@ -23,6 +23,8 @@ def test_softmax_python_impl():
     o_golden = torch.softmax(x, dim)
     o_base = base_softmax(x, dim)
     o_safe = safe_softmax(x, dim)
+    o_online = online_softmax(x, dim)
 
     torch.testing.assert_close(o_golden, o_base, atol=1e-5, rtol=1e-5)
     torch.testing.assert_close(o_golden, o_safe, atol=1e-5, rtol=1e-5)
+    torch.testing.assert_close(o_golden, o_online, atol=1e-5, rtol=1e-5)
