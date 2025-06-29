@@ -1,5 +1,7 @@
-import torch
+"""softmax python implementation, mainly used for tutorial"""
+
 import math
+import torch
 
 
 def base_softmax(x, dim):
