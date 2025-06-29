@@ -1,10 +1,11 @@
 import torch
 import torch.nn.functional as F
-from py_impl.softmax import base_softmax, safe_softmax, online_softmax
+from py_impl.softmax import base_softmax, safe_softmax, online_softmax, block_online_softmax
 import cuda_op
 
 
 def test_softmax_dim():
+    """test softmax dim parameter"""
     torch.manual_seed(0)
     x = torch.randn(2, 3, 4)
     print(x)
@@ -17,6 +18,7 @@ def test_softmax_dim():
 
 
 def test_softmax_python_impl():
+    """test softmax python implementation"""
     x = torch.randn(2, 2, 3, dtype=torch.float)
     dim = 0
 
@@ -24,7 +26,9 @@ def test_softmax_python_impl():
     o_base = base_softmax(x, dim)
     o_safe = safe_softmax(x, dim)
     o_online = online_softmax(x, dim)
+    o_block_online = block_online_softmax(x, dim)
 
     torch.testing.assert_close(o_golden, o_base, atol=1e-5, rtol=1e-5)
     torch.testing.assert_close(o_golden, o_safe, atol=1e-5, rtol=1e-5)
     torch.testing.assert_close(o_golden, o_online, atol=1e-5, rtol=1e-5)
+    torch.testing.assert_close(o_golden, o_block_online, atol=1e-5, rtol=1e-5)
