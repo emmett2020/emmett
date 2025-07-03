@@ -50,7 +50,7 @@ namespace cuda_op {
       for (int i = 0; i < Tr; ++i) {
         // Load Qi to SRAM, l and m to registers
         for (int x = 0; x < d; ++x) {
-          Qi[tx * d + x] = Q[qkv_offset + tile_size * j + tx * d + x];
+          Qi[tx * d + x] = Q[qkv_offset + tile_size * i + tx * d + x];
         }
 
         float row_m_prev = m[lm_offset + (i * Br) + tx];
@@ -86,7 +86,6 @@ namespace cuda_op {
           for (int y = 0; y < Bc; ++y) {
             pv += S[tx * Bc + y] * Vj[y * d + x];
           }
-          // TODO: formula
           O[qkv_offset + (tile_size * i) + (tx * d) + x] =
             (1 / row_l_new)
             * ((row_l_prev
@@ -126,7 +125,7 @@ namespace cuda_op {
     const int sram_size = (3 * Bc * d * sizeof(float)) + (Bc * Br * sizeof(float));
     int max_sram_size;
     cudaDeviceGetAttribute(&max_sram_size, cudaDevAttrMaxSharedMemoryPerBlock, 0);
-    printf("Max shared memory: %d, requested shared memory: %d \\n", max_sram_size, sram_size);
+    printf("Max shared memory: %d, requested shared memory: %d\n", max_sram_size, sram_size);
 
     dim3 grid_dim(B, nh); // batch_size * num_headers
     dim3 block_dim(Bc);   // Bc threads per block
