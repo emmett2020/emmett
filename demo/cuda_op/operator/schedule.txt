@@ -14,7 +14,7 @@ min             | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
 softmax         | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
 matmul          | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
 conv            | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-flash-attention | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+flash-attention | [x] [x] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
 
 2. Basic Optimization
 3. Dive into attention and conv
