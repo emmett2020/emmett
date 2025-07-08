@@ -27,3 +27,6 @@ CMAKE_BUILD_PARALLEL_LEVEL=8 pip3 install .
 ```
 
 
+# TODO
+1. Freely use python tests without importing Pytorch
+2. Use Cache2 to run C++ tests
