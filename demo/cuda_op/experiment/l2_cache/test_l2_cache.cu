@@ -9,40 +9,74 @@
 #include <curand_kernel.h>
 
 namespace {
-  __global__ void matmul_l2_cache_hit_rate_100(
-    const float* a_ptr,
-    const float* b_ptr,
-    int M,
-    int K,
-    int N,
-    int tile_m,
-    int tile_n,
-    float* c_ptr) {
-    unsigned a_tile_size   = tile_m * K;
-    unsigned b_tile_size   = K * tile_n;
-    unsigned c_tile_size   = tile_m * tile_n;
-    unsigned a_tile_offset = (blockIdx.x * gridDim.y * a_tile_size) + (blockIdx.y * a_tile_size);
-    unsigned b_tile_offset = (blockIdx.x * gridDim.y * b_tile_size) + (blockIdx.y * b_tile_size);
-    unsigned c_tile_offset = (blockIdx.x * gridDim.y * c_tile_size) + (blockIdx.y * c_tile_size);
 
-    unsigned tx = threadIdx.x;
+  __global__ void
+  gemm(const float* A, const float* B, int M, int K, int N, int tile_size, float* C) {
+    __shared__ float As[64][64];
+    __shared__ float Bs[64][64];
 
-    for (int y = 0; y < tile_n; ++y) {
-      float sum = 0;
-      for (int x = 0; x < K; ++x) {
-        float a  = a_ptr[a_tile_offset + (tx * K) + x];
-        float b  = b_ptr[b_tile_offset + (tx * K) + x];
-        sum     += a * b;
+    unsigned block_row = blockIdx.y;
+    unsigned block_col = blockIdx.x;
+    unsigned tx        = threadIdx.x;
+    unsigned ty        = threadIdx.y;
+
+    unsigned row = (block_row * tile_size) + ty;
+    unsigned col = (block_col * tile_size) + tx;
+
+    float sum = 0.0F;
+
+    for (unsigned t = 0; t < K; t += tile_size) {
+      // Load A
+      unsigned a_col = t + tx;
+      if (row < M && a_col < K) {
+        As[ty][tx] = A[(row * K) + a_col];
+      } else {
+        As[ty][tx] = 0.0F;
       }
-      c_ptr[c_tile_offset + (tx * tile_n) + y] = sum;
+
+      // Load B
+      unsigned b_row = t + ty;
+      if (b_row < K && col < N) {
+        Bs[ty][tx] = B[(b_row * N) + col];
+      } else {
+        Bs[ty][tx] = 0.0F;
+      }
+      __syncthreads();
+
+      for (int k = 0; k < tile_size; k++) {
+        if (t + k < K) {
+          sum += As[ty][k] * Bs[k][tx];
+        }
+      }
+
+      __syncthreads();
+    }
+
+    if (row < M && col < N) {
+      C[(row * N) + col] = sum;
+    }
+  }
+
+  __global__ void simple_matmul(const float* A, const float* B, int M, int K, int N, float* C) {
+    unsigned row = (blockIdx.y * blockDim.y) + threadIdx.y;
+    unsigned col = (blockIdx.x * blockDim.x) + threadIdx.x;
+
+    if (row < M && col < N) {
+      float sum = 0.0F;
+
+      for (int k = 0; k < K; k++) {
+        sum += A[(row * K) + k] * B[(k * N) + col];
+      }
+
+      C[(row * N) + col] = sum;
     }
   }
 
   __global__ void fill_random_data_kernel(curandState* state, float* data, int n, uint64_t seed) {
     unsigned idx = threadIdx.x + (blockIdx.x * blockDim.x);
     if (idx < n) {
-      curand_init(seed, idx, 0, &state[idx]);  // 初始化随机数状态
-      data[idx] = curand_uniform(&state[idx]); // 生成 [0, 1) 的随机数
+      curand_init(seed, idx, 0, &state[idx]);
+      data[idx] = curand_uniform(&state[idx]);
     }
   }
 
@@ -101,12 +135,13 @@ namespace {
     print_host_buffer(h_data.data(), H, W, title);
   }
 
-  void cpu_mma(int M, int N, int K, const float* a_ptr, const float* b_ptr, float* c_ptr) {
+  /// b is col_major
+  void cpu_gemm(int M, int N, int K, const float* a_ptr, const float* b_ptr, float* c_ptr) {
     for (int m = 0; m < M; ++m) {
       for (int n = 0; n < N; ++n) {
         float sum = 0;
         for (int k = 0; k < K; ++k) {
-          sum += a_ptr[(m * K) + k] * b_ptr[(n * K) + k];
+          sum += a_ptr[(m * K) + k] * b_ptr[(k * N) + n];
         }
         c_ptr[(m * N) + n] = sum;
       }
@@ -133,23 +168,13 @@ auto main() noexcept(false) -> int {
     << cache_line_elements_cnt
     << "\n";
 
-  // const int K = cache_line_elements_cnt;
-  const int K = 3;
+  const int K = cache_line_elements_cnt;
   // const int M = cache_elements_cnt / K / 2;
   // const int N = cache_elements_cnt / K / 2;
 
-  const int M = 2;
-  const int N = 2;
-
-  // const int num_tiles_m = 128;
-  // const int num_tiles_n = 8;
-  // const uint32_t tile_m = M / num_tiles_m;
-  // const uint32_t tile_n = N / num_tiles_n;
-  // auto grid_dim         = dim3{num_tiles_m, num_tiles_n};
-  // auto block_dim        = dim3{tile_m};
-
+  const int M = 128;
+  const int N = 64;
   std::cout << "M=" << M << ", K=" << K << ", N=" << N << "\n";
-  // std::cout << "tile_m=" << tile_m << ", tile_n=" << tile_n << "\n";
 
   const auto a_num_eles = static_cast<int>(M * K);
   const auto b_num_eles = static_cast<int>(K * N);
@@ -173,17 +198,13 @@ auto main() noexcept(false) -> int {
   std::vector<float> c_cpu(static_cast<size_t>(M * N), 0);
   cuda_check(cudaMemcpy(a_cpu.data(), a_ptr, a_size, cudaMemcpyKind::cudaMemcpyDeviceToHost));
   cuda_check(cudaMemcpy(b_cpu.data(), b_ptr, b_size, cudaMemcpyKind::cudaMemcpyDeviceToHost));
-  cpu_mma(M, N, K, a_cpu.data(), b_cpu.data(), c_cpu.data());
+  cpu_gemm(M, N, K, a_cpu.data(), b_cpu.data(), c_cpu.data());
 
-  // matmul_l2_cache_hit_rate_100<<<grid_dim, block_dim>>>(
-  //   a_ptr,
-  //   b_ptr,
-  //   M,
-  //   K,
-  //   N,
-  //   tile_m,
-  //   tile_n,
-  //   c_ptr);
+  const int tile_size = 16;
+  dim3 block_dim{tile_size, tile_size};
+  dim3 grid_dim{(N + tile_size - 1) / tile_size, (M + tile_size - 1) / tile_size};
+
+  gemm<<<grid_dim, block_dim>>>(a_ptr, b_ptr, M, K, N, tile_size, c_ptr);
 
   print_device_buffer(a_ptr, M, K, "a_ptr");
   print_device_buffer(b_ptr, N, K, "b_ptr");
