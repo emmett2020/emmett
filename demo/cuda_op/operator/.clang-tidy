@@ -2,4 +2,5 @@
 Checks: '
   -misc-use-anonymous-namespace,
   -cppcoreguidelines-avoid-c-arrays,
+  -bugprone-exception-escape
 '
