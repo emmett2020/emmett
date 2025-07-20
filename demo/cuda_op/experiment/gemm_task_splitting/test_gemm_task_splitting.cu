@@ -7,7 +7,7 @@
 #include <curand.h>
 #include <curand_kernel.h>
 
-#include "gemm_split_m.cuh"
+#include "gemm.cuh"
 
 namespace {
 
