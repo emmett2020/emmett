@@ -1,3 +1,4 @@
+#include <atomic>
 #include <cstddef>
 #include <iostream>
 #include <cstdint>
@@ -9,6 +10,80 @@
 #include <curand_kernel.h>
 
 namespace {
+
+  /// TODO: only split M, per threadblock per M tile and all B.
+  /// TODO: only split N, per threadblock per N tile and all A.
+  /// TODO: split M & K,
+  /// TODO: split M & N,
+  /// TODO: split M & N & K,
+
+  // thread block only one dim, thread has one dimensions
+  __global__ void gemm_split_m_only_thread_x(
+    const float* A,
+    const float* B,
+    int M,
+    int K,
+    int N,
+    int tile_m,
+    float* C) {
+    unsigned a_block_row = blockIdx.x * tile_m;
+    unsigned a_row       = a_block_row + threadIdx.x;
+
+    for (int x = 0; x < N; ++x) {
+      float sum = 0;
+      for (int k = 0; k < K; ++k) {
+        sum += A[(a_row * K) + k] * B[(k * N) + x];
+      }
+      C[(a_row * N) + x] = sum;
+    }
+  }
+
+  // thread block only one dim, thread has two dimensions
+  // Without shared memory
+  __global__ void
+  gemm_split_m(const float* A, const float* B, int M, int K, int N, int tile_m, float* C) {
+    unsigned a_block_row = blockIdx.x * tile_m;
+    unsigned a_row       = a_block_row + threadIdx.x;
+
+    for (int x = 0; x < N; ++x) {
+      unsigned k = threadIdx.y;
+      float sum  = A[(a_row * K) + k] * B[(k * N) + x];
+      float* ptr = C + (static_cast<size_t>(a_row * N)) + x;
+      atomicAdd(ptr, sum);
+    }
+  }
+
+  // thread block has two dimensions, thread only has one dimension
+  // thread block y will split K
+  __global__ void gemm_split_m_two_dims(
+    const float* A,
+    const float* B,
+    int M,
+    int K,
+    int N,
+    int tile_m,
+    int tile_k,
+    float* C) {
+    unsigned a_block_row = blockIdx.y * tile_m;
+    unsigned a_block_col = blockIdx.x * tile_k;
+    unsigned a_row       = a_block_row + threadIdx.x;
+
+    unsigned b_block_row = blockIdx.x * tile_k;
+
+
+    for (int y = 0; y < N; ++y) {
+      unsigned b_col = y;
+
+      float sum = 0;
+      for (int x = 0; x < tile_k; ++x) {
+        unsigned a_col  = a_block_col + x;
+        unsigned b_row  = b_block_row + x;
+        sum            += A[(a_row * K) + a_col] * B[(b_row * N) + b_col];
+      }
+      float* ptr = C + (static_cast<size_t>(a_row * N)) + b_col;
+      atomicAdd(ptr, sum);
+    }
+  }
 
   __global__ void
   gemm(const float* A, const float* B, int M, int K, int N, int tile_size, float* C) {
@@ -26,8 +101,17 @@ namespace {
     float sum = 0.0F;
 
     for (unsigned t = 0; t < K; t += tile_size) {
-      // Load A
       unsigned a_col = t + tx;
+
+      printf("datad %d %d %d %d, row=%d, col=%d\n",
+             blockIdx.y,
+             blockIdx.x,
+             threadIdx.x,
+             threadIdx.y,
+             row,
+             a_col);
+
+      // Load A
       if (row < M && a_col < K) {
         As[ty][tx] = A[(row * K) + a_col];
       } else {
@@ -168,12 +252,13 @@ auto main() noexcept(false) -> int {
     << cache_line_elements_cnt
     << "\n";
 
+
   const int K = cache_line_elements_cnt;
   // const int M = cache_elements_cnt / K / 2;
   // const int N = cache_elements_cnt / K / 2;
 
   const int M = 128;
-  const int N = 64;
+  const int N = 128;
   std::cout << "M=" << M << ", K=" << K << ", N=" << N << "\n";
 
   const auto a_num_eles = static_cast<int>(M * K);
@@ -200,11 +285,14 @@ auto main() noexcept(false) -> int {
   cuda_check(cudaMemcpy(b_cpu.data(), b_ptr, b_size, cudaMemcpyKind::cudaMemcpyDeviceToHost));
   cpu_gemm(M, N, K, a_cpu.data(), b_cpu.data(), c_cpu.data());
 
-  const int tile_size = 16;
-  dim3 block_dim{tile_size, tile_size};
-  dim3 grid_dim{(N + tile_size - 1) / tile_size, (M + tile_size - 1) / tile_size};
+  const int tile_m = 16;
+  const int tile_k = 8;
+  dim3 block_dim{tile_m};
+  dim3 grid_dim{K / tile_k, M / tile_m};
 
-  gemm<<<grid_dim, block_dim>>>(a_ptr, b_ptr, M, K, N, tile_size, c_ptr);
+  cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 100 * 1'024 * 1'024);
+
+  gemm_split_m_two_dims<<<grid_dim, block_dim>>>(a_ptr, b_ptr, M, K, N, tile_m, tile_k, c_ptr);
 
   print_device_buffer(a_ptr, M, K, "a_ptr");
   print_device_buffer(b_ptr, N, K, "b_ptr");
