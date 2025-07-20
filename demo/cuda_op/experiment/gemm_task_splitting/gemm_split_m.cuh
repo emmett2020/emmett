@@ -6,6 +6,7 @@ namespace {
   /// Grid has one dim.  Per thread block per (tile_m * K) of A, (completed B * tile_m) of B, (tile_m * N) of C.
   /// Block has one dim. Per thread per row (1 * K) of A, completed B, N of C.
   /// Without shared memory or other optimizations.
+  /// It has worse performance.
   __global__ void
   gemm_split_m(const float* A, const float* B, int M, int K, int N, unsigned tile_m, float* C) {
     unsigned a_blk_row = blockIdx.x * tile_m;

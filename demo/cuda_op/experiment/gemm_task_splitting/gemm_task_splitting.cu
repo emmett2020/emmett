@@ -289,7 +289,7 @@ auto main() noexcept(false) -> int {
   // const int N = cache_elements_cnt / K / 2;
 
   const int M = 128;
-  const int N = 128;
+  const int N = 32;
   std::cout << "M=" << M << ", K=" << K << ", N=" << N << "\n";
 
   const auto a_num_eles = static_cast<int>(M * K);
@@ -319,7 +319,7 @@ auto main() noexcept(false) -> int {
 
   // cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 100 * 1'024 * 1'024);
 
-  const int tile_m = 6;
+  const int tile_m = 5;
   launch_gemm_split_m(a_ptr, b_ptr, M, K, N, tile_m, c_ptr);
 
   print_device_buffer(a_ptr, M, K, "a_ptr");
