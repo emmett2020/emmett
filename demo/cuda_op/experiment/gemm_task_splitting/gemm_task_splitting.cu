@@ -1,43 +1,15 @@
-#include <atomic>
 #include <cstddef>
 #include <iostream>
 #include <cstdint>
 #include <vector>
 #include <random>
 
-#include <cublas_v2.h>
 #include <curand.h>
 #include <curand_kernel.h>
 
+#include "gemm_split_m.cuh"
+
 namespace {
-
-  /// TODO: only split M, per threadblock per M tile and all B.
-  /// TODO: only split N, per threadblock per N tile and all A.
-  /// TODO: split M & K,
-  /// TODO: split M & N,
-  /// TODO: split M & N & K,
-
-  // thread block only one dim, thread has one dimensions
-  __global__ void gemm_split_m_only_thread_x(
-    const float* A,
-    const float* B,
-    int M,
-    int K,
-    int N,
-    int tile_m,
-    float* C) {
-    unsigned a_block_row = blockIdx.x * tile_m;
-    unsigned a_row       = a_block_row + threadIdx.x;
-
-    for (int x = 0; x < N; ++x) {
-      float sum = 0;
-      for (int k = 0; k < K; ++k) {
-        sum += A[(a_row * K) + k] * B[(k * N) + x];
-      }
-      C[(a_row * N) + x] = sum;
-    }
-  }
-
   // thread block only one dim, thread has two dimensions
   // Without shared memory
   __global__ void
@@ -55,7 +27,7 @@ namespace {
 
   // thread block has two dimensions, thread only has one dimension
   // thread block y will split K
-  __global__ void gemm_split_m_two_dims(
+  __global__ void gemm_two_dims(
     const float* A,
     const float* B,
     int M,
@@ -70,7 +42,6 @@ namespace {
 
     unsigned b_block_row = blockIdx.x * tile_k;
 
-
     for (int y = 0; y < N; ++y) {
       unsigned b_col = y;
 
@@ -80,6 +51,72 @@ namespace {
         unsigned b_row  = b_block_row + x;
         sum            += A[(a_row * K) + a_col] * B[(b_row * N) + b_col];
       }
+      float* ptr = C + (static_cast<size_t>(a_row * N)) + b_col;
+      atomicAdd(ptr, sum);
+    }
+  }
+
+  // thread block has two dimensions, thread also has two dimensions
+  // thread block y will split K
+  __global__ void gemm_two_dims_two_dims(
+    const float* A,
+    const float* B,
+    int M,
+    int K,
+    int N,
+    int tile_m,
+    int tile_k,
+    float* C) {
+    unsigned a_block_row = blockIdx.y * tile_m;
+    unsigned a_block_col = blockIdx.x * tile_k;
+    unsigned a_row       = a_block_row + threadIdx.x;
+
+    unsigned b_block_row = blockIdx.x * tile_k;
+
+    for (int y = 0; y < N; ++y) {
+      unsigned b_col = y;
+
+      unsigned a_col = a_block_col + threadIdx.y;
+      unsigned b_row = b_block_row + threadIdx.y;
+      float sum      = A[(a_row * K) + a_col] * B[(b_row * N) + b_col];
+      float* ptr     = C + (static_cast<size_t>(a_row * N)) + b_col;
+      atomicAdd(ptr, sum);
+    }
+  }
+
+  // thread block has two dimensions, thread also has two dimensions
+  // thread block y will split K
+  // With shared memory
+  __global__ void gemm_grid_2dims_blk_2dims_shared(
+    const float* A,
+    const float* B,
+    int M,
+    int K,
+    int N,
+    int tile_m,
+    int tile_k,
+    float* C) {
+    __shared__ float a_smem[32][32];
+    __shared__ float b_smem[32][32];
+
+    unsigned a_block_row = blockIdx.y * tile_m;
+    unsigned a_block_col = blockIdx.x * tile_k;
+    unsigned a_row       = a_block_row + threadIdx.x;
+    unsigned a_col       = a_block_col + threadIdx.y;
+
+    unsigned b_block_row = blockIdx.x * tile_k;
+    unsigned b_row       = b_block_row + threadIdx.y;
+
+    a_smem[a_row][a_col] = A[(a_row * K) + a_col];
+
+
+    for (int y = 0; y < N; ++y) {
+    }
+
+    for (int y = 0; y < N; ++y) {
+      unsigned b_col = y;
+
+      float sum  = a_smem[a_row][a_col] * B[(b_row * N) + b_col];
       float* ptr = C + (static_cast<size_t>(a_row * N)) + b_col;
       atomicAdd(ptr, sum);
     }
@@ -173,12 +210,6 @@ namespace {
   void cuda_check(cudaError_t err) {
     if (err != cudaError_t::cudaSuccess) {
       throw std::runtime_error{cudaGetErrorString(err)};
-    }
-  }
-
-  void cublas_check(cublasStatus_t err) {
-    if (err != cublasStatus_t::CUBLAS_STATUS_SUCCESS) {
-      throw std::runtime_error{cublasGetStatusString(err)};
     }
   }
 
@@ -285,14 +316,11 @@ auto main() noexcept(false) -> int {
   cuda_check(cudaMemcpy(b_cpu.data(), b_ptr, b_size, cudaMemcpyKind::cudaMemcpyDeviceToHost));
   cpu_gemm(M, N, K, a_cpu.data(), b_cpu.data(), c_cpu.data());
 
-  const int tile_m = 16;
-  const int tile_k = 8;
-  dim3 block_dim{tile_m};
-  dim3 grid_dim{K / tile_k, M / tile_m};
 
-  cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 100 * 1'024 * 1'024);
+  // cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 100 * 1'024 * 1'024);
 
-  gemm_split_m_two_dims<<<grid_dim, block_dim>>>(a_ptr, b_ptr, M, K, N, tile_m, tile_k, c_ptr);
+  const int tile_m = 6;
+  launch_gemm_split_m(a_ptr, b_ptr, M, K, N, tile_m, c_ptr);
 
   print_device_buffer(a_ptr, M, K, "a_ptr");
   print_device_buffer(b_ptr, N, K, "b_ptr");
