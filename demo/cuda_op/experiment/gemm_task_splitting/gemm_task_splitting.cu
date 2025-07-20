@@ -10,20 +10,6 @@
 #include "gemm_split_m.cuh"
 
 namespace {
-  // thread block only one dim, thread has two dimensions
-  // Without shared memory
-  __global__ void
-  gemm_split_m(const float* A, const float* B, int M, int K, int N, int tile_m, float* C) {
-    unsigned a_block_row = blockIdx.x * tile_m;
-    unsigned a_row       = a_block_row + threadIdx.x;
-
-    for (int x = 0; x < N; ++x) {
-      unsigned k = threadIdx.y;
-      float sum  = A[(a_row * K) + k] * B[(k * N) + x];
-      float* ptr = C + (static_cast<size_t>(a_row * N)) + x;
-      atomicAdd(ptr, sum);
-    }
-  }
 
   // thread block has two dimensions, thread only has one dimension
   // thread block y will split K
@@ -201,12 +187,6 @@ namespace {
     }
   }
 
-  void throw_if(bool cond, std::string_view msg) {
-    if (cond) {
-      throw std::runtime_error{msg.data()};
-    }
-  }
-
   void cuda_check(cudaError_t err) {
     if (err != cudaError_t::cudaSuccess) {
       throw std::runtime_error{cudaGetErrorString(err)};
@@ -319,8 +299,8 @@ auto main() noexcept(false) -> int {
 
   // cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 100 * 1'024 * 1'024);
 
-  const int tile_m = 5;
-  launch_gemm_split_m(a_ptr, b_ptr, M, K, N, tile_m, c_ptr);
+  const int tile_m = 16;
+  launch_gemm_split_m_blk2dims(a_ptr, b_ptr, M, K, N, tile_m, c_ptr);
 
   print_device_buffer(a_ptr, M, K, "a_ptr");
   print_device_buffer(b_ptr, N, K, "b_ptr");

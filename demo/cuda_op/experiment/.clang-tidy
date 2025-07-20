@@ -1,6 +1,0 @@
-# Catch2 not meet this requirements.
-Checks: '
-  -misc-use-anonymous-namespace,
-  -cppcoreguidelines-avoid-c-arrays,
-  -bugprone-exception-escape
-'
