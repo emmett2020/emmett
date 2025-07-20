@@ -299,8 +299,7 @@ auto main() noexcept(false) -> int {
 
   // cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 100 * 1'024 * 1'024);
 
-  const int tile_m = 16;
-  launch_gemm_split_m_blk2dims(a_ptr, b_ptr, M, K, N, tile_m, c_ptr);
+  launch_gemm_split_m_grid_2dims(a_ptr, b_ptr, M, K, N, 16, 8, c_ptr);
 
   print_device_buffer(a_ptr, M, K, "a_ptr");
   print_device_buffer(b_ptr, N, K, "b_ptr");
