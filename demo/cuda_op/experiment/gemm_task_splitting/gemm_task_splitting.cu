@@ -261,7 +261,7 @@ auto main() noexcept(false) -> int {
 
   // cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 100 * 1'024 * 1'024);
 
-  launch_gemm_split_m_grid_2dims_blk_2dims_shared(a_ptr, b_ptr, M, K, N, 16, 8, c_ptr);
+  launch_gemm_split_m_n_grid_1dim_blk_2dims(a_ptr, b_ptr, M, K, N, 16, c_ptr);
 
   print_device_buffer(a_ptr, M, K, "a_ptr");
   print_device_buffer(b_ptr, N, K, "b_ptr");

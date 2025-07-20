@@ -47,6 +47,40 @@ namespace {
     gemm_split_m_grid_1dim<<<grid_dim, blk_dim>>>(A, B, K, N, tile_m, C);
   }
 
+  __global__ void gemm_split_m_n_grid_1dim_blk_2dims(
+    const float* A,
+    const float* B,
+    unsigned K,
+    unsigned N,
+    unsigned tile_m,
+    float* C) {
+    unsigned a_blk_row = blockIdx.x * tile_m;
+    unsigned a_row     = a_blk_row + threadIdx.y;
+    unsigned b_col     = threadIdx.x;
+
+    float sum = 0;
+    for (int k = 0; k < K; ++k) {
+      sum += A[(a_row * K) + k] * B[(k * N) + b_col];
+    }
+    C[(a_row * N) + b_col] = sum;
+  }
+
+  void launch_gemm_split_m_n_grid_1dim_blk_2dims(
+    const float* A,
+    const float* B,
+    unsigned M,
+    unsigned K,
+    unsigned N,
+    unsigned tile_m,
+    float* C) {
+    throw_if(M % tile_m != 0, "unsupported");
+    throw_if(N >= 1'024, "unsupported");
+
+    auto grid_dim = dim3{M / tile_m};
+    auto blk_dim  = dim3{N, tile_m};
+    gemm_split_m_n_grid_1dim_blk_2dims<<<grid_dim, blk_dim>>>(A, B, K, N, tile_m, C);
+  }
+
   __global__ void gemm_split_m_grid_1dim_blk_2dims(
     const float* A,
     const float* B,
@@ -186,6 +220,5 @@ namespace {
     auto blk_dim  = dim3{tile_n, tile_m};
     gemm_split_m_grid_2dims_blk_2dims_shared<<<grid_dim, blk_dim>>>(A, B, K, N, tile_m, tile_n, C);
   }
-
 
 } // namespace
