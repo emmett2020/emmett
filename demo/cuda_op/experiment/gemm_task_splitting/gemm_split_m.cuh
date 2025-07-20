@@ -6,8 +6,8 @@
 #include "gemm_base.cuh"
 
 /// Most of kernels in this file have worse performance. However it doesn't
-/// matters since we only use theses kernels to illustrate how task splitting
-/// works in GEMM.
+/// matters since we only use theses kernels to illustrate how GEMM task
+/// splitting works.
 
 namespace {
   /// Grid has one dim.  Per thread block per (tile_m * K) of A, (completed B * tile_m) of B, (tile_m * N) of C.
