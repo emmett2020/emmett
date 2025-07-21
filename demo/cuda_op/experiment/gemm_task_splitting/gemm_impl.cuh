@@ -221,4 +221,65 @@ namespace {
     gemm_split_m_k_grid_1dim_blk_2dims<<<grid_dim, blk_dim>>>(A, B, K, N, tile_m, C);
   }
 
+  __global__ void gemm_split_m_k_grid_2dims(
+    const float* A,
+    const float* B,
+    unsigned K,
+    unsigned N,
+    unsigned tile_m,
+    unsigned tile_k,
+    float* C) {
+    unsigned a_block_row = blockIdx.y * tile_m;
+    unsigned a_block_col = blockIdx.x * tile_k;
+    unsigned a_row       = a_block_row + threadIdx.x;
+
+    unsigned b_block_row = blockIdx.x * tile_k;
+
+    for (int y = 0; y < N; ++y) {
+      unsigned b_col = y;
+
+      float sum = 0;
+      for (int x = 0; x < tile_k; ++x) {
+        unsigned a_col  = a_block_col + x;
+        unsigned b_row  = b_block_row + x;
+        sum            += A[(a_row * K) + a_col] * B[(b_row * N) + b_col];
+      }
+      float* ptr = C + (static_cast<size_t>(a_row * N)) + b_col;
+      atomicAdd(ptr, sum);
+    }
+  }
+
+  void launch_gemm_split_m_k_grid_2dim(
+    const float* A,
+    const float* B,
+    unsigned M,
+    unsigned K,
+    unsigned N,
+    unsigned tile_m,
+    unsigned tile_k,
+    float* C) {
+    throw_if(M % tile_m != 0, "unsupported");
+    throw_if(K % tile_k != 0, "unsupported");
+
+    auto grid_dim = dim3{K / tile_k, M / tile_m};
+    auto blk_dim  = dim3{tile_m};
+    gemm_split_m_k_grid_2dims<<<grid_dim, blk_dim>>>(A, B, K, N, tile_m, tile_k, C);
+  }
+
+  __global__ void simple_matmul(const float* A, const float* B, int M, int K, int N, float* C) {
+    unsigned row = (blockIdx.y * blockDim.y) + threadIdx.y;
+    unsigned col = (blockIdx.x * blockDim.x) + threadIdx.x;
+
+    if (row < M && col < N) {
+      float sum = 0.0F;
+
+      for (int k = 0; k < K; k++) {
+        sum += A[(row * K) + k] * B[(k * N) + col];
+      }
+
+      C[(row * N) + col] = sum;
+    }
+  }
+
+
 } // namespace
