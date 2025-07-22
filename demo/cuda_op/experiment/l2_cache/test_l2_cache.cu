@@ -1,87 +1,79 @@
 #include <cstddef>
 #include <iostream>
 #include <cstdint>
-#include <vector>
-#include <random>
-
-#include <curand.h>
-#include <curand_kernel.h>
-
-#include "gemm_impl.cuh"
 
 namespace {
+  void cuda_check(cudaError_t err) {
+    if (err != cudaError_t::cudaSuccess) {
+      throw std::runtime_error{cudaGetErrorString(err)};
+    }
+  }
 
-  // thread block has two dimensions, thread only has one dimension
-  // thread block y will split K
-  __global__ void gemm_two_dims(
-    const float* A,
-    const float* B,
-    int M,
-    int K,
-    int N,
-    int tile_m,
-    int tile_k,
-    float* C) {
-    unsigned a_block_row = blockIdx.y * tile_m;
-    unsigned a_block_col = blockIdx.x * tile_k;
-    unsigned a_row       = a_block_row + threadIdx.x;
+  void throw_if(bool cond, std::string_view msg) {
+    if (cond) {
+      throw std::runtime_error{msg.data()};
+    }
+  }
 
-    unsigned b_block_row = blockIdx.x * tile_k;
+  // Per thread block per tile.
+  // The x dimension of the grid traverses along the W dimension of the matrix.
+  // input is col-major
+  // Since input is col-major, the consecutive thread block alongside x
+  // dimension will deal with far away data address. So it should has lower L2
+  // Cache hit rate.
+  __global__ void travel(float* input, unsigned H, unsigned W) {
+    unsigned row = (blockIdx.y * blockDim.y) + threadIdx.y;
+    unsigned col = (blockIdx.x * blockDim.x) + threadIdx.x;
+    if (row < H && col < W) {
+      unsigned idx = (col * H) + row;
 
-    for (int y = 0; y < N; ++y) {
-      unsigned b_col = y;
-
-      float sum = 0;
-      for (int x = 0; x < tile_k; ++x) {
-        unsigned a_col  = a_block_col + x;
-        unsigned b_row  = b_block_row + x;
-        sum            += A[(a_row * K) + a_col] * B[(b_row * N) + b_col];
+      // Enhance L2 cache effect and make sure this piece of code is compiled.
+      float value = 0.0F;
+      for (int i = 0; i < 10; ++i) {
+        value += input[idx];
       }
-      float* ptr = C + (static_cast<size_t>(a_row * N)) + b_col;
-      atomicAdd(ptr, sum);
-    }
-  }
-
-  // thread block has two dimensions, thread also has two dimensions
-  // thread block y will split K
-  __global__ void gemm_two_dims_two_dims(
-    const float* A,
-    const float* B,
-    int M,
-    int K,
-    int N,
-    int tile_m,
-    int tile_k,
-    float* C) {
-    unsigned a_block_row = blockIdx.y * tile_m;
-    unsigned a_block_col = blockIdx.x * tile_k;
-    unsigned a_row       = a_block_row + threadIdx.x;
-
-    unsigned b_block_row = blockIdx.x * tile_k;
-
-    for (int y = 0; y < N; ++y) {
-      unsigned b_col = y;
-
-      unsigned a_col = a_block_col + threadIdx.y;
-      unsigned b_row = b_block_row + threadIdx.y;
-      float sum      = A[(a_row * K) + a_col] * B[(b_row * N) + b_col];
-      float* ptr     = C + (static_cast<size_t>(a_row * N)) + b_col;
-      atomicAdd(ptr, sum);
-    }
-  }
-
-  /// b is col_major
-  void cpu_gemm(int M, int N, int K, const float* a_ptr, const float* b_ptr, float* c_ptr) {
-    for (int m = 0; m < M; ++m) {
-      for (int n = 0; n < N; ++n) {
-        float sum = 0;
-        for (int k = 0; k < K; ++k) {
-          sum += a_ptr[(m * K) + k] * b_ptr[(k * N) + n];
-        }
-        c_ptr[(m * N) + n] = sum;
+      if (value < 0) {
+        input[idx] = value;
       }
     }
   }
+
+  constexpr int block_size = 16; // TODO:
+
+  void launch_travel(float* input, unsigned H, unsigned W) {
+    // const int block_size = 16;
+    dim3 block(block_size, block_size);
+    dim3 grid((W + block_size - 1) / block_size, (H + block_size - 1) / block_size);
+    travel<<<grid, block>>>(input, H, W);
+    cuda_check(cudaGetLastError());
+  }
+
+  __global__ void travel_swizzle(float* input, unsigned H, unsigned W) {
+    unsigned row = (blockIdx.x * blockDim.x) + threadIdx.y;
+    unsigned col = (blockIdx.y * blockDim.y) + threadIdx.x;
+    if (row < H && col < W) {
+      unsigned idx = (col * H) + row;
+
+      // Enhance L2 cache effect and make sure this piece of code is compiled.
+      float value = 0.0F;
+      for (int i = 0; i < 10; ++i) {
+        value += input[idx];
+      }
+      if (value < 0) {
+        input[idx] = value;
+      }
+    }
+  }
+
+  void launch_travel_swizzle(float* input, unsigned H, unsigned W) {
+    // const int block_size = 32;
+    dim3 block(block_size, block_size);
+    dim3 grid((H + block_size - 1) / block_size, (W + block_size - 1) / block_size);
+    travel_swizzle<<<grid, block>>>(input, H, W);
+    cuda_check(cudaGetLastError());
+  }
+
+
 } // namespace
 
 auto main() noexcept(false) -> int {
@@ -103,50 +95,27 @@ auto main() noexcept(false) -> int {
     << cache_line_elements_cnt
     << "\n";
 
+  const unsigned H  = 4'096;
+  const unsigned W  = 128;
+  const size_t size = static_cast<uint64_t>(H * W) * sizeof(float);
+  std::cout << "H=" << H << ", W=" << W << "\n";
 
-  const int K = cache_line_elements_cnt;
-  // const int M = cache_elements_cnt / K / 2;
-  // const int N = cache_elements_cnt / K / 2;
+  float* a_ptr = nullptr;
+  float* b_ptr = nullptr;
+  cuda_check(cudaMalloc(&a_ptr, size));
+  cuda_check(cudaMalloc(&b_ptr, size));
 
-  const int M = 128;
-  const int N = 32;
-  std::cout << "M=" << M << ", K=" << K << ", N=" << N << "\n";
+  cuda_check(cudaFuncSetAttribute(
+    travel,
+    cudaFuncAttributePreferredSharedMemoryCarveout,
+    100 // 强制禁用Swizzle（仅Ampere+有效）
+    ));
 
-  const auto a_num_eles = static_cast<int>(M * K);
-  const auto b_num_eles = static_cast<int>(K * N);
-  const auto c_num_eles = static_cast<int>(M * N);
-  const size_t a_size   = static_cast<uint64_t>(M * K) * sizeof(float);
-  const size_t b_size   = static_cast<uint64_t>(K * N) * sizeof(float);
-  const size_t c_size   = static_cast<uint64_t>(M * N) * sizeof(float);
-  float* a_ptr          = nullptr;
-  float* b_ptr          = nullptr;
-  float* c_ptr          = nullptr;
-  cuda_check(cudaMalloc(&a_ptr, a_size));
-  cuda_check(cudaMalloc(&b_ptr, b_size));
-  cuda_check(cudaMalloc(&c_ptr, c_size));
+  launch_travel(a_ptr, H, W);
+  launch_travel_swizzle(b_ptr, H, W);
 
-  std::random_device rd{};
-  fill_random_data(a_ptr, M * K, rd());
-  fill_random_data(b_ptr, N * K, rd());
-
-  std::vector<float> a_cpu(static_cast<size_t>(M * K), 0);
-  std::vector<float> b_cpu(static_cast<size_t>(N * K), 0);
-  std::vector<float> c_cpu(static_cast<size_t>(M * N), 0);
-  cuda_check(cudaMemcpy(a_cpu.data(), a_ptr, a_size, cudaMemcpyKind::cudaMemcpyDeviceToHost));
-  cuda_check(cudaMemcpy(b_cpu.data(), b_ptr, b_size, cudaMemcpyKind::cudaMemcpyDeviceToHost));
-  cpu_gemm(M, N, K, a_cpu.data(), b_cpu.data(), c_cpu.data());
-
-
-  // cudaDeviceSetLimit(cudaLimitPrintfFifoSize, 100 * 1'024 * 1'024);
-
-  launch_gemm_split_m_n_grid_1dim_blk_2dims(a_ptr, b_ptr, M, K, N, 16, c_ptr);
-
-  print_device_buffer(a_ptr, M, K, "a_ptr");
-  print_device_buffer(b_ptr, N, K, "b_ptr");
-  print_host_buffer(c_cpu.data(), M, N, "c_cpu_ptr");
-  print_device_buffer(c_ptr, M, N, "c_dev_ptr");
-
+  cuda_check(cudaGetLastError());
+  cuda_check(cudaDeviceSynchronize());
   cuda_check(cudaFree(a_ptr));
   cuda_check(cudaFree(b_ptr));
-  cuda_check(cudaFree(c_ptr));
 }

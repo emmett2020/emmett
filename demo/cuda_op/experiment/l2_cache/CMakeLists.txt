@@ -6,11 +6,9 @@ set(CMAKE_CUDA_STANDARD 20)
 set(CMAKE_CUDA_ARCHITECTURES 80 86 87 89 90)
 
 find_package(CUDAToolkit REQUIRED)
-find_package(Torch REQUIRED)
 
 set(target_name cuda_exe)
 file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/*.cu")
 add_executable(${target_name} ${files})
-target_link_libraries(${target_name} PRIVATE cublas)
 target_compile_options(${target_name} PRIVATE -Wno-c++23-extensions)
 target_compile_features(${target_name} PRIVATE cxx_std_23)
