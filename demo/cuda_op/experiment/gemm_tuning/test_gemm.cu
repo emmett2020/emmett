@@ -8,6 +8,7 @@
 #include <curand_kernel.h>
 
 #include "gemm_ampere.cuh"
+#include "gemm_cutlass.cuh"
 
 namespace {
   /// b is col_major
@@ -25,9 +26,9 @@ namespace {
 } // namespace
 
 auto main() noexcept(false) -> int {
-  const int K = 16;
-  const int M = 128;
-  const int N = 32;
+  const int M = 1'024;
+  const int N = 1'024;
+  const int K = 1'024;
   std::cout << "M=" << M << ", K=" << K << ", N=" << N << "\n";
 
   const size_t a_size = static_cast<uint64_t>(M * K) * sizeof(float);
