@@ -25,3 +25,7 @@ Diagnostics:
       # cuda shared memory forcily use c-style array
       - cppcoreguidelines-avoid-c-arrays
       - modernize-avoid-c-arrays
+      - cppcoreguidelines-avoid-non-const-global-variables
+      - cppcoreguidelines-pro-bounds-array-to-pointer-decay
+      - bugprone-implicit-widening-of-multiplication-result
+      - readability-math-missing-parentheses
