@@ -6,12 +6,12 @@ namespace {
     using ColumnMajor = cutlass::layout::ColumnMajor;
     using RowMajor    = cutlass::layout::RowMajor;
     using CutlassGemm =
-      cutlass::gemm::device::Gemm< float, RowMajor, float, ColumnMajor, float, RowMajor >;
+      cutlass::gemm::device::Gemm< float, RowMajor, float, RowMajor, float, RowMajor >;
     CutlassGemm gemm_operator{};
 
-    int lda = -1;
-    int ldb = -1;
-    int ldc = -1;
+    int lda = M;
+    int ldb = K;
+    int ldc = M;
 
     float alpha = 1.0F;
     float beta  = 0.0F;
