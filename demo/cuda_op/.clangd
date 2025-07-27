@@ -27,5 +27,7 @@ Diagnostics:
       - modernize-avoid-c-arrays
       - cppcoreguidelines-avoid-non-const-global-variables
       - cppcoreguidelines-pro-bounds-array-to-pointer-decay
+      # cuda use printf
+      - cppcoreguidelines-pro-type-vararg
       - bugprone-implicit-widening-of-multiplication-result
       - readability-math-missing-parentheses
