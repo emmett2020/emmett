@@ -9,45 +9,61 @@ namespace {
     }
   }
 
-  constexpr int dim      = 32; // For convenience, dim is divisible by 32.
+  constexpr int dim      = 64; // For convenience, dim is divisible by 32.
   constexpr int tile_dim = 32; // tile size
+
+  /// Tiles need transpose.
+  // Say we have (blockIdx.x, blockIdx.y) = (2, 1),
+  // it will visit rows: [32, 63) and columns： [64, 95) of input
+  // After transpose, it should visit rows: [64, 95) and columns: [32, 63) of output instead.
+  // However threadIdx doesn't need to transpose, it's relative offset of tiles.
+  // From thread perspective,
+  // Say (threadIdx.x, threadIdx.y) = (2, 3) of block (0, 0)
+  // It will visit (row, col) = (2, 3) of input (load),
+  //               (row, col) = (2, 3) of shared memory (store),
+  //               (row, col) = (3, 2) of shared memory (load),
+  //               (row, col) = (2, 3) of output (store),
+  // Say (threadIdx.x, threadIdx.y) = (2, 3) of block (2, 1)
+  // It will visit (row, col) = (35, 66) of input (load),
+  //               (row, col) = (35, 66) of shared memory (store), (Actually, it's only used for easier understand)
+  //               (row, col) = (34, 67) of shared memory (load),
+  //               (row, col) = (67, 34) of output (store),
 
   __global__ void transpose_no_swizzle(const int* in, int* out) {
     __shared__ int tile[tile_dim][tile_dim];
 
-    unsigned x = blockIdx.x * tile_dim + threadIdx.x;
-    unsigned y = blockIdx.y * tile_dim + threadIdx.y;
+    unsigned col_input = blockIdx.x * tile_dim + threadIdx.x;
+    unsigned row_input = blockIdx.y * tile_dim + threadIdx.y;
 
     // Load matrix to shared memory
     // Store shared memory is conflict-free here.
-    tile[threadIdx.y][threadIdx.x] = in[y * dim + x];
-
+    tile[threadIdx.y][threadIdx.x] = in[row_input * dim + col_input];
     __syncthreads();
 
     // Store from shared memory to matrix
     // Load shared memory is bank conflicted.
-    unsigned x_out           = blockIdx.y * tile_dim + threadIdx.x;
-    unsigned y_out           = blockIdx.x * tile_dim + threadIdx.y;
-    out[y_out * dim + x_out] = tile[threadIdx.x][threadIdx.y];
+    unsigned col_output                = blockIdx.y * tile_dim + threadIdx.x;
+    unsigned row_output                = blockIdx.x * tile_dim + threadIdx.y;
+    out[row_output * dim + col_output] = tile[threadIdx.x][threadIdx.y];
   }
 
   __global__ void transpose_with_swizzle(const int* in, int* out) {
     __shared__ int tile[tile_dim][tile_dim];
 
-    unsigned x = blockIdx.x * tile_dim + threadIdx.x;
-    unsigned y = blockIdx.y * tile_dim + threadIdx.y;
+    unsigned col_input = blockIdx.x * tile_dim + threadIdx.x;
+    unsigned row_input = blockIdx.y * tile_dim + threadIdx.y;
 
     // Load matrix to shared memory
     // Store shared memory is conflict-free here.
-    tile[threadIdx.y][threadIdx.x ^ threadIdx.y] = in[y * dim + x];
+    tile[threadIdx.y][threadIdx.x ^ threadIdx.y] = in[row_input * dim + col_input];
 
     __syncthreads();
 
     // Store from shared memory to matrix
     // Load shared memory is conflict-free.
-    unsigned x_out           = blockIdx.y * tile_dim + threadIdx.x;
-    unsigned y_out           = blockIdx.x * tile_dim + threadIdx.y;
-    out[y_out * dim + x_out] = tile[threadIdx.x][threadIdx.y ^ threadIdx.x];
+    unsigned col_output                = blockIdx.y * tile_dim + threadIdx.x;
+    unsigned row_output                = blockIdx.x * tile_dim + threadIdx.y;
+    out[row_output * dim + col_output] = tile[threadIdx.x][threadIdx.y ^ threadIdx.x];
   }
 
   bool validate_transpose(const int* original, const int* transposed) {
