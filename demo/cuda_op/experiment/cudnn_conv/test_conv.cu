@@ -1,37 +1,43 @@
+#include "cudnn_graph.h"
 #include <cudnn.h>
 #include <cuda_runtime.h>
 #include <iostream>
 #include <vector>
 
-#define CHECK_CUDNN(status)             \
-  if (status != CUDNN_STATUS_SUCCESS) { \
-    std::cerr                           \
-      << "CuDNN failure: "              \
-      << cudnnGetErrorString(status)    \
-      << " at line "                    \
-      << __LINE__                       \
-      << std::endl;                     \
-    exit(EXIT_FAILURE);                 \
+namespace {
+  inline void cudnn_check(cudnnStatus_t err) {
+    if (err != cudnnStatus_t::CUDNN_STATUS_SUCCESS) {
+      throw std::runtime_error{cudnnGetErrorString(err)};
+    }
   }
 
-int main() {
-  cudnnHandle_t cudnn;
-  CHECK_CUDNN(cudnnCreate(&cudnn));
+} // namespace
+
+int main() noexcept(false) {
+  cudnnHandle_t cudnn = nullptr;
+  cudnn_check(cudnnCreate(&cudnn));
 
   // 配置Tensor Core
-  CHECK_CUDNN(cudnnSetConvolutionMathType(cudnn, CUDNN_TENSOR_OP_MATH));
+  cudnn_check(cudnnSetConvolutionMathType(cudnn, CUDNN_TENSOR_OP_MATH));
 
-  // 张量描述符
-  cudnnTensorDescriptor_t input_desc, output_desc;
-  CHECK_CUDNN(cudnnCreateTensorDescriptor(&input_desc));
-  CHECK_CUDNN(cudnnCreateTensorDescriptor(&output_desc));
+  // Tensor descriptor
+  cudnnTensorDescriptor_t input_desc  = nullptr;
+  cudnnTensorDescriptor_t output_desc = nullptr;
+  cudnn_check(cudnnCreateTensorDescriptor(&input_desc));
+  cudnn_check(cudnnCreateTensorDescriptor(&output_desc));
 
-  // 卷积参数
-  int batch = 1, channels = 64, height = 32, width = 32;
-  int out_channels = 128, kernel_size = 3, pad = 1, stride = 1;
+  // Parameters.
+  int batch        = 1;
+  int channels     = 64;
+  int height       = 32;
+  int width        = 32;
+  int out_channels = 128;
+  int kernel_size  = 3;
+  int pad          = 1;
+  int stride       = 1;
 
-  // 输入张量 (NCHW格式)
-  CHECK_CUDNN(cudnnSetTensor4dDescriptor(
+  // NCHW
+  cudnn_check(cudnnSetTensor4dDescriptor(
     input_desc,
     CUDNN_TENSOR_NCHW,
     CUDNN_DATA_HALF, // FP16使用Tensor Core
@@ -41,9 +47,9 @@ int main() {
     width));
 
   // 卷积描述符
-  cudnnConvolutionDescriptor_t conv_desc;
-  CHECK_CUDNN(cudnnCreateConvolutionDescriptor(&conv_desc));
-  CHECK_CUDNN(cudnnSetConvolution2dDescriptor(
+  cudnnConvolutionDescriptor_t conv_desc = nullptr;
+  cudnn_check(cudnnCreateConvolutionDescriptor(&conv_desc));
+  cudnn_check(cudnnSetConvolution2dDescriptor(
     conv_desc,
     pad,
     pad,
@@ -55,9 +61,9 @@ int main() {
     CUDNN_DATA_HALF)); // FP16计算
 
   // 滤波器描述符
-  cudnnFilterDescriptor_t filter_desc;
-  CHECK_CUDNN(cudnnCreateFilterDescriptor(&filter_desc));
-  CHECK_CUDNN(cudnnSetFilter4dDescriptor(
+  cudnnFilterDescriptor_t filter_desc = nullptr;
+  cudnn_check(cudnnCreateFilterDescriptor(&filter_desc));
+  cudnn_check(cudnnSetFilter4dDescriptor(
     filter_desc,
     CUDNN_DATA_HALF,
     CUDNN_TENSOR_NCHW,
@@ -68,8 +74,8 @@ int main() {
 
   // 查找最佳卷积算法 (启用Tensor Core)
   cudnnConvolutionFwdAlgoPerf_t perf_results;
-  int returned_count;
-  CHECK_CUDNN(cudnnFindConvolutionForwardAlgorithm(
+  int returned_count = 0;
+  cudnn_check(cudnnFindConvolutionForwardAlgorithm(
     cudnn,
     input_desc,
     filter_desc,
@@ -80,8 +86,11 @@ int main() {
     &perf_results));
 
   // 输出描述符
-  int out_n, out_c, out_h, out_w;
-  CHECK_CUDNN(cudnnGetConvolution2dForwardOutputDim(
+  int out_n = 0;
+  int out_c = 0;
+  int out_h = 0;
+  int out_w = 0;
+  cudnn_check(cudnnGetConvolution2dForwardOutputDim(
     conv_desc,
     input_desc,
     filter_desc,
@@ -89,7 +98,7 @@ int main() {
     &out_c,
     &out_h,
     &out_w));
-  CHECK_CUDNN(cudnnSetTensor4dDescriptor(
+  cudnn_check(cudnnSetTensor4dDescriptor(
     output_desc,
     CUDNN_TENSOR_NCHW,
     CUDNN_DATA_HALF,
@@ -115,12 +124,14 @@ int main() {
   // 工作空间
   size_t workspace_size = perf_results.memory;
   void* d_workspace     = nullptr;
-  if (workspace_size > 0)
+  if (workspace_size > 0) {
     cudaMalloc(&d_workspace, workspace_size);
+  }
 
   // 执行卷积
-  float alpha = 1.0f, beta = 0.0f;
-  CHECK_CUDNN(cudnnConvolutionForward(
+  float alpha = 1.0F;
+  float beta  = 0.0F;
+  cudnn_check(cudnnConvolutionForward(
     cudnn,
     &alpha,
     input_desc,
@@ -141,8 +152,9 @@ int main() {
   cudaFree(d_input);
   cudaFree(d_output);
   cudaFree(d_filter);
-  if (d_workspace)
+  if (d_workspace != nullptr) {
     cudaFree(d_workspace);
+  }
   cudnnDestroy(cudnn);
   return 0;
 }
