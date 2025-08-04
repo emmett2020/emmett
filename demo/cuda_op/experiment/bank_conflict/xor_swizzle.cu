@@ -28,7 +28,10 @@ namespace {
   //               (row, col) = (35, 66) of shared memory (store), (Actually, it's only used for easier understand)
   //               (row, col) = (34, 67) of shared memory (load),
   //               (row, col) = (67, 34) of output (store),
-
+  // You could think follows code have two phase. In the first, we only copy
+  // the data from HBM to shared memory. You needn't consider transpose here.
+  // In second phase, we'll copy shared memory data to output buffer, transpose
+  // occurs in here.
   __global__ void transpose_no_swizzle(const int* in, int* out) {
     __shared__ int tile[tile_dim][tile_dim];
 
@@ -63,7 +66,7 @@ namespace {
     // Load shared memory is conflict-free.
     unsigned col_output                = blockIdx.y * tile_dim + threadIdx.x;
     unsigned row_output                = blockIdx.x * tile_dim + threadIdx.y;
-    out[row_output * dim + col_output] = tile[threadIdx.x][threadIdx.y ^ threadIdx.x];
+    out[row_output * dim + col_output] = tile[threadIdx.x][threadIdx.x ^ threadIdx.y];
   }
 
   bool validate_transpose(const int* original, const int* transposed) {
