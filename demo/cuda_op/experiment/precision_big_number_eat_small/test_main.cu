@@ -1,7 +1,7 @@
 #include <iostream>
 
 int main() {
-  float a  = 10000.0F;
+  float a  = 1000000.0F;
   float b  = 0.01;
   double c = a + b;
   printf("%lf\n", c);
