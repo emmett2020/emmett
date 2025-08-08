@@ -1,21 +1,20 @@
-1. Familiar with cuda op
 -----------------------------------------------------------------
-op_name         | 0    1   2   3   4   5   6   7   8   9
+op_name           | 0    1   2   3   4   5   6   7   8   9
 -----------------------------------------------------------------
-groupnorm       | [x] [x] [x] [x] [ ] [ ] [ ] [ ] [ ] [ ]
-batchnorm       | [x] [x] [x] [x] [ ] [ ] [ ] [ ] [ ] [ ]
-layernorm       | [x] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-instancenorm    | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-rmsnorm         | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-add             | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-sigmoid         | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-max             | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-min             | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-softmax         | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-matmul          | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-conv            | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-flash-attention | [x] [x] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+groupnorm         | [x] [x] [x] [x] [ ] [ ] [ ] [ ] [ ] [ ]
+batchnorm         | [x] [x] [x] [x] [ ] [ ] [ ] [ ] [ ] [ ]
+layernorm         | [x] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+rmsnorm           | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+add               | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+sigmoid           | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+relu              | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+reduction max     | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+reduction min     | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+sorting           | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+softmax           | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+matmul            | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+matrix transpose  | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+conv              | [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
+flash-attention   | [x] [x] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
 
-2. Basic Optimization
-3. Dive into attention and conv
-4. Fused operators
+https://leetgpu.com/challenges
