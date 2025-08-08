@@ -5,25 +5,28 @@ import torch.nn.functional as F
 
 
 def test_basic():
-    num_groups = 4
-    num_channels = 16
     eps = 1e-5
-    shape = [1, num_channels, 4, 16]
+
+    N = 1
+    C = 16
+    H = 4
+    W = 16
+    G = 4
+    shape = [N, C, H, W]
+
+    therotical_time = (12 * N * C * H * W) / (504 * 10**3)
+    print(f"\ntherotical performance: {therotical_time}us")
 
     input_t = torch.randn(shape, dtype=torch.float32)
-    gamma = torch.ones(num_channels, dtype=torch.float32)
-    beta = torch.zeros(num_channels, dtype=torch.float32)
-    golden = F.group_norm(input_t, num_groups, gamma, beta, eps)
+    gamma = torch.ones(C, dtype=torch.float32)
+    beta = torch.zeros(C, dtype=torch.float32)
+    golden = F.group_norm(input_t, G, gamma, beta, eps)
 
-    for group_idx in range(int(num_channels / num_groups)):
-        mean = input_t[0, group_idx * num_groups:(group_idx + 1) *
-                       num_groups:].mean().item()
-        var = input_t[0, group_idx * num_groups:(group_idx + 1) *
-                      num_groups:].var().item()
-        std = input_t[0, group_idx * num_groups:(group_idx + 1) *
-                      num_groups:].std().item()
-        rstd = 1 / input_t[0, group_idx * num_groups:(group_idx + 1) *
-                           num_groups:].std().item()
+    for group_idx in range(int(C / G)):
+        mean = input_t[0, group_idx * G:(group_idx + 1) * G:].mean().item()
+        var = input_t[0, group_idx * G:(group_idx + 1) * G:].var().item()
+        std = input_t[0, group_idx * G:(group_idx + 1) * G:].std().item()
+        rstd = 1 / input_t[0, group_idx * G:(group_idx + 1) * G:].std().item()
 
         print(
             f"group_idx: {group_idx}, mean: {mean:.6f}, var: {var:.6f} std: {std:.6f} rstd:{rstd:.6f}"
@@ -31,5 +34,5 @@ def test_basic():
 
     input_cuda = input_t.to("cuda")
     actual = cuda_op.group_norm(input_cuda, gamma.to("cuda"), beta.to("cuda"),
-                                num_groups, eps).to("cpu")
+                                G, eps).to("cpu")
     torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1e-5)
