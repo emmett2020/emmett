@@ -40,16 +40,16 @@ namespace cuda_op {
 
   template <class T>
   __global__ void group_norm(
-    const T* input_ptr,
-    const T* gamma_ptr,
-    const T* beta_ptr,
+    const T* __restrict__ input_ptr,
+    const T* __restrict__ gamma_ptr,
+    const T* __restrict__ beta_ptr,
     int N,
     int C,
     int H,
     int W,
     int G,
     float epsilon,
-    T* output) {
+    T* __restrict__ output) {
     const int D            = C / G;
     const int num_elements = D * H * W;
     const int n            = blockIdx.x / G;
@@ -75,12 +75,11 @@ namespace cuda_op {
     sum        = block_reduce_sum(sum, s_sum);
     square_sum = block_reduce_sum(square_sum, s_square_sum);
     if (tid == 0) {
-      float mean      = sum / num_elements;
-      float variance  = square_sum / num_elements - mean * mean;
-      variance       += epsilon;
+      float mean     = sum / num_elements;
+      float variance = square_sum / num_elements - mean * mean;
 
       s_mean = mean;
-      s_rstd = rsqrtf(variance);
+      s_rstd = rsqrtf(variance + epsilon);
     }
     __syncthreads();
 
@@ -96,12 +95,13 @@ namespace cuda_op {
     }
     __syncthreads();
 
+    const int hw = H * W;
     for (int i = tid; i < num_elements; i += blockDim.x) {
       int idx     = input_start + i;
       float input = input_ptr[idx];
 
       float normalized = (input - mean) * rstd;
-      int c_in_group   = i / (H * W);
+      int c_in_group   = i / hw;
       normalized       = normalized * s_gamma[c_in_group] + s_beta[c_in_group];
 
       output[idx] = normalized;
