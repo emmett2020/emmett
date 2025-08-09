@@ -39,6 +39,76 @@ namespace cuda_op {
   }
 
   template <class T>
+  __global__ void group_norm_interview(
+    const T* __restrict__ input_ptr,
+    const T* __restrict__ gamma_ptr,
+    const T* __restrict__ beta_ptr,
+    int N,
+    int C,
+    int H,
+    int W,
+    int G,
+    float epsilon,
+    T* __restrict__ output) {
+    const int D            = C / G;
+    const int num_elements = D * H * W;
+    const int n            = blockIdx.x / G;
+    const int g            = blockIdx.x % G;
+    const int c_group      = g * D;
+    const int tid          = threadIdx.x;
+    const int input_start  = n * C * H * W + c_group * H * W;
+
+    __shared__ float s_sum[32];
+    __shared__ float s_square_sum[32];
+    __shared__ float s_mean;
+    __shared__ float s_rstd;
+
+    /// 1. Calculate mean and rstd within thread block.
+    float sum        = 0;
+    float square_sum = 0;
+    for (int i = tid; i < num_elements; i += blockDim.x) {
+      float input  = input_ptr[input_start + i];
+      sum         += input;
+      square_sum  += input * input;
+    }
+
+    sum        = block_reduce_sum(sum, s_sum);
+    square_sum = block_reduce_sum(square_sum, s_square_sum);
+    if (tid == 0) {
+      float mean     = sum / num_elements;
+      float variance = square_sum / num_elements - mean * mean;
+
+      s_mean = mean;
+      s_rstd = rsqrtf(variance + epsilon);
+    }
+    __syncthreads();
+
+    float mean = s_mean;
+    float rstd = s_rstd;
+
+    // Load gamma and beta.
+    __shared__ float s_gamma[32];
+    __shared__ float s_beta[32];
+    if (tid < D) {
+      s_gamma[tid] = gamma_ptr[c_group + tid];
+      s_beta[tid]  = beta_ptr[c_group + tid];
+    }
+    __syncthreads();
+
+    const int hw = H * W;
+    for (int i = tid; i < num_elements; i += blockDim.x) {
+      int idx     = input_start + i;
+      float input = input_ptr[idx];
+
+      float normalized = (input - mean) * rstd;
+      int c_in_group   = i / hw;
+      normalized       = normalized * s_gamma[c_in_group] + s_beta[c_in_group];
+
+      output[idx] = normalized;
+    }
+  }
+
+  template <class T>
   __global__ void group_norm(
     const T* __restrict__ input_ptr,
     const T* __restrict__ gamma_ptr,
@@ -120,7 +190,7 @@ namespace cuda_op {
     int G,
     float epsilon,
     T* output) {
-    const int blk_size = 128;
+    const int blk_size = 256;
     const int num_blks = N * G;
     group_norm<<<num_blks, blk_size>>>(
       input_ptr,
