@@ -88,11 +88,11 @@ namespace cuda_op {
     int C,
     int H,
     int W,
-    int num_groups,
+    int G,
     float epsilon,
     T* output) {
     const int blk_size        = 256;
-    const int num_blks        = N * num_groups;
+    const int num_blks        = N * G;
     const int shared_mem_size = (2 * blk_size + 2) * sizeof(float);
     group_norm<<<num_blks, blk_size, shared_mem_size>>>(
       input_ptr,
@@ -102,7 +102,7 @@ namespace cuda_op {
       C,
       H,
       W,
-      num_groups,
+      G,
       epsilon,
       output);
     return cudaGetLastError();
