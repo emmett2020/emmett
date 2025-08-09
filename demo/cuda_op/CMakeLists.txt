@@ -27,6 +27,7 @@ target_link_libraries(${SKBUILD_PROJECT_NAME} PRIVATE
                                               ${TORCH_PYTHON_LIBRARY}
                                               ${TORCH_LIBRARIES})
 target_compile_options(${SKBUILD_PROJECT_NAME} PRIVATE
+                                               -lineinfo
                                                -Wno-c++23-extensions)
 target_compile_features(${SKBUILD_PROJECT_NAME} PRIVATE
                                                 cxx_std_23)

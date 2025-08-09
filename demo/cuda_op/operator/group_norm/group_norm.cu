@@ -91,8 +91,8 @@ namespace cuda_op {
     float rstd = s_rstd;
 
     // Load gamma and beta.
-    __shared__ float s_gamma[128];
-    __shared__ float s_beta[128];
+    __shared__ float s_gamma[32];
+    __shared__ float s_beta[32];
     if (tid < D) {
       s_gamma[tid] = gamma_ptr[g * D + tid];
       s_beta[tid]  = beta_ptr[g * D + tid];
