@@ -133,13 +133,13 @@ namespace cuda_op {
     __shared__ float s_mean;
     __shared__ float s_rstd;
 
+    const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + input_start);
+
     /// 1. Calculate mean and rstd within thread block.
     float sum        = 0;
     float square_sum = 0;
     const int stride = blockDim.x;
     for (int i = tid; i < num_elements / 4; i += stride) {
-      const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + input_start);
-
       float4 input  = input_ptr4[i];
       sum          += input.x;
       square_sum   += input.x * input.x;
@@ -177,16 +177,30 @@ namespace cuda_op {
     }
     __syncthreads();
 
+    float4* output_ptr4 = reinterpret_cast<float4*>(output + input_start);
+
     const int hw = H * W;
-    for (int i = tid; i < num_elements; i += blockDim.x) {
-      int idx     = input_start + i;
-      float input = input_ptr[idx];
+    for (int i = tid; i < num_elements / 4; i += stride) {
+      float4 input = input_ptr4[i];
+      int idx      = i * 4;
 
-      float normalized = (input - mean) * rstd;
-      int c_in_group   = i / hw;
-      normalized       = normalized * s_gamma[c_in_group] + s_beta[c_in_group];
+      float normalized0 = (input.x - mean) * rstd;
+      int c_in_group0   = (idx + 0) / hw;
+      normalized0       = normalized0 * s_gamma[c_in_group0] + s_beta[c_in_group0];
 
-      output[idx] = normalized;
+      float normalized1 = (input.y - mean) * rstd;
+      int c_in_group1   = (idx + 1) / hw;
+      normalized1       = normalized1 * s_gamma[c_in_group1] + s_beta[c_in_group1];
+
+      float normalized2 = (input.z - mean) * rstd;
+      int c_in_group2   = (idx + 2) / hw;
+      normalized2       = normalized2 * s_gamma[c_in_group2] + s_beta[c_in_group2];
+
+      float normalized3 = (input.w - mean) * rstd;
+      int c_in_group3   = (idx + 3) / hw;
+      normalized3       = normalized3 * s_gamma[c_in_group3] + s_beta[c_in_group3];
+
+      output_ptr4[i] = make_float4(normalized0, normalized1, normalized2, normalized3);
     }
   }
 
