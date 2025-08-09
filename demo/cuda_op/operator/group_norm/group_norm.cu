@@ -27,11 +27,9 @@ namespace cuda_op {
     const int tid                = threadIdx.x;
     const int input_start        = n * C * H * W + g * channels_per_group * H * W;
 
-    extern __shared__ char shared_mem[];
-    float* reduce_ptr = reinterpret_cast<float*>(shared_mem);
-    float* stat_ptr   = reduce_ptr + 2 * blockDim.x;
-    float* mean_ptr   = &stat_ptr[0];
-    float* rstd_ptr   = &stat_ptr[1];
+    __shared__ float reduce_ptr[512];
+    __shared__ float mean_ptr[1];
+    __shared__ float rstd_ptr[1];
 
     float sum_input        = 0;
     float sum_input_square = 0;
@@ -91,10 +89,9 @@ namespace cuda_op {
     int G,
     float epsilon,
     T* output) {
-    const int blk_size        = 128;
-    const int num_blks        = N * G;
-    const int shared_mem_size = (2 * blk_size + 2) * sizeof(float);
-    group_norm<<<num_blks, blk_size, shared_mem_size>>>(
+    const int blk_size = 128;
+    const int num_blks = N * G;
+    group_norm<<<num_blks, blk_size>>>(
       input_ptr,
       gamma_ptr,
       beta_ptr,
