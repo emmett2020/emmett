@@ -18,7 +18,6 @@ namespace cuda_op {
     const int lid = threadIdx.x % warpSize;
     const int wid = threadIdx.x / warpSize;
 
-
     // Reduce in warp
     val = warp_reduce_sum(val);
 
@@ -39,8 +38,6 @@ namespace cuda_op {
     return val;
   }
 
-  // variance        = variance > 0.0F ? variance : 0.0F;
-
   template <class T>
   __global__ void group_norm(
     const T* input_ptr,
@@ -57,9 +54,9 @@ namespace cuda_op {
     const int num_elements = D * H * W;
     const int n            = blockIdx.x / G;
     const int g            = blockIdx.x % G;
+    const int c_group      = g * D;
     const int tid          = threadIdx.x;
-    const int wid          = threadIdx.x / 32;
-    const int input_start  = n * C * H * W + g * D * H * W;
+    const int input_start  = n * C * H * W + c_group * H * W;
 
     __shared__ float s_sum[32];
     __shared__ float s_square_sum[32];
@@ -79,7 +76,7 @@ namespace cuda_op {
     square_sum = block_reduce_sum(square_sum, s_square_sum);
     if (tid == 0) {
       float mean      = sum / num_elements;
-      float variance  = (square_sum - sum * mean) / num_elements;
+      float variance  = square_sum / num_elements - mean * mean;
       variance       += epsilon;
 
       s_mean = mean;
@@ -94,11 +91,10 @@ namespace cuda_op {
     __shared__ float s_gamma[32];
     __shared__ float s_beta[32];
     if (tid < D) {
-      s_gamma[tid] = gamma_ptr[g * D + tid];
-      s_beta[tid]  = beta_ptr[g * D + tid];
+      s_gamma[tid] = gamma_ptr[c_group + tid];
+      s_beta[tid]  = beta_ptr[c_group + tid];
     }
     __syncthreads();
-
 
     for (int i = tid; i < num_elements; i += blockDim.x) {
       int idx     = input_start + i;
