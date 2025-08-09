@@ -50,8 +50,8 @@ def test_perf():
     print(f"\ntherotical performance: {therotical_time}us")
 
     input_t = torch.randn(shape, dtype=torch.float32, device="cuda")
-    gamma = torch.ones(C, dtype=torch.float32, device="cuda")
-    beta = torch.zeros(C, dtype=torch.float32, device="cuda")
+    gamma = torch.randn(C, dtype=torch.float32, device="cuda")
+    beta = torch.randn(C, dtype=torch.float32, device="cuda")
     golden = F.group_norm(input_t, G, gamma, beta, eps)
 
     input_cuda = input_t
