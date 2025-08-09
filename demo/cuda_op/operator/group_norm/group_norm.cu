@@ -16,60 +16,63 @@ namespace cuda_op {
     int C,
     int H,
     int W,
-    int num_groups,
+    int G,
     float epsilon,
     T* output) {
-    const int channels_per_group = C / num_groups;
-    const int group_size         = channels_per_group * H * W;
-    const int group_idx          = blockIdx.x;
-    const int n                  = group_idx / num_groups;
-    const int g                  = group_idx % num_groups;
-    const int tid                = threadIdx.x;
-    const int input_start        = n * C * H * W + g * channels_per_group * H * W;
+    const int D            = C / G;
+    const int num_elements = D * H * W;
+    const int n            = blockIdx.x / G;
+    const int g            = blockIdx.x % G;
+    const int tid          = threadIdx.x;
+    const int input_start  = n * C * H * W + g * D * H * W;
 
-    __shared__ float reduce_ptr[512];
-    __shared__ float mean_ptr[1];
-    __shared__ float rstd_ptr[1];
+    __shared__ float s_sum[512];
+    __shared__ float s_square_sum[512];
+    __shared__ float s_mean;
+    __shared__ float s_rstd;
 
-    float sum_input        = 0;
-    float sum_input_square = 0;
-    for (int i = tid; i < group_size; i += blockDim.x) {
-      float input       = input_ptr[input_start + i];
-      sum_input        += input;
-      sum_input_square += input * input;
+    /// 1. Calculate mean and rstd
+    float sum        = 0;
+    float sum_square = 0;
+    for (int i = tid; i < num_elements; i += blockDim.x) {
+      float input  = input_ptr[input_start + i];
+      sum         += input;
+      sum_square  += input * input;
     }
-    reduce_ptr[tid]              = sum_input;
-    reduce_ptr[tid + blockDim.x] = sum_input_square;
+    s_sum[tid]        = sum;
+    s_square_sum[tid] = sum_square;
     __syncthreads();
+
+    // TODO: reduce in warp
 
     // reduce within thread block
     for (int s = blockDim.x / 2; s > 0; s /= 2) {
       if (tid < s) {
-        reduce_ptr[tid]              += reduce_ptr[tid + s];
-        reduce_ptr[tid + blockDim.x] += reduce_ptr[tid + blockDim.x + s];
+        s_sum[tid]        += s_sum[tid + s];
+        s_square_sum[tid] += s_square_sum[tid + s];
       }
       __syncthreads();
     }
 
     // mean & rstd
     if (tid == 0) {
-      float total_sum         = reduce_ptr[0];
-      float total_sum_square  = reduce_ptr[blockDim.x];
-      float mean              = total_sum / group_size;
-      float variance          = (total_sum_square - total_sum * mean) / group_size;
-      variance                = std::max(variance, 0.0f);
+      float total_sum         = s_sum[0];
+      float total_sum_square  = s_square_sum[0];
+      float mean              = total_sum / num_elements;
+      float variance          = (total_sum_square - total_sum * mean) / num_elements;
+      variance                = variance > 0.0F ? variance : 0.0F;
       variance               += epsilon;
-      *mean_ptr               = mean;
-      *rstd_ptr               = rsqrtf(variance);
+      s_mean                  = mean;
+      s_rstd                  = rsqrtf(variance);
     }
     __syncthreads();
 
     // final
-    float mean = *mean_ptr;
-    float rstd = *rstd_ptr;
-    for (int i = tid; i < group_size; i += blockDim.x) {
+    float mean = s_mean;
+    float rstd = s_rstd;
+    for (int i = tid; i < num_elements; i += blockDim.x) {
       int pos          = input_start + i;
-      int c            = g * channels_per_group + i / (H * W);
+      int c            = g * D + i / (H * W);
       float input      = input_ptr[pos];
       float normalized = (input - mean) * rstd;
       normalized       = normalized * gamma_ptr[c] + beta_ptr[c];
