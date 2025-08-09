@@ -136,10 +136,22 @@ namespace cuda_op {
     /// 1. Calculate mean and rstd within thread block.
     float sum        = 0;
     float square_sum = 0;
-    for (int i = tid; i < num_elements; i += blockDim.x) {
-      float input  = input_ptr[input_start + i];
-      sum         += input;
-      square_sum  += input * input;
+    const int stride = blockDim.x;
+    for (int i = tid; i < num_elements / 4; i += stride) {
+      const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + input_start);
+
+      float4 input  = input_ptr4[i];
+      sum          += input.x;
+      square_sum   += input.x * input.x;
+
+      sum        += input.y;
+      square_sum += input.y * input.y;
+
+      sum        += input.z;
+      square_sum += input.z * input.z;
+
+      sum        += input.w;
+      square_sum += input.w * input.w;
     }
 
     sum        = block_reduce_sum(sum, s_sum);
