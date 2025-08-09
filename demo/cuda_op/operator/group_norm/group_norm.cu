@@ -5,7 +5,41 @@
 #include "common/utils.h"
 
 namespace cuda_op {
-  //
+  __device__ __forceinline__ float warp_reduce_sum(float val) {
+#pragma unroll
+    for (int s = warpSize >> 1; s > 0; s >>= 1) {
+      val += __shfl_down_sync(0xFFFFFFFF, val, s);
+    }
+    return val;
+  }
+
+  __device__ __forceinline__ float block_reduce_sum(float val, float* shared) {
+    const int tid = threadIdx.x;
+    const int lid = threadIdx.x % warpSize;
+    const int wid = threadIdx.x / warpSize;
+
+
+    // Reduce in warp
+    val = warp_reduce_sum(val);
+
+    if (lid == 0) {
+      shared[wid] = val;
+    }
+    __syncthreads();
+
+    const int num_warps = blockDim.x / warpSize;
+
+    val = (tid < num_warps) ? shared[lid] : 0;
+
+    if (wid == 0) {
+      val = warp_reduce_sum(val);
+    }
+
+    // threadIdx.x == 0 contains final result.
+    return val;
+  }
+
+  // variance        = variance > 0.0F ? variance : 0.0F;
 
   template <class T>
   __global__ void group_norm(
@@ -24,59 +58,57 @@ namespace cuda_op {
     const int n            = blockIdx.x / G;
     const int g            = blockIdx.x % G;
     const int tid          = threadIdx.x;
+    const int wid          = threadIdx.x / 32;
     const int input_start  = n * C * H * W + g * D * H * W;
 
-    __shared__ float s_sum[512];
-    __shared__ float s_square_sum[512];
+    __shared__ float s_sum[32];
+    __shared__ float s_square_sum[32];
     __shared__ float s_mean;
     __shared__ float s_rstd;
 
-    /// 1. Calculate mean and rstd
+    /// 1. Calculate mean and rstd within thread block.
     float sum        = 0;
-    float sum_square = 0;
+    float square_sum = 0;
     for (int i = tid; i < num_elements; i += blockDim.x) {
       float input  = input_ptr[input_start + i];
       sum         += input;
-      sum_square  += input * input;
-    }
-    s_sum[tid]        = sum;
-    s_square_sum[tid] = sum_square;
-    __syncthreads();
-
-    // TODO: reduce in warp
-
-    // reduce within thread block
-    for (int s = blockDim.x / 2; s > 0; s /= 2) {
-      if (tid < s) {
-        s_sum[tid]        += s_sum[tid + s];
-        s_square_sum[tid] += s_square_sum[tid + s];
-      }
-      __syncthreads();
+      square_sum  += input * input;
     }
 
-    // mean & rstd
+    sum        = block_reduce_sum(sum, s_sum);
+    square_sum = block_reduce_sum(square_sum, s_square_sum);
     if (tid == 0) {
-      float total_sum         = s_sum[0];
-      float total_sum_square  = s_square_sum[0];
-      float mean              = total_sum / num_elements;
-      float variance          = (total_sum_square - total_sum * mean) / num_elements;
-      variance                = variance > 0.0F ? variance : 0.0F;
-      variance               += epsilon;
-      s_mean                  = mean;
-      s_rstd                  = rsqrtf(variance);
+      float mean      = sum / num_elements;
+      float variance  = (square_sum - sum * mean) / num_elements;
+      variance       += epsilon;
+
+      s_mean = mean;
+      s_rstd = rsqrtf(variance);
     }
     __syncthreads();
 
-    // final
     float mean = s_mean;
     float rstd = s_rstd;
+
+    // Load gamma and beta.
+    __shared__ float s_gamma[128];
+    __shared__ float s_beta[128];
+    if (tid < D) {
+      s_gamma[tid] = gamma_ptr[g * D + tid];
+      s_beta[tid]  = beta_ptr[g * D + tid];
+    }
+    __syncthreads();
+
+
     for (int i = tid; i < num_elements; i += blockDim.x) {
-      int pos          = input_start + i;
-      int c            = g * D + i / (H * W);
-      float input      = input_ptr[pos];
+      int idx     = input_start + i;
+      float input = input_ptr[idx];
+
       float normalized = (input - mean) * rstd;
-      normalized       = normalized * gamma_ptr[c] + beta_ptr[c];
-      output[pos]      = normalized;
+      int c_in_group   = i / (H * W);
+      normalized       = normalized * s_gamma[c_in_group] + s_beta[c_in_group];
+
+      output[idx] = normalized;
     }
   }
 
