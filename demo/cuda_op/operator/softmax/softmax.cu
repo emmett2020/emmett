@@ -34,7 +34,7 @@ namespace cuda_op {
     return val;
   }
 
-  // Reduce in W dimensions.
+  // Reduce in C dimensions.
   __global__ void softmax(
     const float* __restrict__ input_ptr,
     unsigned N,
@@ -42,8 +42,7 @@ namespace cuda_op {
     unsigned W,
     unsigned C,
     float* __restrict__ output_ptr) {
-    __shared__ float s_exp[32];
-    __shared__ float s_exp_sum_buffer[32]; // exp sum
+    __shared__ float s_exp_sum_buffer[32]; // buffer for reduce exp sum
     __shared__ float s_exp_sum;            // exp sum
 
     const unsigned tid = threadIdx.x;
@@ -59,7 +58,7 @@ namespace cuda_op {
     const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + offset);
     float4* output_ptr4      = reinterpret_cast<float4*>(output_ptr + offset);
 
-    float exp_sum = 0.0F; // square sum
+    float exp_sum = 0.F;
     for (int i = tid; i < C / 4; i += blockDim.x) {
       float4 input = input_ptr4[i];
       float exp_x  = expf(input.x);
@@ -67,7 +66,7 @@ namespace cuda_op {
       float exp_z  = expf(input.z);
       float exp_w  = expf(input.w);
 
-      exp_sum += exp_x + exp_y + exp_y + exp_w;
+      exp_sum += exp_x + exp_y + exp_z + exp_w;
     }
 
     // Reduce sum and square sum in block
@@ -98,6 +97,8 @@ namespace cuda_op {
   }
 
   torch::Tensor torch_softmax(const torch::Tensor& input) {
+    TORCH_CHECK(input.is_cuda(), "Tensors must be on CUDA device");
+
     const auto shape = input.sizes();
     TORCH_CHECK(shape.size() == 4, "shape size must be 4");
     const int N = shape[0];
