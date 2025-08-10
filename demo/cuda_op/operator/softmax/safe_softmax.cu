@@ -5,6 +5,18 @@
 #include "common/utils.h"
 
 namespace cuda_op {
+  struct __align__(8) Data {
+    float m; // max value
+    float s; // exp sum or cur data
+  };
+
+  __forceinline__ __device__ Data update(const Data& a, const Data& b) {
+    Data ret;
+    ret.m = max(a.m, b.m);
+    ret.s = a.s * __expf(a.m - ret.m) + b.s * __expf(b.m - ret.m);
+    return ret;
+  }
+
   __forceinline__ __device__ float warp_reduce_sum(float val) {
 #pragma unroll
     for (int s = warpSize >> 1; s > 0; s >>= 1) {
