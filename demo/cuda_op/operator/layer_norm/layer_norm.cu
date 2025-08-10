@@ -40,6 +40,7 @@ namespace cuda_op {
     const float* __restrict__ input_ptr,
     const float* __restrict__ gamma_ptr,
     const float* __restrict__ beta_ptr,
+    unsigned int N,
     unsigned int C,
     unsigned int H,
     unsigned int W,
@@ -50,16 +51,16 @@ namespace cuda_op {
     __shared__ float s_sum[32];
     __shared__ float s_ssum[32]; // square sum
 
-    const unsigned num_elements  = H * W;
-    const unsigned tid           = threadIdx.x;
-    const unsigned c             = blockIdx.x;
-    const unsigned channel_offst = c * H * W;
+    const unsigned num_elements = C * H * W;
+    const unsigned tid          = threadIdx.x;
+    const unsigned n            = blockIdx.x;
+    const unsigned batch_offst  = n * C * H * W;
 
     constexpr unsigned vectorized_dim = 4;
     unsigned num_elements_compressed  = num_elements / vectorized_dim;
 
-    const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + channel_offst);
-    float4* output_ptr4      = reinterpret_cast<float4*>(output_ptr + channel_offst);
+    const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + batch_offst);
+    float4* output_ptr4      = reinterpret_cast<float4*>(output_ptr + batch_offst);
 
     // 1. Compute input sum & square sum
     float sum  = 0.F;
@@ -115,17 +116,19 @@ namespace cuda_op {
     const float* input_ptr,
     const float* gamma_ptr,
     const float* beta_ptr,
-    int C,
-    int H,
-    int W,
+    unsigned N,
+    unsigned C,
+    unsigned H,
+    unsigned W,
     float epsilon,
     float* output_ptr) {
     const int blk_size = 256;
-    const int num_blks = C;
+    const int num_blks = N;
     layer_norm_kernel<<<num_blks, blk_size>>>(
       input_ptr,
       gamma_ptr,
       beta_ptr,
+      N,
       C,
       H,
       W,
@@ -143,12 +146,13 @@ namespace cuda_op {
                 "Tensors must be on CUDA device");
 
     auto shape = input.sizes();
-    TORCH_CHECK(shape.size() == 3, "shapes of input must be 3");
-    unsigned C = shape[0];
-    unsigned H = shape[1];
-    unsigned W = shape[2];
+    TORCH_CHECK(shape.size() == 4, "shapes of input must be 4");
+    unsigned N = shape[0];
+    unsigned C = shape[1];
+    unsigned H = shape[2];
+    unsigned W = shape[3];
 
-    unsigned num_elements = H * W;
+    unsigned num_elements = C * H * W;
     TORCH_CHECK(num_elements % 4 == 0, "HxW must be divisible by 4");
 
     auto output = torch::zero(input);
@@ -157,7 +161,7 @@ namespace cuda_op {
     const float* gamma_ptr = gamma.data_ptr<float>();
     const float* beta_ptr  = beta.data_ptr<float>();
     float* output_ptr      = output.data_ptr<float>();
-    cuda_check(launch_layer_norm(input_ptr, gamma_ptr, beta_ptr, C, H, W, epsilon, output_ptr));
+    cuda_check(launch_layer_norm(input_ptr, gamma_ptr, beta_ptr, N, C, H, W, epsilon, output_ptr));
     cuda_check(cudaDeviceSynchronize());
     return output;
   }

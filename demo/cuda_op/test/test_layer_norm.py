@@ -21,19 +21,21 @@ def test_basic():
 
 
 def test_perf():
-    C = 128
-    H = 1028
-    W = 1028
+    N = 16
+    C = 64
+    H = 256
+    W = 256
     eps = 1e-5
-    shape = [C, H, W]
-    normalized_shape = (H, W)
+    shape = [N, C, H, W]
+    normalized_shape = (C, H, W)
 
-    therotical_time = (20 * C * H * W) / (504 * 10**3)
+    therotical_time = (20 * N * C * H * W) / (504 * 10**3)
     print(f"\ntherotical performance: {therotical_time}us")
 
     x = torch.randn(shape, device='cuda')
     gamma = torch.randn(normalized_shape, device='cuda')
     beta = torch.randn(normalized_shape, device='cuda')
+
     golden = torch.nn.functional.layer_norm(x,
                                             normalized_shape,
                                             weight=gamma,
