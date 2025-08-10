@@ -10,10 +10,14 @@ find_package(pybind11 CONFIG REQUIRED)
 find_package(CUDAToolkit REQUIRED)
 find_package(Torch REQUIRED)
 
-file(GLOB_RECURSE op_files
-                  "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cpp"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cu")
-pybind11_add_module(${SKBUILD_PROJECT_NAME} ${op_files})
+file(GLOB_RECURSE cpp_files
+                  "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cpp")
+
+file(GLOB_RECURSE cu_files
+                  "${CMAKE_CURRENT_SOURCE_DIR}/operator/softmax/*.cu")
+# file(GLOB_RECURSE cu_files
+#                   "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cu")
+pybind11_add_module(${SKBUILD_PROJECT_NAME} ${cpp_files} ${cu_files})
 target_include_directories(${SKBUILD_PROJECT_NAME}
                            PRIVATE
                            ${CMAKE_CURRENT_SOURCE_DIR}/operator
