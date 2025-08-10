@@ -1,5 +1,6 @@
 #include "softmax/softmax.h"
 
+#include <cstdint>
 #include <torch/extension.h>
 
 #include "common/utils.h"
@@ -10,6 +11,22 @@ namespace cuda_op {
     float s; // exp sum or cur data
   };
 
+  // 求和操作函数对象
+  struct Sum {
+    template <typename T>
+    __device__ __forceinline__ T operator()(T a, T b) const {
+      return a + b;
+    }
+  };
+
+  // 最大值操作函数对象
+  struct Max {
+    template <typename T>
+    __device__ __forceinline__ T operator()(T a, T b) const {
+      return a > b ? a : b;
+    }
+  };
+
   __forceinline__ __device__ Data update(const Data& a, const Data& b) {
     Data ret;
     ret.m = max(a.m, b.m);
@@ -17,13 +34,48 @@ namespace cuda_op {
     return ret;
   }
 
-  __forceinline__ __device__ float warp_reduce_sum(float val) {
-#pragma unroll
-    for (int s = warpSize >> 1; s > 0; s >>= 1) {
-      val += __shfl_down_sync(0xFFFFFFFF, val, s);
+  // Not fully validated. But we could refer this method.
+  template <typename T, typename Op>
+  __device__ __forceinline__ T warp_reduce(T val, Op op, unsigned mask = 0xffffffff) {
+    constexpr int warp_size = 32;
+    static_assert(sizeof(T) == 4 || sizeof(T) == 8,
+                  "warp_reduce only supports 4-byte or 8-byte types");
+
+    union Converter {
+      T orig;
+      typename std::conditional<sizeof(T) == 4, uint32_t, uint64_t>::type bits;
+    };
+
+    Converter current;
+    current.orig = val;
+
+    for (int offset = warp_size / 2; offset > 0; offset >>= 1) {
+      Converter other;
+      if constexpr (sizeof(T) == 4) {
+        other.bits = __shfl_down_sync(mask, current.bits, offset);
+      } else {
+        other.bits = __shfl_down_sync(mask, current.bits, offset, warp_size);
+      }
+      current.orig = op(current.orig, other.orig);
     }
-    return val;
+
+    // 广播结果到整个warp
+    if constexpr (sizeof(T) == 4) {
+      current.bits = __shfl_sync(mask, current.bits, 0);
+    } else {
+      current.bits = __shfl_sync(mask, current.bits, 0, warp_size);
+    }
+
+    return current.orig;
   }
+
+  //   __forceinline__ __device__ float warp_reduce_sum(float val) {
+  // #pragma unroll
+  //     for (int s = warpSize >> 1; s > 0; s >>= 1) {
+  //       val += __shfl_down_sync(0xFFFFFFFF, val, s);
+  //     }
+  //     return val;
+  //   }
 
   __forceinline__ __device__ float block_reduce_sum(float val, float* shared) {
     const unsigned num_warps = blockDim.x / warpSize;
@@ -32,7 +84,8 @@ namespace cuda_op {
     const unsigned lid = tid % warpSize;
     const unsigned wid = tid / warpSize;
 
-    val = warp_reduce_sum(val);
+    val = warp_reduce(val, Sum{});
+    // val = warp_reduce_sum(val);
     if (lid == 0) {
       shared[wid] = val;
     }
@@ -40,7 +93,8 @@ namespace cuda_op {
 
     val = tid < num_warps ? shared[lid] : 0.F;
     if (wid == 0) {
-      val = warp_reduce_sum(val);
+      val = warp_reduce(val, Sum{});
+      // val = warp_reduce_sum(val);
     }
 
     return val;
