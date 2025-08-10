@@ -20,7 +20,11 @@ def test_training():
     print("=== training mode ===")
     mean = input.mean(dim=(0, 2, 3))
     var = input.var(dim=(0, 2, 3), unbiased=False)
-    golden = F.batch_norm(input, running_mean, running_var, gamma, beta,
+    golden = F.batch_norm(input,
+                          running_mean,
+                          running_var,
+                          gamma,
+                          beta,
                           training=True,
                           eps=epsilon)
 
@@ -29,7 +33,27 @@ def test_training():
     beta = beta.to("cuda")
     running_mean = cuda_running_mean
     running_var = cuda_running_var
-    actual = cuda_op.batch_norm(input, running_mean, running_var, gamma, beta, epsilon,
-                                momentum, True)
+    actual = cuda_op.batch_norm(input, running_mean, running_var, gamma, beta,
+                                epsilon, momentum, True)
     actual = actual.to("cpu")
     torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1e-5)
+
+
+def test_perf():
+    N, C, H, W = 16, 32, 256, 256
+    epsilon = 1e-5
+
+    x = torch.randn(N, C, H, W, device="cuda")
+    gamma = torch.randn(C, device="cuda")
+    beta = torch.randn(C, device="cuda")
+
+    golden = F.batch_norm(x,
+                          None,
+                          None,
+                          gamma,
+                          beta,
+                          training=True,
+                          eps=epsilon)
+
+    actual = cuda_op.batch_norm(x, gamma, beta, epsilon)
+    torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1.3e-6)

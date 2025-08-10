@@ -1,230 +1,160 @@
-#include "batch_norm/batch_norm.h"
+#include "layer_norm/layer_norm.h"
 
 #include <torch/extension.h>
 #include "common/utils.h"
 
 namespace cuda_op {
 
-  __global__ void compute_mean_kernel(const float* input, float* mean, int C, int N, int H, int W) {
-    extern __shared__ float shared[];
-    const int c            = blockIdx.x;
-    const int tid          = threadIdx.x;
-    const int num_elements = N * H * W;
-
-    float sum = 0.0f;
-    for (int idx = tid; idx < num_elements; idx += blockDim.x) {
-      int n      = idx / (H * W);
-      int hw     = idx % (H * W);
-      int h      = hw / W;
-      int w      = hw % W;
-      int index  = ((n * C + c) * H + h) * W + w;
-      sum       += input[index];
+  __forceinline__ __device__ float warp_reduce_sum(float val) {
+#pragma unroll
+    for (int s = warpSize >> 1; s > 0; s >>= 1) {
+      val += __shfl_down_sync(0xFFFFFFFF, val, s);
     }
+    return val;
+  }
 
-    shared[tid] = sum;
+  __forceinline__ __device__ float block_reduce_sum(float val, float* shared) {
+    const unsigned num_warps = blockDim.x / warpSize;
+
+    const unsigned tid = threadIdx.x;
+    const unsigned lid = tid % warpSize;
+    const unsigned wid = tid / warpSize;
+
+    val = warp_reduce_sum(val);
+    if (lid == 0) {
+      shared[wid] = val;
+    }
     __syncthreads();
 
-    for (int s = blockDim.x / 2; s > 0; s >>= 1) {
-      if (tid < s) {
-        shared[tid] += shared[tid + s];
-      }
-      __syncthreads();
+    val = tid < num_warps ? shared[lid] : 0.F;
+    if (wid == 0) {
+      val = warp_reduce_sum(val);
     }
 
-    if (tid == 0) {
-      mean[c] = shared[0] / num_elements;
-    }
+    return val;
   }
 
-  __global__ void
-  compute_var_kernel(const float* input, const float* mean, float* var, int C, int N, int H, int W) {
-    extern __shared__ float shared[];
-    int c            = blockIdx.x;
-    int tid          = threadIdx.x;
-    int num_elements = N * H * W;
-    float mean_val   = mean[c];
+  // Per C per ThreadBlock
+  __global__ void batch_norm_kernel(
+    const float* __restrict__ input_ptr,
+    const float* __restrict__ gamma_ptr,
+    const float* __restrict__ beta_ptr,
+    unsigned int N,
+    unsigned int C,
+    unsigned int H,
+    unsigned int W,
+    float epsilon,
+    float* __restrict__ output_ptr) {
+    __shared__ float s_sum[32];
+    __shared__ float s_ssum[32];
+    __shared__ float s_mean;
+    __shared__ float s_rstd;
 
-    float sum_sq = 0.0f;
-    for (int idx = tid; idx < num_elements; idx += blockDim.x) {
-      int n      = idx / (H * W);
-      int hw     = idx % (H * W);
-      int h      = hw / W;
-      int w      = hw % W;
-      int index  = ((n * C + c) * H + h) * W + w;
-      float diff = input[index] - mean_val;
-      sum_sq     = diff * diff;
+    const unsigned tid = threadIdx.x;
+    const unsigned bid = blockIdx.x;
+
+    const unsigned c            = bid;
+    const unsigned num_elements = N * H * W;
+
+    // 1. Compute input sum and square sum
+    float sum  = 0.0F;
+    float ssum = 0.0F; // square sum
+    for (int i = tid; i < num_elements; i += blockDim.x) {
+      const unsigned n  = i / (H * W);
+      const unsigned hw = i % (H * W);
+      const unsigned h  = hw / W;
+      const unsigned w  = hw % W;
+
+      const unsigned offset = n * C * H * W + c * H * W + h * W + w;
+
+      float input = input_ptr[offset];
+
+      sum  += input;
+      ssum += input * input;
     }
 
-    shared[tid] = sum_sq;
+    // Reduce sum and square sum in block
+    sum  = block_reduce_sum(sum, s_sum);
+    ssum = block_reduce_sum(ssum, s_ssum);
+    if (tid == 0) {
+      float mean     = sum / num_elements;
+      float variance = ssum / num_elements - mean * mean;
+
+      s_mean = mean;
+      s_rstd = rsqrtf(variance + epsilon);
+    }
     __syncthreads();
 
-    for (int s = blockDim.x / 2; s > 0; s /= 2) {
-      if (tid < s) {
-        shared[tid] += shared[tid + s];
-      }
-      __syncthreads();
-    }
-    if (tid == 0) {
-      var[c] = shared[0] / num_elements;
+    float mean = s_mean;
+    float rstd = s_rstd;
+
+    for (int i = tid; i < num_elements; i += blockDim.x) {
+      const unsigned n  = i / (H * W);
+      const unsigned hw = i % (H * W);
+      const unsigned h  = hw / W;
+      const unsigned w  = hw % W;
+
+      const unsigned offset = n * C * H * W + c * H * W + h * W + w;
+
+      float input = input_ptr[offset];
+      float gamma = gamma_ptr[c];
+      float beta  = beta_ptr[c];
+
+      float norm         = (input - mean) * rstd * gamma + beta;
+      output_ptr[offset] = norm;
     }
   }
 
-  __global__ void update_moving_average_kernel(
-    float* running_mean,
-    float* running_var,
-    const float* batch_mean,
-    const float* batch_var,
-    float momentum,
-    int C) {
-    int c = blockIdx.x * blockDim.x + threadIdx.x;
-    if (c < C) {
-      running_mean[c] = momentum * running_mean[c] + (1.0f - momentum) * batch_mean[c];
-      running_var[c]  = momentum * running_var[c] + (1.0f - momentum) * batch_var[c];
-    }
-  }
-
-  __global__ void batch_norm_forward_kernel(
-    const float* input,
-    float* output,
-    const float* gamma,
-    const float* beta,
-    const float* mean,
-    const float* var,
+  cudaError_t launch_batch_norm(
+    const float* input_ptr,
+    const float* gamma_ptr,
+    const float* beta_ptr,
+    unsigned N,
+    unsigned C,
+    unsigned H,
+    unsigned W,
     float epsilon,
-    int C,
-    int N,
-    int H,
-    int W) {
-    int idx            = blockIdx.x * blockDim.x + threadIdx.x;
-    int total_elements = N * C * H * W;
-    if (idx < total_elements) {
-      int n = idx / (C * H * W);
-      int c = (idx / (H * W)) % C;
-      int h = (idx / W) % H;
-      int w = idx % W;
-
-      float inv_std  = rsqrtf(var[c] + epsilon);
-      float norm_val = (input[((n * C + c) * H + h) * W + w] - mean[c]) * inv_std;
-      output[((n * C + c) * H + h) * W + w] = gamma[c] * norm_val + beta[c];
-    }
-  }
-
-  cudaError_t batch_norm_forward(
-    const float* input,
-    float* output,
-    const float* gamma,
-    const float* beta,
-    float* running_mean,
-    float* running_var,
-    int N,
-    int C,
-    int H,
-    int W,
-    float epsilon,
-    float momentum,
-    bool training) {
-    float *d_batch_mean, *d_batch_var;
-    cudaMalloc(&d_batch_mean, C * sizeof(float));
-    cudaMalloc(&d_batch_var, C * sizeof(float));
-    const int threads_per_block = 256;
-    if (training) {
-      dim3 grid(C);
-      dim3 block(threads_per_block);
-      int shared_mem = threads_per_block * sizeof(float);
-
-      compute_mean_kernel<<<grid, block, shared_mem>>>(input, d_batch_mean, C, N, H, W);
-      compute_var_kernel<<<grid, block, shared_mem>>>(input, d_batch_mean, d_batch_var, C, N, H, W);
-
-      // Update
-      dim3 update_grid((C + 255) / 256);
-      dim3 update_block(256);
-      update_moving_average_kernel<<<update_grid, update_block>>>(
-        running_mean,
-        running_var,
-        d_batch_mean,
-        d_batch_var,
-        momentum,
-        C);
-
-      int total_elements = N * C * H * W;
-      dim3 norm_grid((total_elements + threads_per_block - 1) / threads_per_block);
-      batch_norm_forward_kernel<<<norm_grid, threads_per_block>>>(
-        input,
-        output,
-        gamma,
-        beta,
-        d_batch_mean,
-        d_batch_var,
-        epsilon,
-        C,
-        N,
-        H,
-        W);
-    } else {
-      int total_elements = N * C * H * W;
-      dim3 norm_grid((total_elements + threads_per_block - 1) / threads_per_block);
-      batch_norm_forward_kernel<<<norm_grid, threads_per_block>>>(
-        input,
-        output,
-        gamma,
-        beta,
-        running_mean,
-        running_var,
-        epsilon,
-        C,
-        N,
-        H,
-        W);
-    }
-
-    cudaFree(d_batch_mean);
-    cudaFree(d_batch_var);
-
+    float* output_ptr) {
+    const int num_blks = C;
+    const int blk_size = 128;
+    batch_norm_kernel<<<num_blks, blk_size>>>(
+      input_ptr,
+      gamma_ptr,
+      beta_ptr,
+      N,
+      C,
+      H,
+      W,
+      epsilon,
+      output_ptr);
     return cudaGetLastError();
   }
 
   torch::Tensor torch_batch_norm(
     const torch::Tensor& input,
-    torch::Tensor& running_mean,
-    torch::Tensor& running_var,
     const torch::Tensor& gamma,
     const torch::Tensor& beta,
-    float epsilon,
-    float momentum,
-    bool training) {
-    auto output = torch::zero(input);
-    auto shape  = input.sizes();
-    TORCH_CHECK(shape.size() == 4, "shapes of input must be 4");
-    TORCH_CHECK(
-      input.is_cuda()
-        && running_mean.is_cuda()
-        && running_mean.is_cuda()
-        && gamma.is_cuda()
-        && beta.is_cuda(),
-      "Tensors must be on CUDA device");
+    float epsilon) {
+    TORCH_CHECK(input.is_cuda() && gamma.is_cuda() && beta.is_cuda(),
+                "Tensors must be on CUDA device");
 
-    const float* input_ptr  = input.data_ptr<float>();
-    const float* gamma_ptr  = gamma.data_ptr<float>();
-    const float* beta_ptr   = beta.data_ptr<float>();
-    float* running_mean_ptr = running_mean.data_ptr<float>();
-    float* running_var_ptr  = running_var.data_ptr<float>();
-    float* output_ptr       = output.data_ptr<float>();
-    cuda_check(batch_norm_forward(
-      input_ptr,
-      output_ptr,
-      gamma_ptr,
-      beta_ptr,
-      running_mean_ptr,
-      running_var_ptr,
-      shape[0],
-      shape[1],
-      shape[2],
-      shape[3],
-      epsilon,
-      momentum,
-      training));
+    auto shape = input.sizes();
+    TORCH_CHECK(shape.size() == 4, "shapes of input must be 4");
+    unsigned N = shape[0];
+    unsigned C = shape[1];
+    unsigned H = shape[2];
+    unsigned W = shape[3];
+
+    auto output = torch::zero(input);
+
+    const float* input_ptr = input.data_ptr<float>();
+    const float* gamma_ptr = gamma.data_ptr<float>();
+    const float* beta_ptr  = beta.data_ptr<float>();
+    float* output_ptr      = output.data_ptr<float>();
+    cuda_check(launch_batch_norm(input_ptr, gamma_ptr, beta_ptr, N, C, H, W, epsilon, output_ptr));
     cuda_check(cudaDeviceSynchronize());
     return output;
   }
+
 
 } // namespace cuda_op
