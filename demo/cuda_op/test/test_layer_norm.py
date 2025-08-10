@@ -20,7 +20,7 @@ def test_basic():
                                rtol=1e-5)
 
 
-def test_perf():
+def test_perf_cv():
     N = 16
     C = 64
     H = 256
@@ -42,4 +42,28 @@ def test_perf():
                                             bias=beta,
                                             eps=eps)
     actual = cuda_op.layer_norm(x, gamma, beta, eps)
+    torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1.3e-6)
+
+def test_perf():
+    N = 16
+    H = 256
+    W = 256
+    C = 64
+    eps = 1e-5
+    shape = [N, H, W, C]
+    normalized_shape = (C,)
+
+    therotical_time = (12 * N * H * W * C) / (504 * 10**3)
+    print(f"\ntherotical performance: {therotical_time}us")
+
+    x = torch.randn(shape, device='cuda')
+    gamma = torch.randn(normalized_shape, device='cuda')
+    beta = torch.randn(normalized_shape, device='cuda')
+
+    golden = torch.nn.functional.layer_norm(x,
+                                            normalized_shape,
+                                            weight=gamma,
+                                            bias=beta,
+                                            eps=eps)
+    actual = cuda_op.layer_norm_nlp(x, gamma, beta, eps)
     torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1.3e-6)

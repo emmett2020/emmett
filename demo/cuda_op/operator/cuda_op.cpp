@@ -20,5 +20,6 @@ PYBIND11_MODULE(cuda_op, m) {
   m.def("group_norm", &cuda_op::torch_group_norm);
   m.def("batch_norm", &cuda_op::torch_batch_norm);
   m.def("layer_norm", &cuda_op::torch_layer_norm);
+  m.def("layer_norm_nlp", &cuda_op::torch_layer_norm_nlp);
   m.def("flash_attention", &cuda_op::torch_flash_attn);
 }
