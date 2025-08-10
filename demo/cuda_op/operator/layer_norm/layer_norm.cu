@@ -115,6 +115,7 @@ namespace cuda_op {
   // Input must be NHWC
   // gridDim.x == N * H * W
   // Per C per thread block
+  // C must be divisibly by 4.
   __global__ void layer_norm_nlp_kernel(
     const float* __restrict__ input_ptr,
     const float* __restrict__ gamma_ptr,
