@@ -5,66 +5,109 @@
 
 namespace cuda_op {
 
-  __inline__ __device__ float warp_reduce_sum(float val) {
-    for (int i = 16; i > 0; i /= 2) {
-      val += __shfl_down_sync(0xFFFFFFFF, val, i);
+  __forceinline__ __device__ float warp_reduce_sum(float val) {
+#pragma unroll
+    for (int s = warpSize >> 1; s > 0; s >>= 1) {
+      val += __shfl_down_sync(0xFFFFFFFF, val, s);
     }
     return val;
   }
 
-  __inline__ __device__ void atomic_add_block(float* addr, float val) {
-    unsigned active = __activemask();
-    unsigned mask   = __ballot_sync(active, threadIdx.x % warpSize == 0);
-    if (threadIdx.x % warpSize == 0) {
-      atomicAdd(addr, val / __popc(mask));
+  __forceinline__ __device__ float block_reduce_sum(float val, float* shared) {
+    const unsigned num_warps = blockDim.x / warpSize;
+
+    const unsigned tid = threadIdx.x;
+    const unsigned lid = tid % warpSize;
+    const unsigned wid = tid / warpSize;
+
+    val = warp_reduce_sum(val);
+    if (lid == 0) {
+      shared[wid] = val;
     }
+    __syncthreads();
+
+    val = tid < num_warps ? shared[lid] : 0.F;
+    if (wid == 0) {
+      val = warp_reduce_sum(val);
+    }
+
+    return val;
   }
 
+  // Per C per ThreadBlock
+  // HxW must be divisible by 4.
   __global__ void layer_norm_kernel(
-    const float* input_ptr,
-    const float* gamma_ptr,
-    const float* beta_ptr,
-    int N,
-    int C,
+    const float* __restrict__ input_ptr,
+    const float* __restrict__ gamma_ptr,
+    const float* __restrict__ beta_ptr,
+    unsigned int C,
+    unsigned int H,
+    unsigned int W,
     float epsilon,
-    float* output_ptr) {
-    __shared__ float s_sum_input;
-    __shared__ float s_sum_square;
+    float* __restrict__ output_ptr) {
+    __shared__ float s_mean;
+    __shared__ float s_rstd;
+    __shared__ float s_sum[32];
+    __shared__ float s_ssum[32]; // square sum
 
-    const int tid         = threadIdx.x;
-    const int input_start = blockIdx.x * C;
+    const unsigned num_elements  = H * W;
+    const unsigned tid           = threadIdx.x;
+    const unsigned c             = blockIdx.x;
+    const unsigned channel_offst = c * H * W;
 
-    float sum_input = 0;
-    for (int i = tid; i < C; i += blockDim.x) {
-      float input  = input_ptr[input_start + i];
-      sum_input   += input;
+    constexpr unsigned vectorized_dim = 4;
+    unsigned num_elements_compressed  = num_elements / vectorized_dim;
+
+    const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + channel_offst);
+    float4* output_ptr4      = reinterpret_cast<float4*>(output_ptr + channel_offst);
+
+    // 1. Compute input sum & square sum
+    float sum  = 0.F;
+    float ssum = 0.F;
+    for (unsigned i = tid; i < num_elements_compressed; i += blockDim.x) {
+      float4 data = input_ptr4[i];
+
+      sum  += data.x;
+      ssum += data.x * data.x;
+      sum  += data.y;
+      ssum += data.y * data.y;
+      sum  += data.z;
+      ssum += data.z * data.z;
+      sum  += data.w;
+      ssum += data.w * data.w;
     }
-    sum_input = warp_reduce_sum(sum_input);
-    if (threadIdx.x % warpSize == 0) {
-      atomic_add_block(&s_sum_input, sum_input);
+
+    // 2. Reduce
+    sum  = block_reduce_sum(sum, s_sum);
+    ssum = block_reduce_sum(ssum, s_ssum);
+
+    // 3. Compute mean & rstd
+    if (tid == 0) {
+      float mean     = sum / num_elements;
+      float variance = ssum / num_elements - mean * mean;
+
+      s_mean = mean;
+      s_rstd = rsqrtf(variance + epsilon);
     }
     __syncthreads();
-    float mean = s_sum_input / C;
-    __syncthreads();
+    float mean = s_mean;
+    float rstd = s_rstd;
 
-    float sum_square = 0;
-    for (int i = tid; i < C; i += blockDim.x) {
-      float input  = input_ptr[input_start + i];
-      sum_square  += (input - mean) * (input - mean);
-    }
-    sum_square = warp_reduce_sum(sum_square);
-    if (threadIdx.x % warpSize == 0) {
-      atomic_add_block(&s_sum_square, sum_square);
-    }
-    __syncthreads();
-    float variance = s_sum_square / C;
-    float inv_std  = rsqrtf(variance + epsilon);
+    // 4. Compute normalization
+    for (unsigned i = tid; i < num_elements_compressed; i += blockDim.x) {
+      float4 data = input_ptr4[i];
 
-    for (int i = tid; i < C; i += blockDim.x) {
-      float input                 = input_ptr[input_start + i];
-      float normalized            = (input - mean) * inv_std;
-      normalized                  = normalized * gamma_ptr[i] + beta_ptr[i];
-      output_ptr[input_start + i] = normalized;
+      const float4* gamma_ptr4 = reinterpret_cast<const float4*>(gamma_ptr);
+      const float4* beta_ptr4  = reinterpret_cast<const float4*>(beta_ptr);
+      float4 gamma             = gamma_ptr4[i];
+      float4 beta              = beta_ptr4[i];
+
+      float norm0 = (data.x - mean) * rstd * gamma.x + beta.x;
+      float norm1 = (data.y - mean) * rstd * gamma.y + beta.y;
+      float norm2 = (data.z - mean) * rstd * gamma.z + beta.z;
+      float norm3 = (data.w - mean) * rstd * gamma.w + beta.w;
+
+      output_ptr4[i] = make_float4(norm0, norm1, norm2, norm3);
     }
   }
 
@@ -72,18 +115,20 @@ namespace cuda_op {
     const float* input_ptr,
     const float* gamma_ptr,
     const float* beta_ptr,
-    int N,
     int C,
+    int H,
+    int W,
     float epsilon,
     float* output_ptr) {
     const int blk_size = 256;
-    const int num_blks = N;
+    const int num_blks = C;
     layer_norm_kernel<<<num_blks, blk_size>>>(
       input_ptr,
       gamma_ptr,
       beta_ptr,
-      N,
       C,
+      H,
+      W,
       epsilon,
       output_ptr);
     return cudaGetLastError();
@@ -94,18 +139,25 @@ namespace cuda_op {
     const torch::Tensor& gamma,
     const torch::Tensor& beta,
     float epsilon) {
-    auto output = torch::zero(input);
-    auto shape  = input.sizes();
-    TORCH_CHECK(shape.size() == 2, "shapes of input must be 2");
     TORCH_CHECK(input.is_cuda() && gamma.is_cuda() && beta.is_cuda(),
                 "Tensors must be on CUDA device");
+
+    auto shape = input.sizes();
+    TORCH_CHECK(shape.size() == 3, "shapes of input must be 3");
+    unsigned C = shape[0];
+    unsigned H = shape[1];
+    unsigned W = shape[2];
+
+    unsigned num_elements = H * W;
+    TORCH_CHECK(num_elements % 4 == 0, "HxW must be divisible by 4");
+
+    auto output = torch::zero(input);
 
     const float* input_ptr = input.data_ptr<float>();
     const float* gamma_ptr = gamma.data_ptr<float>();
     const float* beta_ptr  = beta.data_ptr<float>();
     float* output_ptr      = output.data_ptr<float>();
-    cuda_check(
-      launch_layer_norm(input_ptr, gamma_ptr, beta_ptr, shape[0], shape[1], epsilon, output_ptr));
+    cuda_check(launch_layer_norm(input_ptr, gamma_ptr, beta_ptr, C, H, W, epsilon, output_ptr));
     cuda_check(cudaDeviceSynchronize());
     return output;
   }

@@ -21,13 +21,12 @@ def test_basic():
 
 
 def test_perf():
-    N = 16
     C = 128
     H = 256
     W = 256
     eps = 1e-5
-    shape = [N, C, H, W]
-    normalized_shape = (C, H, W)
+    shape = [C, H, W]
+    normalized_shape = (H, W)
 
     x = torch.randn(shape, device='cuda')
     gamma = torch.randn(normalized_shape, device='cuda')
@@ -37,5 +36,5 @@ def test_perf():
                                             weight=gamma,
                                             bias=beta,
                                             eps=eps)
-    # actual = cuda_op.layer_norm(x, gamma, beta, eps)
-    # torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1.3e-6)
+    actual = cuda_op.layer_norm(x, gamma, beta, eps)
+    torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1.3e-6)

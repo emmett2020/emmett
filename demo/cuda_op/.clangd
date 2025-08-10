@@ -13,7 +13,8 @@ CompileFlags:
         - -Xcudafe
         - --diag_suppress=*
         - -Xcompiler=-fvisibility=hidden
-        - use_fast_math
+        - -Xptxas
+        - --use_fast_math
     Add:
         - --cuda-path=/usr/local/cuda/
         - -L/usr/local/cuda/lib64
