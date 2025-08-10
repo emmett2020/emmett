@@ -46,3 +46,14 @@ def test_softmax_perf():
     actual = cuda_op.softmax(x)
 
     torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1.3e-6)
+
+
+def test_safe_softmax_perf():
+    """Test cuda op softmax nhwc version"""
+    N, H, W, C = 16, 256, 256, 128
+    x = torch.randn(N, H, W, C, dtype=torch.float, device="cuda")
+
+    golden = torch.softmax(x, -1)
+    actual = cuda_op.safe_softmax(x)
+
+    torch.testing.assert_close(golden, actual, atol=1e-5, rtol=1.3e-6)

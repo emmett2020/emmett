@@ -13,6 +13,7 @@ namespace cuda_op { } // namespace cuda_op
 PYBIND11_MODULE(cuda_op, m) {
   m.doc() = "high performance cuda kernels";
   m.def("softmax", &cuda_op::torch_softmax);
+  m.def("safe_softmax", &cuda_op::torch_safe_softmax);
 }
 
 // PYBIND11_MODULE(cuda_op, m) {
