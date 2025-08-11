@@ -1,122 +1,94 @@
-#include <cuda_runtime.h>
+#include "sorting/sorting.h"
 
-// this is same solution as solution of https://leetgpu.com/challenges/sorting
+#include <ATen/ops/copy.h>
+#include <torch/extension.h>
 
-constexpr int threadsPerBlock = 256;
+#include "common/utils.h"
 
-__device__ inline void swap(float& a, float& b) {
-  auto temp = a;
-  a         = b;
-  b         = temp;
-}
+namespace cuda_op {
 
-__device__ inline void sort2(float& a, float& b) {
-  if (b > a) {
-    swap(a, b);
-  }
-}
-
-__global__ void bitonic_block_sort_kernel(float* data, int N) {
-  __shared__ float sdata[2 * threadsPerBlock];
-
-  const int tid = threadIdx.x;
-  const int idx = (blockIdx.x * 2 * threadsPerBlock) + threadIdx.x;
-  if (idx < N) {
-    sdata[tid] = data[idx];
-  } else {
-    sdata[tid] = -INFINITY;
-  }
-  if (idx + threadsPerBlock < N) {
-    sdata[tid + threadsPerBlock] = data[idx + threadsPerBlock];
-  } else {
-    sdata[tid + threadsPerBlock] = -INFINITY;
-  }
-  __syncthreads();
-
-  for (int threads_in_chunk = 1; threads_in_chunk <= threadsPerBlock; threads_in_chunk *= 2) {
-    const int items_in_chunk = 2 * threads_in_chunk;
-    const int chunk_id       = tid / threads_in_chunk;
-    const int tid_in_chunk   = tid % threads_in_chunk;
-    sort2(sdata[items_in_chunk * chunk_id + tid_in_chunk],
-          sdata[items_in_chunk * chunk_id + items_in_chunk - 1 - tid_in_chunk]); //triangle layer
-    __syncthreads();
-    for (int threads_in_rhombus  = threads_in_chunk / 2; threads_in_rhombus > 0;
-         threads_in_rhombus     /= 2) {
-      const int items_in_rhombus = 2 * threads_in_rhombus;
-      const int rhombus_id       = tid / threads_in_rhombus;
-      const int tid_in_rhombus   = tid % threads_in_rhombus;
-      sort2(
-        sdata[items_in_rhombus * rhombus_id + tid_in_rhombus],
-        sdata[items_in_rhombus * rhombus_id + threads_in_rhombus + tid_in_rhombus]); //rhombus layers
-      __syncthreads();
+  __inline__ __device__ void swap(float& a, float& b, bool is_ascending) {
+    if (a > b == is_ascending) {
+      float tmp = a;
+      a         = b;
+      b         = tmp;
     }
   }
 
-  if (idx < N) {
-    data[idx] = sdata[tid];
-  }
-  if (idx + threadsPerBlock < N) {
-    data[idx + threadsPerBlock] = sdata[tid + threadsPerBlock];
-  }
-}
+  // Say N = 16,
+  // Then:
+  // k = 2, 4, 8, 16
+  // when k = 2,  j = 1
+  // when k = 4,  j = 2, 1
+  // when k = 8,  j = 4, 2, 1
+  // when k = 16, j = 8, 4, 2, 1
 
-__global__ void bitonic_grid_sort_triangle_layer(float* data, int N, int threads_in_chunk) {
-  const int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+  // When k = 2, j = 1,
+  //    when i = 0, i^j = 1
 
-  const int items_in_chunk = 2 * threads_in_chunk;
-  const int chunk_id       = tid / threads_in_chunk;
-  const int tid_in_chunk   = tid % threads_in_chunk;
-  if ((items_in_chunk * chunk_id + items_in_chunk - 1 - tid_in_chunk) < N) {
-    sort2(data[items_in_chunk * chunk_id + tid_in_chunk],
-          data[items_in_chunk * chunk_id + items_in_chunk - 1 - tid_in_chunk]); //triangle layer
-  }
-}
+  // When k = 4,
+  //    when j = 2,
+  //      when i = 0, i^j = 2,
+  //      when i = 1, i^j = 3,
+  //      when i = 2, i^j = 0,
+  //      when i = 3, i^j = 1,
+  //    when j = 1,
+  //      when i = 0, i^j = 1,
+  //      when i = 1, i^j = 0,
 
-__global__ void bitonic_grid_sort_rhombus_layer(float* data, int N, int threads_in_rhombus) {
-  const int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+  // Each function call, we use num_threads=N to do work. They are divided into
+  // small groups, each group contains num_threads=2*k, and the first k of each
+  // group will handle ascending while the left part handles descending.
+  __global__ void bitonic_sort(float* data, unsigned N, unsigned k, unsigned j) {
+    unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) {
+      return;
+    }
 
-  const int items_in_rhombus = 2 * threads_in_rhombus;
-  const int rhombus_id       = tid / threads_in_rhombus;
-  const int tid_in_rhombus   = tid % threads_in_rhombus;
-  if ((items_in_rhombus * rhombus_id + threads_in_rhombus + tid_in_rhombus) < N) {
-    sort2(
-      data[items_in_rhombus * rhombus_id + tid_in_rhombus],
-      data[items_in_rhombus * rhombus_id + threads_in_rhombus + tid_in_rhombus]); //rhombus layers
-  }
-}
-
-void solve(const float* input, float* output, int N, int k) {
-  float* data;
-  cudaMalloc(&data, N * sizeof(float));
-  cudaMemcpy(data, input, N * sizeof(float), cudaMemcpyDeviceToDevice);
-
-  int itemsPerBlock = 2 * threadsPerBlock;
-  int blocksPerGrid = (N + itemsPerBlock - 1) / itemsPerBlock;
-  bitonic_block_sort_kernel<<<blocksPerGrid, threadsPerBlock>>>(data, N);
-  cudaDeviceSynchronize();
-
-  // when first time threads_in_chunk >= N then its mean that in previous iteration, number of threads is threads_in_chunk/2
-  // and we handled 2*threads_in_chunk/2 elements, which is >=N, hence we should stop here
-  for (int threads_in_chunk = 2 * threadsPerBlock; threads_in_chunk < N; threads_in_chunk *= 2) {
-    // not optimal number of threads, because in most cases first threads of first chunk will do nothing
-    // but we still need to create them because in bitonic_grid_sort_triangle_layer function
-    // we do not count which thread is actual first thread which will do some work
-    int numElements   = threads_in_chunk * ((N + threads_in_chunk - 1) / threads_in_chunk);
-    int blocksPerGrid = (numElements + threadsPerBlock - 1) / threadsPerBlock;
-    bitonic_grid_sort_triangle_layer<<<blocksPerGrid, threadsPerBlock>>>(data, N, threads_in_chunk);
-    cudaDeviceSynchronize();
-    for (int threads_in_rhombus  = threads_in_chunk / 2; threads_in_rhombus > 0;
-         threads_in_rhombus     /= 2) {
-      bitonic_grid_sort_rhombus_layer<<<blocksPerGrid, threadsPerBlock>>>(
-        data,
-        N,
-        threads_in_rhombus);
-      cudaDeviceSynchronize();
+    unsigned ixj = i ^ j;
+    if (i < ixj && ixj < N) {
+      if ((i & k) == 0) {
+        swap(data[i], data[ixj], true);
+      } else {
+        swap(data[i], data[ixj], false);
+      }
     }
   }
 
-  cudaMemcpy(output, data, k * sizeof(float), cudaMemcpyDeviceToDevice);
-  cudaFree(data);
-}
+  cudaError_t launch_sort(float* data, int N, unsigned k, unsigned j) {
+    constexpr int blk_size = 128;
+    const int num_blks     = (N + blk_size - 1) / blk_size;
+    bitonic_sort<<<num_blks, blk_size>>>(data, N, k, j);
+    return cudaGetLastError();
+  }
+
+  __host__ __device__ int next_power_of_two(int n) {
+    int pow2 = 1;
+    while (pow2 < n)
+      pow2 <<= 1;
+    return pow2;
+  }
+
+  torch::Tensor torch_sorting(const torch::Tensor& input) {
+    TORCH_CHECK(input.is_cuda(), "Tensors must be on CUDA device");
+
+    const int N         = input.numel();
+    const int padding_N = next_power_of_two(N);
+    TORCH_CHECK(N == padding_N, "N must be power of 2");
+
+    auto output = input.clone();
+
+    const float* input_ptr = input.data_ptr<float>();
+    float* output_ptr      = output.data_ptr<float>();
+    for (unsigned k = 2; k <= N; k <<= 1) {
+      for (unsigned j = k >> 1; j > 0; j >>= 1) {
+        launch_sort(output_ptr, N, k, j);
+        cuda_check(cudaDeviceSynchronize());
+      }
+    }
+    cuda_check(cudaDeviceSynchronize());
+    return output;
+  }
 
 
+} // namespace cuda_op
