@@ -1,6 +1,8 @@
 #include "sorting/sorting.h"
 
 #include <ATen/ops/copy.h>
+#include <c10/core/TensorOptions.h>
+#include <c10/util/Exception.h>
 #include <torch/extension.h>
 
 #include "common/utils.h"
@@ -71,18 +73,26 @@ namespace cuda_op {
 
   torch::Tensor torch_sorting(const torch::Tensor& input) {
     TORCH_CHECK(input.is_cuda(), "Tensors must be on CUDA device");
+    TORCH_CHECK(input.sizes().size() == 1, "Tensor shape must be 1 dimension");
 
     const int N         = input.numel();
     const int padding_N = next_power_of_two(N);
-    TORCH_CHECK(N == padding_N, "N must be power of 2");
 
-    auto output = input.clone();
+    auto output = torch::zeros(padding_N, input.options());
 
     const float* input_ptr = input.data_ptr<float>();
     float* output_ptr      = output.data_ptr<float>();
-    for (unsigned k = 2; k <= N; k <<= 1) {
+    cuda_check(cudaMemcpy(output_ptr, input_ptr, N * sizeof(float), cudaMemcpyDeviceToDevice));
+
+    // Rellenar con FLT_MAX
+    const float pad_value = FLT_MAX;
+    for (int i = N; i < padding_N; ++i) {
+      cudaMemcpy(output_ptr + i, &pad_value, sizeof(float), cudaMemcpyHostToDevice);
+    }
+
+    for (unsigned k = 2; k <= padding_N; k <<= 1) {
       for (unsigned j = k >> 1; j > 0; j >>= 1) {
-        launch_sort(output_ptr, N, k, j);
+        launch_sort(output_ptr, padding_N, k, j);
         cuda_check(cudaDeviceSynchronize());
       }
     }
