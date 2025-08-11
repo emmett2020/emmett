@@ -7,17 +7,18 @@
 // #include "batch_norm/batch_norm.h"
 // #include "flash_attention/flash_attention.h"
 // #include "softmax/softmax.h"
-#include "sorting/sorting.h"
+// #include "sorting/sorting.h"
+#include "conv/conv.h"
 
 namespace cuda_op { } // namespace cuda_op
 
 PYBIND11_MODULE(cuda_op, m) {
-  m.doc() = "high performance cuda kernels";
-  m.def("sort", &cuda_op::torch_sorting);
+  m.doc() = "High performance cuda kernels";
+  m.def("conv2d", &cuda_op::torch_conv2d);
 }
 
 // PYBIND11_MODULE(cuda_op, m) {
-//   m.doc() = "high performance cuda kernels";
+//   m.doc() = "High performance cuda kernels";
 //   m.def("add",
 //         &cuda_op::torch_add,
 //         "A function that add two tensors",
@@ -31,4 +32,5 @@ PYBIND11_MODULE(cuda_op, m) {
 //   m.def("softmax", &cuda_op::torch_softmax);
 //   m.def("safe_softmax", &cuda_op::torch_safe_softmax);
 //   m.def("flash_attention", &cuda_op::torch_flash_attn);
+//   m.def("sort", &cuda_op::torch_sorting);
 // }

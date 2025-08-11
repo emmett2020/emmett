@@ -14,7 +14,7 @@ file(GLOB_RECURSE cpp_files
                   "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cpp")
 
 file(GLOB_RECURSE cu_files
-                  "${CMAKE_CURRENT_SOURCE_DIR}/operator/sorting/*.cu")
+                  "${CMAKE_CURRENT_SOURCE_DIR}/operator/conv/*.cu")
 # file(GLOB_RECURSE cu_files
 #                   "${CMAKE_CURRENT_SOURCE_DIR}/operator/*.cu")
 pybind11_add_module(${SKBUILD_PROJECT_NAME} ${cpp_files} ${cu_files})
