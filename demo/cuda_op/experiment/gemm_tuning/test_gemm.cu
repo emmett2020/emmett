@@ -33,6 +33,7 @@ namespace {
         float g = golden[m * N + n];
         float o = output[m * N + n];
         if (std::fabs(g - o) >= atol + rtol * std::fabs(o)) {
+          printf("m=%d, n=%d, g=%f != o=%f\n", m, n, g, o);
           throw std::runtime_error{"mismatch"};
         }
       }
