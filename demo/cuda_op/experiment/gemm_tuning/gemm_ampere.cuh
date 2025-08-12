@@ -6,41 +6,40 @@
 
 namespace {
 
-  constexpr std::size_t tile_m = 32;
-  constexpr std::size_t tile_n = 32;
-  constexpr std::size_t tile_k = 32;
+  constexpr std::size_t tile = 16;
 
   __global__ void
   gemm(const float* A, const float* B, unsigned M, unsigned N, unsigned K, float* C) {
-    __shared__ float As[tile_m][tile_k];
-    __shared__ float Bs[tile_k][tile_n];
+    __shared__ float As[tile][tile];
+    __shared__ float Bs[tile][tile];
 
     const unsigned bx = blockIdx.x;
     const unsigned by = blockIdx.y;
     const unsigned tx = threadIdx.x;
     const unsigned ty = threadIdx.y;
 
-    const unsigned row = by * tile_m + ty;
-    const unsigned col = bx * tile_n + tx;
+    const unsigned row = by * tile + ty;
+    const unsigned col = bx * tile + tx;
 
     float sum        = 0.0F;
-    const unsigned T = (K + tile_k - 1) / tile_k;
+    const unsigned T = (K + tile - 1) / tile;
     for (int t = 0; t < T; ++t) {
-      unsigned a_col = t * tile_k + tx;
+      unsigned a_col = t * tile + tx;
       if (row < M && a_col < K) {
         As[ty][tx] = A[row * K + a_col];
       } else {
         As[ty][tx] = 0.0F;
       }
 
-      if (t * tile_k + ty < K && col < N) {
-        Bs[ty][tx] = B[(t * tile_k + ty) * N + col];
+      unsigned b_row = t * tile + ty;
+      if (b_row < K && col < N) {
+        Bs[ty][tx] = B[b_row * N + col];
       } else {
         Bs[ty][tx] = 0.0F;
       }
 
       __syncthreads();
-      for (int k = 0; k < tile_k; ++k) {
+      for (int k = 0; k < tile; ++k) {
         sum += As[ty][k] * Bs[k][tx];
       }
       __syncthreads();
@@ -52,9 +51,9 @@ namespace {
   }
 
   void launch_gemm(const float* A, const float* B, unsigned M, unsigned N, unsigned K, float* C) {
-    auto grid_dim = dim3{static_cast<unsigned int>((N + tile_n - 1) / tile_n),
-                         static_cast<unsigned int>((M + tile_m - 1) / tile_m)};
-    auto blk_dim  = dim3{tile_n, tile_m};
+    auto grid_dim = dim3{static_cast<unsigned int>((N + tile - 1) / tile),
+                         static_cast<unsigned int>((M + tile - 1) / tile)};
+    auto blk_dim  = dim3{tile, tile};
     gemm<<<grid_dim, blk_dim>>>(A, B, M, N, K, C);
   }
 

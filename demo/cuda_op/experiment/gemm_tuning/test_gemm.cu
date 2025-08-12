@@ -42,9 +42,13 @@ namespace {
 } // namespace
 
 auto main() noexcept(false) -> int {
-  const int M = 1'024;
-  const int N = 1'024;
-  const int K = 1'024;
+  // const int M = 1'024;
+  // const int N = 1'024;
+  // const int K = 1'024;
+  int M = -1;
+  int N = -1;
+  int K = -1;
+  std::cin >> M >> N >> K;
   std::cout << "M=" << M << ", K=" << K << ", N=" << N << "\n";
 
   const size_t a_size  = static_cast<uint64_t>(M * K) * sizeof(float);
@@ -79,6 +83,7 @@ auto main() noexcept(false) -> int {
   cuda_check(cudaMemcpy(cutlass_data.data(), c_cutlass_ptr, M * N * 4, cudaMemcpyDeviceToHost));
   valid(c_cpu.data(), cuda_data.data(), M, N);
   valid(c_cpu.data(), cutlass_data.data(), M, N);
+  std::cout << "Run passed" << "\n";
 
   cuda_check(cudaFree(a_ptr));
   cuda_check(cudaFree(b_ptr));
