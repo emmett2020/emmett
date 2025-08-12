@@ -19,6 +19,7 @@ CompileFlags:
         - --cuda-path=/usr/local/cuda/
         - -L/usr/local/cuda/lib64
         - -I/usr/local/cuda/include
+        - '--cuda-gpu-arch=sm_80'
 
 Diagnostics:
   Suppress: ref_bad_target

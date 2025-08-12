@@ -9,6 +9,7 @@
 #include <curand_kernel.h>
 
 #include "gemm_ampere_simt.cuh"
+#include "gemm_ampere_tcore.cuh"
 #include "gemm_cutlass_simt.cuh"
 
 namespace {
