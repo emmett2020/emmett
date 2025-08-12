@@ -8,8 +8,8 @@
 #include <curand.h>
 #include <curand_kernel.h>
 
-#include "gemm_ampere.cuh"
-#include "gemm_cutlass.cuh"
+#include "gemm_ampere_simt.cuh"
+#include "gemm_cutlass_simt.cuh"
 
 namespace {
   /// b is col_major
@@ -41,14 +41,19 @@ namespace {
   }
 } // namespace
 
-auto main() noexcept(false) -> int {
-  // const int M = 1'024;
-  // const int N = 1'024;
-  // const int K = 1'024;
+auto main(int argc, char** argv) noexcept(false) -> int {
   int M = -1;
   int N = -1;
   int K = -1;
-  std::cin >> M >> N >> K;
+  if (argc != 4) {
+    M = 1'024;
+    N = 1'024;
+    K = 1'024;
+  } else {
+    M = atoi(argv[1]);
+    N = atoi(argv[2]);
+    K = atoi(argv[3]);
+  }
   std::cout << "M=" << M << ", K=" << K << ", N=" << N << "\n";
 
   const size_t a_size  = static_cast<uint64_t>(M * K) * sizeof(float);
@@ -81,7 +86,9 @@ auto main() noexcept(false) -> int {
   std::vector<float> cutlass_data(M * N);
   cuda_check(cudaMemcpy(cuda_data.data(), c_ptr, M * N * 4, cudaMemcpyDeviceToHost));
   cuda_check(cudaMemcpy(cutlass_data.data(), c_cutlass_ptr, M * N * 4, cudaMemcpyDeviceToHost));
+  std::cout << "Comparing cuda with cpu" << "\n";
   valid(c_cpu.data(), cuda_data.data(), M, N);
+  std::cout << "Comparing cutlass with cpu" << "\n";
   valid(c_cpu.data(), cutlass_data.data(), M, N);
   std::cout << "Run passed" << "\n";
 
