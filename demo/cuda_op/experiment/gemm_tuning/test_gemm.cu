@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <iostream>
 #include <cstdint>
+#include <stdexcept>
 #include <vector>
 #include <random>
 
@@ -20,6 +21,20 @@ namespace {
           sum += a_ptr[(m * K) + k] * b_ptr[(k * N) + n];
         }
         c_ptr[(m * N) + n] = sum;
+      }
+    }
+  }
+
+  void valid(const float* golden, const float* output, int M, int N) {
+    const float atol = 1e-5;
+    const float rtol = 1.3e-6;
+    for (int m = 0; m < M; ++m) {
+      for (int n = 0; n < N; ++n) {
+        float g = golden[m * N + n];
+        float o = output[m * N + n];
+        if (std::fabs(g - o) >= atol + rtol * std::fabs(o)) {
+          throw std::runtime_error{"mismatch"};
+        }
       }
     }
   }
@@ -57,11 +72,12 @@ auto main() noexcept(false) -> int {
   launch_gemm(a_ptr, b_ptr, M, N, K, c_ptr);
   CutlassGemmAmpere(a_ptr, b_ptr, M, N, K, c_cutlass_ptr);
 
-  print_device_buffer(a_ptr, M, K, "a_ptr");
-  print_device_buffer(b_ptr, N, K, "b_ptr");
-  print_host_buffer(c_cpu.data(), M, N, "c_cpu_ptr");
-  print_device_buffer(c_ptr, M, N, "c_dev_ptr");
-  print_device_buffer(c_cutlass_ptr, M, N, "c_cutlass_ptr");
+  std::vector<float> cuda_data(M * N);
+  std::vector<float> cutlass_data(M * N);
+  cuda_check(cudaMemcpy(cuda_data.data(), c_ptr, M * N * 4, cudaMemcpyDeviceToHost));
+  cuda_check(cudaMemcpy(cutlass_data.data(), c_cutlass_ptr, M * N * 4, cudaMemcpyDeviceToHost));
+  valid(c_cpu.data(), cuda_data.data(), M, N);
+  valid(c_cpu.data(), cutlass_data.data(), M, N);
 
   cuda_check(cudaFree(a_ptr));
   cuda_check(cudaFree(b_ptr));
