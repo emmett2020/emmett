@@ -3,10 +3,38 @@
 namespace {
 
   cudaError_t CutlassGemmAmpere(const float* A, const float* B, int M, int N, int K, float* C) {
-    using ColumnMajor = cutlass::layout::ColumnMajor;
-    using RowMajor    = cutlass::layout::RowMajor;
+    using RowMajor = cutlass::layout::RowMajor;
     using CutlassGemm =
       cutlass::gemm::device::Gemm< float, RowMajor, float, RowMajor, float, RowMajor >;
+    CutlassGemm gemm_operator{};
+
+    int lda = M;
+    int ldb = K;
+    int ldc = M;
+
+    float alpha = 1.0F;
+    float beta  = 0.0F;
+
+    CutlassGemm::Arguments args{
+      {M, N, K},
+      {A, lda},
+      {B, ldb},
+      {C, ldc},
+      {C, ldc},
+      {alpha, beta}
+    };
+
+    cutlass::Status status = gemm_operator(args);
+    if (status != cutlass::Status::kSuccess) {
+      return cudaErrorUnknown;
+    }
+    return cudaSuccess;
+  }
+
+  cudaError_t CutlassGemmAmpereTcore(const half* A, const half* B, int M, int N, int K, half* C) {
+    using RowMajor = cutlass::layout::RowMajor;
+    using CutlassGemm =
+      cutlass::gemm::device::Gemm< half, RowMajor, half, RowMajor, half, RowMajor >;
     CutlassGemm gemm_operator{};
 
     int lda = M;
