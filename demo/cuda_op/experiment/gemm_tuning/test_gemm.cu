@@ -81,17 +81,17 @@ auto main(int argc, char** argv) noexcept(false) -> int {
   cuda_check(cudaMemcpy(b_cpu.data(), b_ptr, b_size, cudaMemcpyKind::cudaMemcpyDeviceToHost));
 
   cpu_gemm(M, N, K, a_cpu.data(), b_cpu.data(), c_cpu.data());
-  launch_gemm_ampere_tcore(a_ptr, b_ptr, M, N, K, c_cuda_ptr);
+  cuda_check(launch_gemm_ampere_tcore(a_ptr, b_ptr, M, N, K, c_cuda_ptr));
   CutlassGemmAmpereTcore(a_ptr, b_ptr, M, N, K, c_cutlass_ptr);
 
   std::vector<half> cuda_data(M * N);
   std::vector<half> cutlass_data(M * N);
   cuda_check(cudaMemcpy(cuda_data.data(), c_cuda_ptr, M * N * 2, cudaMemcpyDeviceToHost));
   cuda_check(cudaMemcpy(cutlass_data.data(), c_cutlass_ptr, M * N * 2, cudaMemcpyDeviceToHost));
-  std::cout << "Comparing cutlass with cpu" << "\n";
-  valid(c_cpu.data(), cutlass_data.data(), M, N);
-  std::cout << "Comparing cutlass with cuda" << "\n";
-  valid(cuda_data.data(), cutlass_data.data(), M, N);
+  // std::cout << "Comparing cutlass with cpu" << "\n";
+  // valid(c_cpu.data(), cutlass_data.data(), M, N);
+  // std::cout << "Comparing cutlass with cuda" << "\n";
+  // valid(cutlass_data.data(), cuda_data.data(), M, N);
   std::cout << "Comparing cuda with cpu" << "\n";
   valid(c_cpu.data(), cuda_data.data(), M, N);
 

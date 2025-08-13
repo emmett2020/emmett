@@ -9,14 +9,20 @@
 using namespace nvcuda; // NOLINT
 
 namespace {
+  // Size per warp
   inline constexpr std::size_t tile_size = 16;
 
   __global__ void
   gemm_tcore(const half* A, const half* B, unsigned M, unsigned N, unsigned K, half* C) {
-    const unsigned wid = threadIdx.x / warpSize;
+    const unsigned wid       = threadIdx.x / warpSize;
+    const unsigned num_warps = 8;
 
-    unsigned row = blockIdx.y * tile_size;
-    unsigned col = blockIdx.x * tile_size;
+    unsigned row = blockIdx.y * num_warps * tile_size + wid * tile_size;
+    unsigned col = blockIdx.x * num_warps * tile_size + wid * tile_size;
+
+    // if (threadIdx.x % 32 == 0) {
+    //   printf("bx=%u by=%u wid=%u row=%u, col=%u\n", blockIdx.x, blockIdx.y, wid, row, col);
+    // }
 
     if (row >= M && col >= N) {
       return;
@@ -45,17 +51,19 @@ namespace {
     wmma::store_matrix_sync(C_, c_frag, N, wmma::mem_row_major);
   }
 
-  void launch_gemm_ampere_tcore(
+  cudaError_t launch_gemm_ampere_tcore(
     const half* A,
     const half* B,
     unsigned M,
     unsigned N,
     unsigned K,
     half* C) {
-    const dim3 block{32};
-    const dim3 grid{static_cast<unsigned int>((N + tile_size - 1) / tile_size),
-                    static_cast<unsigned int>((M + tile_size - 1) / tile_size)};
+    const dim3 block{256}; // 8 warps
+    const unsigned tile_size_per_blk = 8 * tile_size;
+    const dim3 grid{static_cast<unsigned int>((N + tile_size_per_blk - 1) / tile_size_per_blk),
+                    static_cast<unsigned int>((M + tile_size_per_blk - 1) / tile_size_per_blk)};
     gemm_tcore<<<grid, block>>>(A, B, M, N, K, C);
+    return cudaGetLastError();
   }
 
 } // namespace
