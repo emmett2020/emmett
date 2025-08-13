@@ -1,11 +1,10 @@
 #include <cutlass/gemm/device/gemm.h>
 
 namespace {
-
-  cudaError_t CutlassGemmAmpere(const float* A, const float* B, int M, int N, int K, float* C) {
+  cudaError_t CutlassGemmAmpereTcore(const half* A, const half* B, int M, int N, int K, half* C) {
     using RowMajor = cutlass::layout::RowMajor;
     using CutlassGemm =
-      cutlass::gemm::device::Gemm< float, RowMajor, float, RowMajor, float, RowMajor >;
+      cutlass::gemm::device::Gemm< half, RowMajor, half, RowMajor, half, RowMajor >;
     CutlassGemm gemm_operator{};
 
     int lda = M;
