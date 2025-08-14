@@ -15,16 +15,12 @@ namespace {
   __global__ void
   gemm_tcore(const half* A, const half* B, unsigned M, unsigned N, unsigned K, half* C) {
     const unsigned wid       = threadIdx.x / warpSize;
-    const unsigned num_warps = 8;
+    const unsigned num_warps = 2; // 0,1 handles same row different col
 
-    unsigned row = blockIdx.y * num_warps * tile_size + wid * tile_size;
-    unsigned col = blockIdx.x * num_warps * tile_size + wid * tile_size;
+    unsigned row = blockIdx.y * num_warps * tile_size + wid / 2 * tile_size;
+    unsigned col = blockIdx.x * num_warps * tile_size + wid % 2 * tile_size;
 
-    // if (threadIdx.x % 32 == 0) {
-    //   printf("bx=%u by=%u wid=%u row=%u, col=%u\n", blockIdx.x, blockIdx.y, wid, row, col);
-    // }
-
-    if (row >= M && col >= N) {
+    if (row >= M || col >= N) {
       return;
     }
 
@@ -58,8 +54,8 @@ namespace {
     unsigned N,
     unsigned K,
     half* C) {
-    const dim3 block{256}; // 8 warps
-    const unsigned tile_size_per_blk = 8 * tile_size;
+    const dim3 block{128}; // 4 warps, 2 warps handle same row different col
+    const unsigned tile_size_per_blk = 2 * tile_size;
     const dim3 grid{static_cast<unsigned int>((N + tile_size_per_blk - 1) / tile_size_per_blk),
                     static_cast<unsigned int>((M + tile_size_per_blk - 1) / tile_size_per_blk)};
     gemm_tcore<<<grid, block>>>(A, B, M, N, K, C);
