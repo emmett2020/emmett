@@ -26,7 +26,7 @@ namespace {
 
   void valid(const half* golden, const half* output, int M, int N) {
     const float atol = 0.001;
-    const float rtol = 0.20;
+    const float rtol = 0.020;
     for (int m = 0; m < M; ++m) {
       for (int n = 0; n < N; ++n) {
         float g = golden[m * N + n];
@@ -88,8 +88,8 @@ auto main(int argc, char** argv) noexcept(false) -> int {
   std::vector<half> cutlass_data(M * N);
   cuda_check(cudaMemcpy(cuda_data.data(), c_cuda_ptr, M * N * 2, cudaMemcpyDeviceToHost));
   cuda_check(cudaMemcpy(cutlass_data.data(), c_cutlass_ptr, M * N * 2, cudaMemcpyDeviceToHost));
-  // std::cout << "Comparing cutlass with cpu" << "\n";
-  // valid(c_cpu.data(), cutlass_data.data(), M, N);
+  std::cout << "Comparing cutlass with cpu" << "\n";
+  valid(c_cpu.data(), cutlass_data.data(), M, N);
   // std::cout << "Comparing cutlass with cuda" << "\n";
   // valid(cutlass_data.data(), cuda_data.data(), M, N);
   std::cout << "Comparing cuda with cpu" << "\n";
