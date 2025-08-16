@@ -8,7 +8,9 @@
 #include <curand.h>
 #include <curand_kernel.h>
 
-#include "gemm_ampere_tcore.cuh"
+#include "gemm_base.cuh"
+#include "ampere/tcore_base.cuh"
+#include "ampere/tcore_smem.cuh"
 #include "gemm_cutlass_tcore.cuh"
 
 namespace {
@@ -81,7 +83,7 @@ auto main(int argc, char** argv) noexcept(false) -> int {
   cuda_check(cudaMemcpy(b_cpu.data(), b_ptr, b_size, cudaMemcpyKind::cudaMemcpyDeviceToHost));
 
   cpu_gemm(M, N, K, a_cpu.data(), b_cpu.data(), c_cpu.data());
-  cuda_check(launch_gemm_ampere_tcore(a_ptr, b_ptr, M, N, K, c_cuda_ptr));
+  cuda_check(launch_gemm_ampere_tcore_base(a_ptr, b_ptr, M, N, K, c_cuda_ptr));
   CutlassGemmAmpereTcore(a_ptr, b_ptr, M, N, K, c_cutlass_ptr);
 
   std::vector<half> cuda_data(M * N);

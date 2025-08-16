@@ -4,7 +4,7 @@
 #include <cuda_runtime.h>
 #include <mma.h>
 
-#include "gemm_base.cuh"
+// #include "gemm_base.cuh"
 
 using namespace nvcuda; // NOLINT
 
@@ -47,7 +47,7 @@ namespace {
     wmma::store_matrix_sync(C_, c_frag, N, wmma::mem_row_major);
   }
 
-  cudaError_t launch_gemm_ampere_tcore(
+  cudaError_t launch_gemm_ampere_tcore_base(
     const half* A,
     const half* B,
     unsigned M,

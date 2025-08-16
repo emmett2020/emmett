@@ -4,8 +4,6 @@
 #include <cuda_runtime.h>
 #include <mma.h>
 
-#include "gemm_base.cuh"
-
 using namespace nvcuda; // NOLINT
 
 namespace {
@@ -67,7 +65,7 @@ namespace {
     }
   }
 
-  cudaError_t launch_gemm_ampere_tcore(
+  cudaError_t launch_gemm_ampere_tcore_smem(
     const half* A,
     const half* B,
     unsigned M,
