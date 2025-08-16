@@ -13,7 +13,13 @@ namespace {
 #define FLOAT4(pointer)      (reinterpret_cast<float4*>(&(pointer))[0]) // NOLINT
 
   template <unsigned BM, unsigned BN, unsigned BK, unsigned PAD>
-  __global__ void gemm_tcore(half* A, half* B, unsigned M, unsigned N, unsigned K, half* C) {
+  __global__ void gemm_tcore(
+    half* __restrict__ A,
+    half* __restrict__ B,
+    unsigned M,
+    unsigned N,
+    unsigned K,
+    half* __restrict__ C) {
     extern __shared__ half smem[];
     half* As = smem;
     half* Bs = smem + 2 * BM * (BK + PAD); // Ping-pong needs two buffers.
@@ -78,13 +84,13 @@ namespace {
       half* b_gmem_ptr2 = &B[(b_gmem_row + 2) * N + b_gmem_col];
       half* b_gmem_ptr3 = &B[(b_gmem_row + 3) * N + b_gmem_col];
 
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(a_smem_ptr0), "l"(a_gmem_ptr0));
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(a_smem_ptr1), "l"(a_gmem_ptr1));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(a_smem_ptr0), "l"(a_gmem_ptr0));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(a_smem_ptr1), "l"(a_gmem_ptr1));
 
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr0), "l"(b_gmem_ptr0));
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr1), "l"(b_gmem_ptr1));
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr2), "l"(b_gmem_ptr2));
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr3), "l"(b_gmem_ptr3));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr0), "l"(b_gmem_ptr0));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr1), "l"(b_gmem_ptr1));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr2), "l"(b_gmem_ptr2));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr3), "l"(b_gmem_ptr3));
 
       asm("cp.async.commit_group;\n" ::);
       asm("cp.async.wait_group 0;\n" ::);
@@ -95,6 +101,7 @@ namespace {
     constexpr int KP = BK + PAD;
     constexpr int NP = BN + PAD;
 
+#pragma unroll
     for (int t = 1; t < T; ++t) { // Starts from 1
       unsigned a_gmem_col    = t * BK + a_smem_col;
       unsigned a_gmem_offset = a_gmem_row * K + a_gmem_col;
@@ -122,13 +129,13 @@ namespace {
       half* b_gmem_ptr2 = &B[(b_gmem_row + 2) * N + b_gmem_col];
       half* b_gmem_ptr3 = &B[(b_gmem_row + 3) * N + b_gmem_col];
 
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(a_smem_ptr0), "l"(a_gmem_ptr0));
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(a_smem_ptr1), "l"(a_gmem_ptr1));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(a_smem_ptr0), "l"(a_gmem_ptr0));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(a_smem_ptr1), "l"(a_gmem_ptr1));
 
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr0), "l"(b_gmem_ptr0));
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr1), "l"(b_gmem_ptr1));
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr2), "l"(b_gmem_ptr2));
-      asm("cp.async.ca.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr3), "l"(b_gmem_ptr3));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr0), "l"(b_gmem_ptr0));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr1), "l"(b_gmem_ptr1));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr2), "l"(b_gmem_ptr2));
+      asm("cp.async.cg.shared.global [%0], [%1], 16;\n" ::"r"(b_smem_ptr3), "l"(b_gmem_ptr3));
 
       int sa_offset_po = smem_idx_pong * sa_tile;
       load_matrix_sync(a_frags[0][0], &As[sa_offset_po + (warp_load_m * 64 + 0) * KP + 0], KP);
