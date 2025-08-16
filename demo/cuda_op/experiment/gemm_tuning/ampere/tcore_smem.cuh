@@ -221,11 +221,14 @@ namespace {
     if (N % BN != 0 || M % BM != 0 || K % BK != 0) {
       throw std::runtime_error("not supported un-aligned case");
     }
+    constexpr unsigned PAD = 8;
+    cudaFuncSetAttribute(gemm_tcore<BM, BN, BK, PAD>,
+                         cudaFuncAttributeMaxDynamicSharedMemorySize,
+                         98'304);
 
     constexpr size_t num_threads = 256;
 
     const dim3 grid{N / BN, M / BM};
-    constexpr unsigned PAD  = 0;
     constexpr unsigned smem = 2 * (BM * (BK + PAD) + BK * (BN + PAD)) * sizeof(half);
     gemm_tcore<BM, BN, BK, PAD><<<grid, num_threads, smem>>>(
       const_cast<half*>(A), // NOLINT
