@@ -64,7 +64,6 @@ namespace {
     throw_if(H <= 0, "H must be greater than 0");
     throw_if(W <= 0, "W must be greater than 0");
     int num_elements = H * W;
-    size_t byte_size = num_elements * sizeof(float);
     if (!title.empty()) {
       std::cout << title << "\n";
     }
