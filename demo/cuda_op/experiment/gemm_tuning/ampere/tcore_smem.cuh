@@ -5,12 +5,14 @@
 #include <mma.h>
 #include <stdexcept>
 
-using namespace nvcuda; // NOLINT
+using namespace nvcuda;                                                 // NOLINT
 
 namespace {
+#define OFFSET(row, col, ld) ((row) * (ld) + (col))                     // NOLINT
+#define FLOAT4(pointer)      (reinterpret_cast<float4*>(&(pointer))[0]) // NOLINT
+
   template <unsigned BM, unsigned BN, unsigned BK>
-  __global__ void
-  gemm_tcore(const half* A, const half* B, unsigned M, unsigned N, unsigned K, half* C) {
+  __global__ void gemm_tcore(half* A, half* B, unsigned M, unsigned N, unsigned K, half* C) {
     __shared__ half As[BM][BK];
     __shared__ half Bs[BK][BN];
 
@@ -23,9 +25,9 @@ namespace {
     const unsigned a_row_smem_start = tid / 4 * 2;
     const unsigned a_row_gmem_start = a_row_blk_start + a_row_smem_start;
 
-    const unsigned b_col_blk_start  = bx * BN;
-    const unsigned b_col_smem_start = (tid % 32) * 8;
-    const unsigned b_col_gmem_start = b_col_blk_start + b_col_smem_start;
+    const unsigned b_col_blk_start = bx * BN;
+    const unsigned b_col_smem      = (tid % 32) * 8;
+    const unsigned b_col_gmem      = b_col_blk_start + b_col_smem;
 
     const unsigned warp_load_m = wid & 1;
     const unsigned warp_load_n = wid / 2;
@@ -43,28 +45,21 @@ namespace {
     unsigned int T = K / BK;
     for (int t = 0; t < T; ++t) {
       // Load A to shared memory
-      unsigned a_col_smem_start = tid % 4 * 8;
-      unsigned a_col_gmem_start = t * BK + a_col_smem_start;
+      unsigned a_col_smem_start  = tid % 4 * 8;
+      unsigned a_col_gmem_start  = t * BK + a_col_smem_start;
+      unsigned a_col_gmem_offset = a_row_gmem_start * K + a_col_gmem_start;
 
-      for (int i = 0; i < 8; ++i) {
-        unsigned k_in_tile = a_col_smem_start + i;
-        unsigned k         = a_col_gmem_start + i;
-
-        As[a_row_smem_start][k_in_tile]     = A[a_row_gmem_start * K + k];
-        As[a_row_smem_start + 1][k_in_tile] = A[(a_row_gmem_start + 1) * K + k];
-      }
+      FLOAT4(As[a_row_smem_start][a_col_smem_start])     = FLOAT4(A[a_col_gmem_offset]);
+      FLOAT4(As[a_row_smem_start + 1][a_col_smem_start]) = FLOAT4(A[a_col_gmem_offset + K]);
 
       // Load B to shared memory
-      unsigned b_row_smem_start = tid / 32 * 4;
-      unsigned b_row_gmem_start = t * BK + b_row_smem_start;
-      for (int i = 0; i < 8; ++i) {
-        unsigned b_col = b_col_smem_start + i;
+      unsigned b_row_smem       = tid / 32 * 4;
+      unsigned b_row_gmem_start = t * BK + b_row_smem;
 
-        Bs[b_row_smem_start + 0][b_col] = B[(b_row_gmem_start + 0) * N + b_col_gmem_start + i];
-        Bs[b_row_smem_start + 1][b_col] = B[(b_row_gmem_start + 1) * N + b_col_gmem_start + i];
-        Bs[b_row_smem_start + 2][b_col] = B[(b_row_gmem_start + 2) * N + b_col_gmem_start + i];
-        Bs[b_row_smem_start + 3][b_col] = B[(b_row_gmem_start + 3) * N + b_col_gmem_start + i];
-      }
+      FLOAT4(Bs[b_row_smem + 0][b_col_smem]) = FLOAT4(B[(b_row_gmem_start + 0) * N + b_col_gmem]);
+      FLOAT4(Bs[b_row_smem + 1][b_col_smem]) = FLOAT4(B[(b_row_gmem_start + 1) * N + b_col_gmem]);
+      FLOAT4(Bs[b_row_smem + 2][b_col_smem]) = FLOAT4(B[(b_row_gmem_start + 2) * N + b_col_gmem]);
+      FLOAT4(Bs[b_row_smem + 3][b_col_smem]) = FLOAT4(B[(b_row_gmem_start + 3) * N + b_col_gmem]);
       __syncthreads();
 
       wmma::load_matrix_sync(a_frags[0][0], &As[warp_load_m * 64 + 0][0], BK);
@@ -124,7 +119,8 @@ namespace {
     constexpr size_t num_threads = 256;
 
     const dim3 grid{N / BN, M / BM};
-    gemm_tcore<BM, BN, TK><<<grid, num_threads>>>(A, B, M, N, K, C);
+    gemm_tcore<BM, BN, TK>
+      <<<grid, num_threads>>>(const_cast<half*>(A), const_cast<half*>(B), M, N, K, C); // NOLINT
     return cudaGetLastError();
   }
 
