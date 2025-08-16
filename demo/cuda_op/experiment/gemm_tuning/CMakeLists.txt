@@ -3,7 +3,7 @@ project(experiment LANGUAGES CXX CUDA)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CUDA_STANDARD 20)
-set(CMAKE_CUDA_ARCHITECTURES 80 86 87 89 90)
+set(CMAKE_CUDA_ARCHITECTURES 89)
 
 find_package(CUDAToolkit REQUIRED)
 include(cmake/FetchCutlass.cmake)
