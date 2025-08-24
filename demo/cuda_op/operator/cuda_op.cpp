@@ -8,13 +8,14 @@
 // #include "flash_attention/flash_attention.h"
 // #include "softmax/softmax.h"
 // #include "sorting/sorting.h"
-#include "conv/conv.h"
+// #include "conv/conv.h"
+#include "rms_norm/rms_norm.h"
 
 namespace cuda_op { } // namespace cuda_op
 
 PYBIND11_MODULE(cuda_op, m) {
   m.doc() = "High performance cuda kernels";
-  m.def("conv2d", &cuda_op::torch_conv2d);
+  m.def("rms_norm", &cuda_op::torch_rms_norm);
 }
 
 // PYBIND11_MODULE(cuda_op, m) {
@@ -33,4 +34,5 @@ PYBIND11_MODULE(cuda_op, m) {
 //   m.def("safe_softmax", &cuda_op::torch_safe_softmax);
 //   m.def("flash_attention", &cuda_op::torch_flash_attn);
 //   m.def("sort", &cuda_op::torch_sorting);
+//   m.def("conv2d", &cuda_op::torch_conv2d);
 // }
