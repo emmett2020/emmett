@@ -6,35 +6,7 @@
 #include "common/utils.h"
 
 namespace cuda_op {
-  struct __align__(8) Data {
-    float m; // max value
-    float s; // exp sum or cur data
-  };
-
-  // 求和操作函数对象
-  struct Sum {
-    template <typename T>
-    __device__ __forceinline__ T operator()(T a, T b) const {
-      return a + b;
-    }
-  };
-
-  // 最大值操作函数对象
-  struct Max {
-    template <typename T>
-    __device__ __forceinline__ T operator()(T a, T b) const {
-      return a > b ? a : b;
-    }
-  };
-
-  __forceinline__ __device__ Data update(const Data& a, const Data& b) {
-    Data ret;
-    ret.m = max(a.m, b.m);
-    ret.s = a.s * __expf(a.m - ret.m) + b.s * __expf(b.m - ret.m);
-    return ret;
-  }
-
-  // Not fully validated. But we could refer this method.
+  /// WARN: Not fully validated. But we could refer this method.
   template <typename T, typename Op>
   __device__ __forceinline__ T warp_reduce(T val, Op op, unsigned mask = 0xffffffff) {
     constexpr int warp_size = 32;
@@ -67,37 +39,6 @@ namespace cuda_op {
     }
 
     return current.orig;
-  }
-
-  //   __forceinline__ __device__ float warp_reduce_sum(float val) {
-  // #pragma unroll
-  //     for (int s = warpSize >> 1; s > 0; s >>= 1) {
-  //       val += __shfl_down_sync(0xFFFFFFFF, val, s);
-  //     }
-  //     return val;
-  //   }
-
-  __forceinline__ __device__ float block_reduce_sum(float val, float* shared) {
-    const unsigned num_warps = blockDim.x / warpSize;
-
-    const unsigned tid = threadIdx.x;
-    const unsigned lid = tid % warpSize;
-    const unsigned wid = tid / warpSize;
-
-    val = warp_reduce(val, Sum{});
-    // val = warp_reduce_sum(val);
-    if (lid == 0) {
-      shared[wid] = val;
-    }
-    __syncthreads();
-
-    val = tid < num_warps ? shared[lid] : 0.F;
-    if (wid == 0) {
-      val = warp_reduce(val, Sum{});
-      // val = warp_reduce_sum(val);
-    }
-
-    return val;
   }
 
   // Reduce in C dimensions.
