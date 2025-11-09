@@ -12,24 +12,27 @@
 | ![tutorial](https://github.com/emmett2020/emmett/actions/workflows/ci_tutorial.yml/badge.svg)                   |
 
 
-A suite of tested C/C++/CUDA/CMake projects and cross-platform scripts (Shell/Lua/Python), complete with development configurations. All content is validated by GitHub CI. Issues and PRs are welcome!
+A suite of tested C/C++/CUDA/CMake projects and utility scripts (Shell/Lua/Python), complete with development configurations. All content is validated by GitHub CI. Issues and PRs are welcome!
 
-Note: Please retain the copyright notice when using the content from this repository.
+**NOTE**:
+
+1. This repository is primarily for **personal use**, and any content may be subject to change in the future. However, the repository will still strive to adhere to mainstream version release rules as much as possible.
+2. Please retain the copyright notice when using the content from this repository.
 
 Below is a detailed introduction to subdirectories:
 
-| directory | Notes                                                          |
+| Directory | Explanation                                                    |
 | -------   | ------------------------------------------------               |
 | cpp       | Contains several C/C++ projects                                |
 | cuda      | Contains several CUDA projects                                 |
 | cmake     | Contains CMake utility                                         |
 | tutorial  | Contains some structured and educational code                  |
-| script    | Contains some platform specific scripts                        |
-| config    | Contains configs for zsh/neovim/docker and so on               |
+| script    | Contains some platform specific scripts I wrote                |
+| config    | Contains configurations for some popular tools I used          |
 
 
 # How to build subprojects
-Each subproject will have its own environmental dependency requirements. Generally, a Linux platform and a compiler supporting C++20 or later are required. Specific environmental configuration requirements depend on the subproject. Some more complex subprojects may provide documentation for environment setup scripts.
+Each subproject may have its own environmental dependency requirements. Generally, a Linux platform and a compiler supporting C++20 or later are required. Specific environmental configuration requirements depend on the subproject. Some more complex subprojects may provide documentation for environment setup scripts.
 
 Once the environment meets the requirements, the typical compilation process is as follows:
 ```bash
