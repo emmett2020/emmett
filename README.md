@@ -12,25 +12,25 @@
 | ![tutorial](https://github.com/emmett2020/emmett/actions/workflows/ci_tutorial.yml/badge.svg)                   |
 
 
-This repository contains code examples for C/C++/CMake, commonly used scripts for various platforms, development environment configuration files, and more. The relevant content has been tested as much as possible via GitHub CI and can be used directly. If you have any good ideas, please feel free to submit issues and PRs.
+This repository contains several C/C++/CUDA/CMake projects, commonly used Shell/Lua/Python scripts for various platforms, development environment configuration files, and other interesting things. The relevant content has been tested as much as possible via GitHub CI and can be used directly. If you have any good ideas, please feel free to submit issues and PRs.
 
 This repository is primarily for personal use, and any content may be subject to change in the future. However, the repository will still strive to adhere to mainstream version release rules as much as possible.
 
 Note: Please retain the copyright notice when using the content from this repository.
 
-Below is a detailed introduction to some subdirectories:
+Below is a detailed introduction to subdirectories:
 
 | directory | Notes                                                          |
 | -------   | ------------------------------------------------               |
-| demo      | Contains some small C++ projects                               |
+| cpp       | Contains several C/C++ projects                                |
+| cuda      | Contains several CUDA projects                                 |
+| cmake     | Contains CMake utility                                         |
 | tutorial  | Contains some structured and educational code                  |
-| bench     | Contains some benchmark code for C++                           |
-| script    | Contains some useful scripts                                   |
+| script    | Contains some platform specific scripts                        |
 | config    | Contains configs for zsh/neovim/docker and so on               |
-| cmake     | Contains CMake files                                           |
 
 
-# How to build C/C++ Projects
+# How to build subprojects
 Each subproject will have its own environmental dependency requirements. Generally, a Linux platform and a compiler supporting C++20 or later are required. Specific environmental configuration requirements depend on the subproject. Some more complex subprojects may provide documentation for environment setup scripts.
 
 Once the environment meets the requirements, the typical compilation process is as follows:
@@ -43,9 +43,9 @@ make -j`nproc`
 ```
 
 # How to contribution to this project
-[contribute](./docs/Contribution.md)
+[contribute](./doc/Contribution.md)
 
 # What will support in the future
-[TODOs](./docs/TODOs.md)
+[TODOs](./doc/TODOs.md)
 
 

@@ -1,7 +1,6 @@
-// https://github.com/NVIDIA/cuda-samples/tree/master/Samples/0_Introduction/vectorAdd
 #include <array>
-#include <cstddef>
-#include <cstring>
+#include <format>
+#include <source_location>
 
 namespace {
 __global__ void VecAdd(const float *A, const float *B, float *C, int N) {
@@ -10,6 +9,18 @@ __global__ void VecAdd(const float *A, const float *B, float *C, int N) {
     C[i] = A[i] + B[i];
   }
 }
+
+inline void cuda_check(cudaError_t err, std::source_location loc = std::source_location::current()) {
+    if (err != cudaSuccess) {
+      auto str = std::format(
+        "[CUDA ERROR] at {}:{}:{}: {}",
+        loc.file_name(),
+        loc.line(),
+        loc.function_name(),
+        cudaGetErrorString(err));
+      throw std::runtime_error(str);
+    }
+  }
 
 } // namespace
 
