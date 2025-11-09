@@ -12,9 +12,7 @@
 | ![tutorial](https://github.com/emmett2020/emmett/actions/workflows/ci_tutorial.yml/badge.svg)                   |
 
 
-This repository contains several C/C++/CUDA/CMake projects, commonly used Shell/Lua/Python scripts for various platforms, development environment configuration files, and other interesting things. The relevant content has been tested as much as possible via GitHub CI and can be used directly. If you have any good ideas, please feel free to submit issues and PRs.
-
-This repository is primarily for personal use, and any content may be subject to change in the future. However, the repository will still strive to adhere to mainstream version release rules as much as possible.
+A suite of tested C/C++/CUDA/CMake projects and cross-platform scripts (Shell/Lua/Python), complete with development configurations. All content is validated by GitHub CI. Issues and PRs are welcome!
 
 Note: Please retain the copyright notice when using the content from this repository.
 
