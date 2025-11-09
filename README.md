@@ -12,6 +12,8 @@
 | ![tutorial](https://github.com/emmett2020/emmett/actions/workflows/ci_tutorial.yml/badge.svg)                   |
 
 
+# Introduction
+
 A suite of tested C/C++/CUDA/CMake projects and utility scripts (Shell/Lua/Python), complete with development configurations. All content is validated by GitHub CI. Issues and PRs are welcome!
 
 **NOTE**:
