@@ -1,3 +1,7 @@
+# 2025-11-11
+1. Rename `demo` directory to `cpp` and remove non-cpp projects.
+
+
 # 2025-01-19
 1. Remove old Cpp source files to make structure more simplified
 2. Add basic Github workflow to guard scripts, configs, and cpp codes.
