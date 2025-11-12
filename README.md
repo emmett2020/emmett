@@ -14,7 +14,7 @@
 
 # Introduction
 
-A suite of tested C/C++/CUDA/CMake projects and utility scripts (Shell/Lua/Python), complete with development configurations. All content is validated by GitHub CI. Issues and PRs are welcome!
+This project is primarily for personal use, including small C++ projects I've written, projects in the MLSYS field, as well as configurations for various tools and scripts for specific tasks. All content is validated by GitHub CI. Issues and PRs are welcome!
 
 **NOTE**:
 
@@ -25,8 +25,8 @@ Below is a detailed introduction to subdirectories:
 
 | Directory | Explanation                                                    |
 | -------   | ------------------------------------------------               |
-| cpp       | Contains several C/C++ projects                                |
-| cuda      | Contains several CUDA projects                                 |
+| cpp       | Contains several C/C++ projects I've written                   |
+| mlsys     | Contains several mlsys projects                                |
 | cmake     | Contains CMake utility                                         |
 | tutorial  | Contains some structured and educational code                  |
 | script    | Contains some platform specific scripts I wrote                |

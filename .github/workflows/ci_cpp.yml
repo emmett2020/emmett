@@ -1,12 +1,12 @@
-name: CI Demo on Ubuntu 24.04
+name: CI CPP on Ubuntu 24.04
 on:
   pull_request:
     branches: [master]
-    paths: 'demo/**'
+    paths: 'cpp/**'
 
 jobs:
   build-tests:
-    name: "demo-ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
+    name: "cpp-ubuntu-24.04-${{ matrix.compiler }}-${{ matrix.version }}"
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -38,15 +38,18 @@ jobs:
         id: filter
         with:
           filters: |
-            multithreads_read_same_file: 'demo/multithreads_read_same_file/**'
-            memory_leak: 'demo/memory_leak_detector/**'
+            multithreads_read_same_file: 'cpp/general/multithreads_read_same_file/**'
+            memory_leak: 'cpp/general/memory_leak_detector/**'
+            example: 'cpp/bench/example/**'
+            memory_allocation: 'cpp/bench/memory_allocation/**'
+            char_classifier: 'cpp/bench/char_classifier/**'
 
-      - name: Compile And Run multithreads_read_same_file
+      - name: Run multithreads_read_same_file
         if: steps.filter.outputs.multithreads_read_same_file == 'true'
         run: |
           set -euo pipefail
           sudo apt-get install -y libboost-all-dev
-          cd demo/multithreads_read_same_file/
+          cd cpp/multithreads_read_same_file/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
           ./build/main
@@ -56,7 +59,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get install -y valgrind
-          cd demo/memory_leak_detector/
+          cd cpp/memory_leak_detector/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
           if valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/memory_leak; then
@@ -69,7 +72,7 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf build
-          cd demo/memory_leak_detector/
+          cd cpp/memory_leak_detector/
           cmake -S . -B build -GNinja -DENABLE_ASAN=on
           cmake --build build -v -j`nproc`
           if ./build/memory_leak; then
@@ -77,4 +80,29 @@ jobs:
           fi
           ./build/safely_allocate_memory
 
+      - name: Run example
+        if: steps.filter.outputs.example == 'true'
+        run: |
+          set -euo pipefail
+          cd cpp/bench/example/
+          cmake -S . -B build -GNinja
+          cmake --build build -v -j`nproc`
+          ./build/example
 
+      - name: Run memory_allocation
+        if: steps.filter.outputs.memory_allocation == 'true'
+        run: |
+          set -euo pipefail
+          cd cpp/bench/memory_allocation/
+          cmake -S . -B build -GNinja
+          cmake --build build -v -j`nproc`
+          ./build/memory_allocation
+
+      - name: Run char_classifier
+        if: steps.filter.outputs.char_classifier == 'true'
+        run: |
+          set -euo pipefail
+          cd cpp/bench/char_classifier/
+          cmake -S . -B build -GNinja
+          cmake --build build -v -j`nproc`
+          ./build/char_classifier

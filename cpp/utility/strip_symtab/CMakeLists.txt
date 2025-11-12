@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(emmett)
+project(cpp)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CXX_STANDARD_REQUIRED TRUE)
@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}")
 
-set(root_path ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
+set(root_path ${CMAKE_CURRENT_SOURCE_DIR}/../../../..)
 include(${root_path}/cmake/ReserveDebugSymbolAndStripSymtab.cmake)
 
 add_library(foo SHARED foo.cpp)

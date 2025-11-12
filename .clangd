@@ -14,19 +14,19 @@ If:
     CompilationDatabase: ./cpp/bench/char_classifier/build
 
 If:
-  PathMatch: ./cpp/bench/string_view_vs_string/
+  PathMatch: ./cpp/bench/memory_allocation/
   CompileFlags:
-    CompilationDatabase: ./cpp/bench/string_view_vs_string/build
+    CompilationDatabase: ./cpp/bench/memory_allocation/build
 
 If:
-  PathMatch: ./cpp/multithreads_read_same_file/
+  PathMatch: ./cpp/general/multithreads_read_same_file/
   CompileFlags:
-    CompilationDatabase: ./cpp/multithreads_read_same_file/build
+    CompilationDatabase: ./cpp/general/multithreads_read_same_file/build
 
 If:
-  PathMatch: ./cpp/memory_leak_detector/
+  PathMatch: ./cpp/general/memory_leak_detector/
   CompileFlags:
-    CompilationDatabase: ./cpp/memory_leak_detector/build
+    CompilationDatabase: ./cpp/general/memory_leak_detector/build
 
 ##################### tutorial/
 If:
