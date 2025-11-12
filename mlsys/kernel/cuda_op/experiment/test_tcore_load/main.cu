@@ -11,7 +11,7 @@ namespace {
     wmma::fragment<wmma::matrix_b, 16, 16, 16, half, wmma::col_major> b_frag;
     load_matrix_sync(b_frag, data, N);
     if (threadIdx.x == 0) {
-      printf("elmenets=%d\n", b_frag.num_elements);
+      printf("elements=%d\n", b_frag.num_elements);
       for (int n = 0; n < b_frag.num_elements; ++n) {
         printf("%f\n", float(b_frag.x[n]));
       }

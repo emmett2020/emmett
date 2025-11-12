@@ -54,13 +54,13 @@ namespace cuda_op {
     const unsigned num_elements = C * H * W;
     const unsigned tid          = threadIdx.x;
     const unsigned n            = blockIdx.x;
-    const unsigned batch_offst  = n * C * H * W;
+    const unsigned batch_offset  = n * C * H * W;
 
     constexpr unsigned vectorized_dim = 4;
     unsigned num_elements_compressed  = num_elements / vectorized_dim;
 
-    const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + batch_offst);
-    float4* output_ptr4      = reinterpret_cast<float4*>(output_ptr + batch_offst);
+    const float4* input_ptr4 = reinterpret_cast<const float4*>(input_ptr + batch_offset);
+    float4* output_ptr4      = reinterpret_cast<float4*>(output_ptr + batch_offset);
 
     // 1. Compute input sum & square sum
     float sum  = 0.F;

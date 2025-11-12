@@ -24,7 +24,7 @@ namespace {
 
     // e.g.:
     // bank0 is visited by lane0 and lane16,
-    // lane0  visit the begginning of bank0
+    // lane0  visit the beginning of bank0
     // lane16 visit bank0 + 128 bytes
     unsigned sub_bank_idx            = lane_id / 16;
     unsigned sub_bank_element_offset = sub_bank_idx * 32;

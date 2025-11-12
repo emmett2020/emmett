@@ -39,7 +39,7 @@ extern "C" void solve(float* data, int N) {
     float* dev_padded;
     cudaMalloc(&dev_padded, padded_N * sizeof(float));
 
-    // Copiar datos originales
+    // Copiar datos originals
     cudaMemcpy(dev_padded, data, N * sizeof(float), cudaMemcpyDeviceToDevice);
 
     // Rellenar con FLT_MAX

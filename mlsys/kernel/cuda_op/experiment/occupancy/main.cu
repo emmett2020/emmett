@@ -39,7 +39,7 @@ int main() {
 
   AchievedOccupancy<<<24, 24 * 32>>>(buffer, size / 4);
 
-  // User inputed block counter doesn't affect active blocks.
+  // User inputted block counter doesn't affect active blocks.
   AchievedOccupancy<<<128, 24 * 32>>>(buffer, size / 4);
 
   AchievedOccupancyCompute<<<128, 24 * 32>>>(buffer, size / 4);
