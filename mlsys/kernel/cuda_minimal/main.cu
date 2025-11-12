@@ -1,5 +1,6 @@
 #include <array>
 #include <format>
+#include <cstring>
 #include <source_location>
 
 namespace {
