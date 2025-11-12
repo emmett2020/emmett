@@ -1,0 +1,61 @@
+
+Fatbin elf code:
+================
+arch = sm_52
+code version = [1,7]
+host = linux
+compile_size = 64bit
+
+Fatbin elf code:
+================
+arch = sm_52
+code version = [1,7]
+host = linux
+compile_size = 64bit
+
+Fatbin ptx code:
+================
+arch = sm_52
+code version = [8,7]
+host = linux
+compile_size = 64bit
+compressed
+ptxasOptions = 
+
+//
+//
+//
+//
+//
+//
+
+.version 8.7
+.target sm_52
+.address_size 64
+
+
+.entry _ZN35_GLOBAL__N__56e6bcca_7_main_cu_main4FillEPff(
+.param .u64 _ZN35_GLOBAL__N__56e6bcca_7_main_cu_main4FillEPff_param_0,
+.param .f32 _ZN35_GLOBAL__N__56e6bcca_7_main_cu_main4FillEPff_param_1
+)
+{
+.reg .f32 %f<2>;
+.reg .b32 %r<5>;
+.reg .b64 %rd<5>;
+
+
+ld.param.u64 %rd1, [_ZN35_GLOBAL__N__56e6bcca_7_main_cu_main4FillEPff_param_0];
+ld.param.f32 %f1, [_ZN35_GLOBAL__N__56e6bcca_7_main_cu_main4FillEPff_param_1];
+cvta.to.global.u64 %rd2, %rd1;
+mov.u32 %r1, %tid.x;
+mov.u32 %r2, %ctaid.x;
+mov.u32 %r3, %ntid.x;
+mad.lo.s32 %r4, %r2, %r3, %r1;
+mul.wide.u32 %rd3, %r4, 4;
+add.s64 %rd4, %rd2, %rd3;
+st.global.f32 [%rd4], %f1;
+ret;
+
+}
+
+

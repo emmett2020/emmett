@@ -1,4 +1,4 @@
-name: Test Ubuntu Scripts on Ubuntu
+name: Test Scripts on Ubuntu
 on:
   pull_request:
     branches: [master]

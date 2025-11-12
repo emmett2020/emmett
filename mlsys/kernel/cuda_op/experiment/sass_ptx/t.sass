@@ -1,0 +1,56 @@
+
+Fatbin elf code:
+================
+arch = sm_52
+code version = [1,7]
+host = linux
+compile_size = 64bit
+
+	code for sm_52
+
+Fatbin elf code:
+================
+arch = sm_52
+code version = [1,7]
+host = linux
+compile_size = 64bit
+
+	code for sm_52
+		Function : _ZN35_GLOBAL__N__56e6bcca_7_main_cu_main4FillEPff
+	.headerflags	@"EF_CUDA_TEXMODE_UNIFIED EF_CUDA_64BIT_ADDRESS EF_CUDA_SM52 EF_CUDA_VIRTUAL_SM(EF_CUDA_SM52)"
+                                                                                 /* 0x001c7c00e22007f6 */
+        /*0008*/                   MOV R1, c[0x0][0x20] ;                        /* 0x4c98078000870001 */
+        /*0010*/                   S2R R0, SR_TID.X ;                            /* 0xf0c8000002170000 */
+        /*0018*/                   S2R R2, SR_CTAID.X ;                          /* 0xf0c8000002570002 */
+                                                                                 /* 0x001fd840fec20ff1 */
+        /*0028*/                   XMAD R0, R2.reuse, c[0x0] [0x8], R0 ;         /* 0x4e00000000270200 */
+        /*0030*/                   XMAD.MRG R3, R2.reuse, c[0x0] [0x8].H1, RZ ;  /* 0x4f107f8000270203 */
+        /*0038*/                   XMAD.PSL.CBCC R2, R2.H1, R3.H1, R0 ;          /* 0x5b30001800370202 */
+                                                                                 /* 0x001fc400fcc207f1 */
+        /*0048*/                   SHR.U32 R0, R2.reuse, 0x1e ;                  /* 0x3828000001e70200 */
+        /*0050*/                   ISCADD R2.CC, R2, c[0x0][0x140], 0x2 ;        /* 0x4c18810005070202 */
+        /*0058*/                   IADD.X R3, R0, c[0x0][0x144] ;                /* 0x4c10080005170003 */
+                                                                                 /* 0x001ffc00fe8007f2 */
+        /*0068*/                   MOV R0, c[0x0][0x148] ;                       /* 0x4c98078005270000 */
+        /*0070*/                   STG.E [R2], R0 ;                              /* 0xeedc200000070200 */
+        /*0078*/                   EXIT ;                                        /* 0xe30000000007000f */
+                                                                                 /* 0x001f8000fc0007ff */
+        /*0088*/                   BRA 0x80 ;                                    /* 0xe2400fffff07000f */
+        /*0090*/                   NOP;                                          /* 0x50b0000000070f00 */
+        /*0098*/                   NOP;                                          /* 0x50b0000000070f00 */
+                                                                                 /* 0x001f8000fc0007e0 */
+        /*00a8*/                   NOP;                                          /* 0x50b0000000070f00 */
+        /*00b0*/                   NOP;                                          /* 0x50b0000000070f00 */
+        /*00b8*/                   NOP;                                          /* 0x50b0000000070f00 */
+		..........
+
+
+
+Fatbin ptx code:
+================
+arch = sm_52
+code version = [8,7]
+host = linux
+compile_size = 64bit
+compressed
+ptxasOptions = 

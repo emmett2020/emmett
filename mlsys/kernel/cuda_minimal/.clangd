@@ -1,0 +1,36 @@
+CompileFlags:
+    Remove:
+        - -rdc=true
+        - -ccbin=*
+        - -arch=native
+        - -forward-unknown-to-host-compiler
+        - -gencode
+        - --generate-code=*
+        - --expt-extended-lambda
+        - --expt-relaxed-constexpr
+        - --options-file
+        - -Xcompiler=-fPIC
+        - -Xcudafe
+        - --diag_suppress=*
+        - -Xcompiler=-fvisibility=hidden
+        - -Xptxas
+        - --use_fast_math
+    Add:
+        - --cuda-path=/usr/local/cuda/
+        - -L/usr/local/cuda/lib64
+        - -I/usr/local/cuda/include
+        - '--cuda-gpu-arch=sm_80'
+
+Diagnostics:
+  Suppress: ref_bad_target
+  ClangTidy:
+    Remove:
+      # cuda shared memory forcily use c-style array
+      - cppcoreguidelines-avoid-c-arrays
+      - modernize-avoid-c-arrays
+      - cppcoreguidelines-avoid-non-const-global-variables
+      - cppcoreguidelines-pro-bounds-array-to-pointer-decay
+      # cuda use printf
+      - cppcoreguidelines-pro-type-vararg
+      - bugprone-implicit-widening-of-multiplication-result
+      - readability-math-missing-parentheses

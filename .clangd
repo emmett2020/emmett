@@ -2,31 +2,33 @@
 CompileFlags:
   Add: [-std=c++23]
 
+##################### cpp/
 If:
-  PathMatch: ./bench/example/
+  PathMatch: ./cpp/bench/example/
   CompileFlags:
-    CompilationDatabase: ./bench/example/build
+    CompilationDatabase: ./cpp/bench/example/build
 
 If:
-  PathMatch: ./bench/char_classifier/
+  PathMatch: ./cpp/bench/char_classifier/
   CompileFlags:
-    CompilationDatabase: ./bench/char_classifier/build
+    CompilationDatabase: ./cpp/bench/char_classifier/build
 
 If:
-  PathMatch: ./bench/string_view_vs_string/
+  PathMatch: ./cpp/bench/memory_allocation/
   CompileFlags:
-    CompilationDatabase: ./bench/string_view_vs_string/build
+    CompilationDatabase: ./cpp/bench/memory_allocation/build
 
 If:
-  PathMatch: ./demo/multithreads_read_same_file/
+  PathMatch: ./cpp/general/multithreads_read_same_file/
   CompileFlags:
-    CompilationDatabase: ./demo/multithreads_read_same_file/build
+    CompilationDatabase: ./cpp/general/multithreads_read_same_file/build
 
 If:
-  PathMatch: ./demo/memory_leak_detector/
+  PathMatch: ./cpp/general/memory_leak_detector/
   CompileFlags:
-    CompilationDatabase: ./demo/memory_leak_detector/build
+    CompilationDatabase: ./cpp/general/memory_leak_detector/build
 
+##################### tutorial/
 If:
   PathMatch: ./tutorial/design_pattern/
   CompileFlags:
