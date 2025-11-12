@@ -49,7 +49,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get install -y libboost-all-dev
-          cd cpp/multithreads_read_same_file/
+          cd cpp/general/multithreads_read_same_file/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
           ./build/main
@@ -59,7 +59,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get install -y valgrind
-          cd cpp/memory_leak_detector/
+          cd cpp/general/memory_leak_detector/
           cmake -S . -B build -GNinja
           cmake --build build -v -j`nproc`
           if valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./build/memory_leak; then
@@ -72,7 +72,7 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf build
-          cd cpp/memory_leak_detector/
+          cd cpp/general/memory_leak_detector/
           cmake -S . -B build -GNinja -DENABLE_ASAN=on
           cmake --build build -v -j`nproc`
           if ./build/memory_leak; then
