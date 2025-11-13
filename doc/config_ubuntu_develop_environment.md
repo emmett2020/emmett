@@ -2,7 +2,7 @@ Personally, I recommend the following three methods to set up a local developmen
 
 # 1. Docker
 ----
-1. This method assumes you already have Docker installed. If not, you can refer to the following link for installation instructions.
+1. This method assumes you already have Docker installed. If not, you can refer to [this link](https://docs.docker.com/engine/install/) for installation instructions.
 2. You can download a pre-built image and run the container to get an out-of-the-box C++ development environment, which includes tools like GCC, CMake, and Neovim.
 To pull the stable image:
 
