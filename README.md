@@ -11,13 +11,12 @@
 | ![tutorial](https://github.com/emmett2020/emmett/actions/workflows/ci_tutorial.yml/badge.svg)                   |
 
 # Catalog
-- [Introduction](# Introduction)
+- [Introduction](#Introduction)
 - [How to use this project](# How to use this project)
 - [How to contribution to this project](# How to contribution to this project)
 - [What will support in the future](# What will support in the future)
 
 # Introduction
-----
 
 This project is primarily for personal use, including small C++ projects I've written, projects in the MLSYS field, as well as configurations for various tools and scripts for specific tasks. All content is validated by GitHub CI. Issues and PRs are welcome!
 
@@ -39,13 +38,15 @@ Below is a detailed introduction to subdirectories:
 
 
 # How to use this project
-----
 
-1. Config developing environment.
+## 1. Config developing environment
+
 This project is organized as a collection of subprojects, each designed for a specific purpose and may have its own dependencies. Generally, a Linux platform and a compiler supporting C++20 or later are required. Specific environmental configuration requirements depend on the subproject. Some more complex subprojects may provide documentation for environment setup scripts. Despite this modularity, most sub-projects [use this development environment](./doc/config_ubuntu_develop_environment.md). You should prioritize configuring the environment and then compile the subprojects.
 
 
-2. Once the environment meets the requirements, the typical compilation process is as follows:
+## 2. Build sub-projects
+
+Once the environment meets the requirements, the **typical** compilation process is as follows:
 ```bash
 git clone --recursive https://github.com/emmett2020/emmett
 cd /path/to/subproject/you/want/to/build
