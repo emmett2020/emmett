@@ -1,4 +1,3 @@
-# Catalogue
 1. [Memory Management in C++: Tools to Prevent Leaks](#memory-management-in-C++-tools-to-prevent-leaks)
 2. [Run this demo with valgrind](#run-this-demo-with-valgrind)
 3. [Run this demo with ASan](#run-this-demo-with-asan)

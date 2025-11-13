@@ -10,7 +10,6 @@
 | ![check typo](https://github.com/emmett2020/emmett/actions/workflows/ci_check_typo.yml/badge.svg)                 |
 | ![tutorial](https://github.com/emmett2020/emmett/actions/workflows/ci_tutorial.yml/badge.svg)                   |
 
-# Catalog
 - [Introduction](#Introduction)
 - [Development environment configuration](#Development-environment-configuration)
 - [Build sub-projects](#Build-sub-projects)

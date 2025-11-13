@@ -1,4 +1,3 @@
-# Catalog
 1. [Docker](#Docker)
 2. [Conda](#Conda)
 3. [Manaual](#Manaual)
