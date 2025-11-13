@@ -17,7 +17,6 @@
 - [Contribution](#Contribution)
 - [TODO](#TODO)
 
-[toc]
 
 # Introduction
 
@@ -43,7 +42,7 @@ Below is a detailed introduction to subdirectories:
 
 # Development environment configuration
 
-This project is organized as a collection of subprojects, each designed for a specific purpose and may have its own dependencies. Generally, a `Linux`` platform and a compiler supporting `C++20` or later are required. Specific environmental configuration requirements depend on the subproject. Some more complex subprojects may provide documentations or scripts for environment setup. Despite this modularity, most sub-projects [use this development environment](./doc/config_ubuntu_develop_environment.md). You should prioritize configuring the environment and then compile the subprojects.
+This project is organized as a collection of subprojects, each designed for a specific purpose and may have its own dependencies. Generally, a `Linux` platform and a compiler supporting `C++20` or later are required. Specific environmental configuration requirements depend on the subproject. Some more complex subprojects may provide documentations or scripts for environment setup. Despite this modularity, most sub-projects [use this development environment](./doc/config_ubuntu_develop_environment.md). You should prioritize configuring the environment and then compile the subprojects.
 
 # Build sub-projects
 
