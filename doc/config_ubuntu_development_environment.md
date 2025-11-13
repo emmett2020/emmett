@@ -41,6 +41,8 @@ Additionally, you can build your own image using the Dockerfile available [here]
 # Conda
 When `root` access is not granted, we recommend using `Conda` to install the required tools.
 
+If you don't have `Conda` installed, you can refer by [this script](script/linux/ubuntu/install_miniconda.sh) to get latest `miniconda3`.
+
 ```bash
 conda create -c conda-forge -n daily python=3.11 gcc=14.2.0 gxx=14.2.0
 conda activate daily
@@ -50,10 +52,12 @@ conda activate daily
 # Manaual
 For a manual installation that offers finer control over your environment, begin by installing these essential compilation tools:
 
-| Tool      | Version  | Install method                                         |
-| -------   | -------- | ----------------------------------------               |
-| g++       | 14.2.0   |                                                        |
-| cmake     | 14.2.0   |                                                        |
+| Tool      |  Version  | Install method                                         |
+| -------   | --------  | ----------------------------------------               |
+| gcc       |  14.2.0   | [script](script/linux/ubuntu/install_gcc.sh)           |
+| g++       |  14.2.0   | [script](script/linux/ubuntu/install_gcc.sh)           |
+| CMake     |  3.31.1   | [script](script/linux/ubuntu/install_cmake.sh)         |
+| clangd    |  20.1.1   | [script](script/linux/ubuntu/install_clangd.sh)        |
 
 
 For an optimal experience, the following development tools are strongly recommended
