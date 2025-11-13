@@ -12,9 +12,9 @@
 
 # Catalog
 - [Introduction](#Introduction)
-- [How to use this project](# How to use this project)
-- [How to contribution to this project](# How to contribution to this project)
-- [What will support in the future](# What will support in the future)
+- [How to use this project](#How to use this project)
+- [How to contribute to this project](#How to contribute to this project)
+- [TODO](#TODO)
 
 # Introduction
 
@@ -55,10 +55,10 @@ cmake ..
 make -j`nproc`
 ```
 
-# How to contribution to this project
+# How to contribute to this project
 [contribute](./doc/contribution.md)
 
-# What will support in the future
+# TODO
 [TODOs](./doc/todo.md)
 
 
