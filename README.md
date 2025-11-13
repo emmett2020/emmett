@@ -20,7 +20,7 @@
 
 # Introduction
 
-Hello experts, welcome to my personal project👋.
+Hello experts, welcome to my personal project👋
 
 This project is primarily for **personal use**, including small C++ projects I've written, projects in the MLSYS field, as well as configurations for various tools and scripts for specific tasks. All content is validated by GitHub CI. Issues and PRs are welcome!
 
