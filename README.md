@@ -12,24 +12,26 @@
 
 # Catalog
 - [Introduction](#Introduction)
-- [How to use this project](#How to use this project)
-- [How to contribute to this project](#How to contribute to this project)
+- [Development environment configuration](#Development environment configuration)
+- [Build sub-projects](#Build sub-projects)
+- [Contribution](#Contribution)
 - [TODO](#TODO)
 
 # Introduction
 
-This project is primarily for personal use, including small C++ projects I've written, projects in the MLSYS field, as well as configurations for various tools and scripts for specific tasks. All content is validated by GitHub CI. Issues and PRs are welcome!
+Hello experts, welcome to my personal project👋.
+This project is primarily for **personal use**, including small C++ projects I've written, projects in the MLSYS field, as well as configurations for various tools and scripts for specific tasks. All content is validated by GitHub CI. Issues and PRs are welcome!
 
 **NOTE**:
 
-1. This repository is primarily for **personal use**, and any content may be subject to change in the future. However, the repository will still strive to adhere to mainstream version release rules as much as possible.
+1. Any content may be subject to change in the future. However, the repository will still strive to adhere to mainstream version release rules as much as possible.
 2. Please retain the copyright notice when using the content from this repository.
 
 Below is a detailed introduction to subdirectories:
 
 | Directory | Explanation                                                    |
 | -------   | ------------------------------------------------               |
-| cpp       | Contains several C/C++ projects I've written                   |
+| cpp       | Contains several C/C++ projects                                |
 | mlsys     | Contains several mlsys projects                                |
 | cmake     | Contains CMake utility                                         |
 | tutorial  | Contains some structured and educational code                  |
@@ -37,14 +39,12 @@ Below is a detailed introduction to subdirectories:
 | config    | Contains configurations for some popular tools I used          |
 
 
-# How to use this project
+# Development environment configuration
 
-## 1. Config developing environment
-
-This project is organized as a collection of subprojects, each designed for a specific purpose and may have its own dependencies. Generally, a Linux platform and a compiler supporting C++20 or later are required. Specific environmental configuration requirements depend on the subproject. Some more complex subprojects may provide documentation for environment setup scripts. Despite this modularity, most sub-projects [use this development environment](./doc/config_ubuntu_develop_environment.md). You should prioritize configuring the environment and then compile the subprojects.
+This project is organized as a collection of subprojects, each designed for a specific purpose and may have its own dependencies. Generally, a `Linux`` platform and a compiler supporting `C++20` or later are required. Specific environmental configuration requirements depend on the subproject. Some more complex subprojects may provide documentations or scripts for environment setup. Despite this modularity, most sub-projects [use this development environment](./doc/config_ubuntu_develop_environment.md). You should prioritize configuring the environment and then compile the subprojects.
 
 
-## 2. Build sub-projects
+# Build sub-projects
 
 Once the environment meets the requirements, the **typical** compilation process is as follows:
 ```bash
@@ -55,8 +55,8 @@ cmake ..
 make -j`nproc`
 ```
 
-# How to contribute to this project
-[contribute](./doc/contribution.md)
+# Contribution
+[contribution](./doc/contribution.md)
 
 # TODO
 [TODOs](./doc/todo.md)
