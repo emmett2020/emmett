@@ -1,5 +1,6 @@
 # 2025-11-11
 1. Rename `demo` directory to `cpp` and remove non-cpp projects.
+2. Add mlsys subprojects
 
 
 # 2025-01-19
