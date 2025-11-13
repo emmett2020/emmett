@@ -3,11 +3,12 @@
 2. [Conda](#Conda)
 3. [Manaual](#Manaual)
 
-Personally, I recommend the following three methods to set up a local `Ubuntu` development environment for general use.
+Personally, I recommend the following methods to set up a local `Ubuntu` development environment for general use.
 
 # 1. Docker
 1. This method assumes you already have Docker installed. If not, you can refer to [this link](https://docs.docker.com/engine/install/) for installation instructions.
 2. You can download a pre-built image and run the container to get an out-of-the-box C++ development environment, which includes tools like GCC, CMake, and Neovim.
+
 To pull the stable image:
 
 ```bash
@@ -15,12 +16,14 @@ docker pull emmettzhang/daily:latest
 ```
 
 Alternatively, you can find newer [nightly build images](https://hub.docker.com/repository/docker/emmettzhang/nightly/general).
+
 Example command for a specific tag:
 ```bash
 docker pull emmettzhang/nightly:tagname
 ```
 
 3. Create and run the container.
+
 First, retrieve the image ID:
 ```bash
 docker images
@@ -36,7 +39,7 @@ Additionally, you can build your own image using the Dockerfile available [here]
 
 
 # Conda
-When root-level access is not granted, we recommend using Conda to install the required tools.
+When `root` access is not granted, we recommend using `Conda` to install the required tools.
 
 ```bash
 conda create -c conda-forge -n daily python=3.11 gcc=14.2.0 gxx=14.2.0
