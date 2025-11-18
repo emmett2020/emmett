@@ -1,3 +1,6 @@
+# 2025-11-18
+1. Add python/ directory to store some pure Python projects.
+
 # 2025-11-11
 1. Rename `demo` directory to `cpp` and remove non-cpp projects.
 2. Add mlsys subprojects
